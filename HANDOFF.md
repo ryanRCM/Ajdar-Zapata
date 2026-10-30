@@ -25,6 +25,7 @@ Built: full screen, wake lock, cursor hides, retries a failed image, updates rea
 
 ## Waiting on Ryan
 - [ ] Put it on Netlify (free, ~5 min, steps in README) → **ajdarzapata.netlify.app** on both TVs. Replaces the artifact link and the short-link idea.
+- [ ] Domain: **ajdarzapata.co.uk** was free on 30 Oct (ajdarzapata.com and ajdar-zapata.com are taken; maybe the shop already owns the .com?). Buy it in Netlify (Domain management → Add a domain), or at Namecheap and point it at Netlify DNS.
 - [ ] The rest of the specs.
 - [ ] The new account.
 
