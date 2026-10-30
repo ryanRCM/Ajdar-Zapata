@@ -1,6 +1,12 @@
-<title>Ajdar Zapata Screens</title>
-<meta name="claude:viewport-fit-sides" content="cover">
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ajdar Zapata Menu</title>
 <style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
   /* Both TVs show the same thing: the three tall boards side by side at full height. */
   :root { --bg: #121110; color-scheme: dark; }
   html, body { height: 100%; }
@@ -12,6 +18,8 @@
   #stage img { height: 100vh; width: auto; max-width: 33vw; object-fit: contain; flex: 0 1 auto; }
   body.hide-cursor, body.hide-cursor * { cursor: none; }
 </style>
+</head>
+<body>
 
 <div id="stage">
   <img src="board-1.png" alt="Starters and sides, sauce selection and drinks">
@@ -39,6 +47,11 @@
   function wake() { document.body.classList.remove('hide-cursor'); clearTimeout(cursorTimer); cursorTimer = setTimeout(() => document.body.classList.add('hide-cursor'), 3000); }
   document.addEventListener('mousemove', wake); wake();
 
+  // Reload every 10 minutes so a new menu reaches the TVs on its own.
+  setTimeout(() => location.reload(), 10 * 60 * 1000);
+
   // A board that fails to load tries again a minute later.
   stage.querySelectorAll('img').forEach(b => b.addEventListener('error', () => setTimeout(() => { b.src = b.src.split('?')[0] + '?r=' + Date.now(); }, 60000)));
 </script>
+</body>
+</html>
