@@ -1,0 +1,107 @@
+<title>Ajdar Zapata Screens</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+  /* One full-bleed board per TV; the chooser only shows when no screen is picked. */
+  :root {
+    --bg: #111111;
+    --fg: #f5efe6;
+    --orange: #f7971e;
+    --red: #c8102e;
+    --muted: #9a9088;
+    --font: "DejaVu Sans", Verdana, system-ui, sans-serif;
+    color-scheme: dark;
+  }
+  html, body { height: 100%; }
+  body { background: var(--bg); color: var(--fg); font-family: var(--font); overflow: hidden; }
+
+  #stage { position: fixed; inset: 0; background: #000; }
+  #stage img {
+    position: absolute; inset: 0; width: 100%; height: 100%; max-width: none;
+    object-fit: contain; opacity: 0; transition: opacity 1s ease;
+  }
+  #stage img.on { opacity: 1; }
+  body.hide-cursor, body.hide-cursor * { cursor: none; }
+
+  #chooser {
+    position: fixed; inset: 0; overflow-y: auto; background: var(--bg);
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 40px;
+    display: grid; place-content: center; gap: 28px;
+  }
+  #chooser h1 { margin: 0; font-size: clamp(28px, 4vw, 48px); letter-spacing: .02em; }
+  #chooser h1 small { display: block; margin-top: 6px; color: var(--orange); font-size: .45em; letter-spacing: .08em; }
+  .rule { height: 3px; background: var(--red); }
+  .picks { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; max-width: 980px; }
+  .picks a {
+    display: grid; gap: 8px; padding: 18px 20px; border-radius: 8px;
+    background: var(--orange); color: #111; text-decoration: none; font-weight: 700;
+  }
+  .picks a span { font-weight: 400; font-size: 14px; }
+  .picks a.alt { background: transparent; color: var(--fg); outline: 2px solid var(--orange); }
+  .picks a:focus-visible { outline: 3px solid var(--fg); outline-offset: 3px; }
+  .note { margin: 0; max-width: 62ch; color: var(--muted); line-height: 1.5; font-size: 15px; }
+  @media (prefers-reduced-motion: reduce) { #stage img { transition: none; } }
+</style>
+
+<div id="stage" hidden>
+  <img id="b1" src="board-1.png" alt="Sandwiches, burgers and hot dogs menu">
+  <img id="b2" src="board-2.png" alt="Doner and shawarma menu">
+  <img id="b3" src="board-3.png" alt="Starters, sides and drinks menu">
+</div>
+
+<div id="chooser" hidden>
+  <h1>AJDAR ZAPATA<small>PICK WHAT THIS TV SHOWS</small></h1>
+  <div class="rule"></div>
+  <div class="picks">
+    <a href="#tv1">TV 1<span>Sandwiches / Burgers / Hot Dogs</span></a>
+    <a href="#tv2">TV 2<span>Doner / Shawarma</span></a>
+    <a href="#tv3">TV 3<span>Starters / Sides / Drinks</span></a>
+    <a href="#loop" class="alt">All boards<span>Rotates every 20 seconds</span></a>
+  </div>
+  <p class="note">Open this page on the TV, pick its board, then tap the screen once to go full screen. Bookmark that link on the TV so it comes straight back after a power cut.</p>
+</div>
+
+<script>
+  const boards = [b1, b2, b3];
+  const stage = document.getElementById('stage');
+  const chooser = document.getElementById('chooser');
+  let loopTimer = null, cursorTimer = null, lock = null;
+
+  function show(i) { boards.forEach((b, n) => b.classList.toggle('on', n === i)); }
+
+  function route() {
+    clearInterval(loopTimer);
+    const h = location.hash.slice(1);
+    const m = /^tv([123])$/.exec(h);
+    if (m || h === 'loop') {
+      chooser.hidden = true; stage.hidden = false;
+      if (m) show(+m[1] - 1);
+      else { let i = 0; show(i); loopTimer = setInterval(() => show(i = (i + 1) % 3), 20000); }
+      keepAwake();
+    } else {
+      stage.hidden = true; chooser.hidden = false;
+    }
+  }
+
+  // Keep the screen on while a board is showing; ignore it if the TV browser says no.
+  async function keepAwake() {
+    try { if (!lock && navigator.wakeLock) { lock = await navigator.wakeLock.request('screen'); lock.addEventListener('release', () => lock = null); } } catch (e) {}
+  }
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && !stage.hidden) keepAwake(); });
+
+  // Tap the board once for full screen.
+  stage.addEventListener('click', () => {
+    try { if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {}); } catch (e) {}
+  });
+
+  // Hide the mouse pointer when it stops moving.
+  function wake() { document.body.classList.remove('hide-cursor'); clearTimeout(cursorTimer); cursorTimer = setTimeout(() => document.body.classList.add('hide-cursor'), 3000); }
+  document.addEventListener('mousemove', wake); wake();
+
+  // A board that fails to load tries again a minute later.
+  boards.forEach(b => b.addEventListener('error', () => setTimeout(() => { b.src = b.src.split('?')[0] + '?r=' + Date.now(); }, 60000)));
+
+  addEventListener('hashchange', route);
+  route();
+</script>
