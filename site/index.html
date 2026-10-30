@@ -55,11 +55,9 @@
   <div class="rule"></div>
   <div class="picks">
     <a href="#tv1">TV 1<span>Sandwiches / Burgers / Hot Dogs</span></a>
-    <a href="#tv2">TV 2<span>Doner / Shawarma</span></a>
-    <a href="#tv3">TV 3<span>Starters / Sides / Drinks</span></a>
-    <a href="#loop" class="alt">All boards<span>Rotates every 20 seconds</span></a>
+    <a href="#tv2">TV 2<span>Doner / Shawarma, then Starters / Sides / Drinks</span></a>
   </div>
-  <p class="note">Open this page on the TV, pick its board, then tap the screen once to go full screen. Bookmark that link on the TV so it comes straight back after a power cut.</p>
+  <p class="note">Pick which TV this is. The TV remembers, so next time this page opens straight on its board. Tap the screen once to go full screen.</p>
 </div>
 
 <script>
@@ -70,14 +68,21 @@
 
   function show(i) { boards.forEach((b, n) => b.classList.toggle('on', n === i)); }
 
+  // TV 1 holds one board; TV 2 switches between two every 20 seconds.
+  const tvs = { tv1: [0], tv2: [1, 2] };
+
+  function remembered() { try { return localStorage.getItem('tv'); } catch (e) { return null; } }
+  function remember(tv) { try { localStorage.setItem('tv', tv); } catch (e) {} }
+
   function route() {
     clearInterval(loopTimer);
-    const h = location.hash.slice(1);
-    const m = /^tv([123])$/.exec(h);
-    if (m || h === 'loop') {
+    const tv = location.hash.slice(1) || remembered();
+    const list = tvs[tv];
+    if (list) {
+      remember(tv);
       chooser.hidden = true; stage.hidden = false;
-      if (m) show(+m[1] - 1);
-      else { let i = 0; show(i); loopTimer = setInterval(() => show(i = (i + 1) % 3), 20000); }
+      let i = 0; show(list[0]);
+      if (list.length > 1) loopTimer = setInterval(() => show(list[i = (i + 1) % list.length]), 20000);
       keepAwake();
     } else {
       stage.hidden = true; chooser.hidden = false;

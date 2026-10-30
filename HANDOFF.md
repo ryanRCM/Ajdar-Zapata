@@ -6,7 +6,7 @@
 | What | Where |
 |---|---|
 | Live TV site (v1) | https://claude.ai/artifact/DQufCywpypLtHh7m5geduP (on Ryan's account, private until shared) |
-| Screens | `#tv1` sandwiches/burgers/hot dogs · `#tv2` doner/shawarma · `#tv3` starters/sides/drinks · `#loop` all three, 20s each |
+| Screens (2 TVs, locked in 30 Oct) | TV 1: sandwiches/burgers/hot dogs, fixed · TV 2: doner/shawarma ↔ starters/sides/drinks, 20s each. Each TV remembers its pick, so the plain link works |
 | Source | `site/`: `index.html` + `board-1..3.png` (the Three TV Boards PDF rendered at 3840×2160) |
 | Original designs | `menu/`: Three TV Boards, Vertical Menu Boards, Full Menu A4, Takeaway Flyer A5 |
 
@@ -25,7 +25,7 @@ Built: full screen, wake lock, cursor hides, retries a failed image, updates rea
 
 ## Waiting on Ryan
 - [ ] Share the live link (Share → anyone with the link) so the TVs open it.
-- [ ] 2 monitors, 3 boards: which board on which TV?
+- [ ] Short links (e.g. is.gd/ajdartv1): the cloud session was blocked from making them; Ryan can make them or allow it.
 - [ ] The rest of the specs.
 - [ ] The new account.
 
