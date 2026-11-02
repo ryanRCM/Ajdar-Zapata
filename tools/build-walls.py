@@ -144,6 +144,38 @@ tight = {}
 for name, (b, y0, y1) in SECTIONS.items():
     tight[name] = tighten(boards[b][y0:y1 + 1, X0:X1])
 
+# ---- sauces: the board prints them small in a 3-across grid. Rebuild them as a list like the other
+# sections (Ryan, 2 Nov 2026: the sauces must be big): one sauce per row, English left, Persian right,
+# each name cut straight from the board (never retyped) and enlarged to match the other sections' names.
+def sauce_list():
+    b, y0, y1 = SECTIONS['sauces']
+    src = boards[b][y0:y1 + 1, X0:X1]
+    head = src[:76]                                   # title, Persian title and the rule
+    cells_x = [(0, 365), (370, 735), (740, 1094)]     # the grid's three columns
+    rows_y = [((88, 111), (119, 144)), ((170, 193), (200, 226)), ((252, 275), (283, 308))]  # (English, Persian)
+    def cut(y, x):
+        part = src[y[0]:y[1], x[0]:x[1]]
+        ink = np.abs(part - B).max(axis=2) > 30
+        xs = np.where(ink.any(axis=0))[0]
+        return part[:, xs.min() - 1:xs.max() + 2]
+    def up(img, k=1.45):
+        im = Image.fromarray(img.astype(np.uint8)).resize((round(img.shape[1] * k), round(img.shape[0] * k)), Image.LANCZOS)
+        return np.asarray(im, float)
+    width = head.shape[1]
+    lines = [head, np.tile(B, (18, width, 1))]
+    for (ey, fy) in rows_y:
+        for x in cells_x:
+            en, fa = up(cut(ey, x)), up(cut(fy, x))
+            h = max(en.shape[0], fa.shape[0])
+            row = np.tile(B, (h, width, 1))
+            row[(h - en.shape[0]) // 2:(h - en.shape[0]) // 2 + en.shape[0], 8:8 + en.shape[1]] = en
+            row[(h - fa.shape[0]) // 2:(h - fa.shape[0]) // 2 + fa.shape[0], width - 8 - fa.shape[1]:width - 8] = fa
+            lines += [row, np.tile(B, (22, width, 1))]
+    out = np.vstack(lines + [np.tile(B, (10, width, 1))])
+    return out, tight['sauces'][1]
+
+tight['sauces'] = sauce_list()
+
 # ---- layout, in pixels of a 1920x1080 screen
 W, H = 1920.0, 1080.0
 M, GAP, PAD = 14.0, 12.0, 10.0          # outer margin, between panels, inside a panel
