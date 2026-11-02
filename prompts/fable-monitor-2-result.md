@@ -1,9 +1,24 @@
 # Monitor 2 motion · result · 2 Nov 2026
 
-**Branch `fable/monitor-2`, ready to review. Not on `main`.** `node tools/check.cjs` passes ✅ on both monitors at 1920×1080 and 1366×768.
+**Branch `fable/monitor-2`, ready to review. Not on `main`.** Netlify's deploy preview is blocked by its free-plan "unrecognized Git contributor" rule, not by the code. Ryan can approve it in Netlify (see the comment on PR #1). `node tools/check.cjs` passes ✅ on both monitors at 1920×1080 and 1366×768.
+
+## Orange background (Ryan, 2 Nov: "Background ORANGE not black")
+- **Monitor 2 now runs on orange.** It uses its own copies of the boards in `site/monitor-2/board-1..3.png`, made by `python3 tools/orange-boards.py` from `site/board-*.png`.
+- **The two colours swap, not just the background.** Painting only the background orange would have hidden the orange prices and headings. So the background turns orange and the orange and cream type turns black, by a pure per-pixel recolour.
+  - Every word, price and number is still the same pixels in the same place.
+  - The logo artwork is unchanged and its black oval now sits on the orange.
+  - The orange bars at the top and bottom become black.
+- **The motion is re-coloured to suit.**
+  - The reel words are black, with the accent word in cream.
+  - Each food sits on a black oval badge like the logo's.
+  - The wipe is a black slab.
+  - The embers are cream, the flame licks deep red, and the logo glow cream.
+- **Size:** the three orange boards add about 430 KB in total, saved at 256 colours with dithering. They look the same as the full-colour version.
+- **Monitor 1 is still black and untouched.** If Ryan wants it orange too, it would be one line per board in `monitor-1/index.html`.
+- **When the menu changes:** re-run `python3 tools/orange-boards.py` after making new boards from a new PDF.
 
 ## What I built
-Monitor 2 keeps the three board images exactly as they are. All motion sits in the blank space around them. A pixel check against the PNGs found zero menu pixels under any motion box, at both screen sizes.
+Monitor 2 keeps the three boards' content exactly as it is (now on orange, see above). All motion sits in the blank space around them. A pixel check against the PNGs found zero menu pixels under any motion box, at both screen sizes.
 
 - **The reel** sits in board two's blank strip, 76.8–90.0% of its height. It plays seven scenes, about 46 seconds per loop.
 - **The hand-over** between scenes is a slanted orange slab that sweeps across. The old food is shoved out tilted and its letters fly up while the next scene is revealed behind the slab. There is no fade.
@@ -29,7 +44,7 @@ Monitor 2 keeps the three board images exactly as they are. All motion sits in t
 
 ## Checks
 - The boards, prices and logo artwork are unchanged. Monitor 1, `screen.css` and `screen.js` are untouched.
-- Animation uses only transforms, opacity and clip paths, with no filters, video or libraries. Monitor 2 is 56 KB in all.
+- Animation uses only transforms, opacity and clip paths, with no filters, video or libraries. The motion files are 56 KB, and the orange boards about 430 KB.
 - Everything is built once at load. Over two full loops the page kept the same element count (515) and the same memory.
 - Only Google Fonts loads from outside, as before.
 - `tools/check.cjs` changed in one way. It now waits each scene's own hold time before checking that the reel moved, because scenes are longer than the old 3.6 seconds.

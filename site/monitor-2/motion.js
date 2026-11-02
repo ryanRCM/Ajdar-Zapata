@@ -44,9 +44,9 @@
     svg.setAttribute('viewBox', '0 0 200 20');
     svg.setAttribute('preserveAspectRatio', 'none');
     svg.style.height = '48%'; svg.style.top = 'auto';
-    // Each lick fades from warm orange at the base to nothing at the tip.
+    // Each lick fades from deep red at the base to nothing at the tip, so it reads as fire on the orange.
     const id = 'lk' + Math.random().toString(36).slice(2, 7);
-    svg.innerHTML = `<defs><linearGradient id="${id}" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#f07c1a" stop-opacity=".7"/><stop offset=".55" stop-color="#ffb347" stop-opacity=".35"/><stop offset="1" stop-color="#ffb347" stop-opacity="0"/></linearGradient></defs>`;
+    svg.innerHTML = `<defs><linearGradient id="${id}" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#a3200c" stop-opacity=".8"/><stop offset=".5" stop-color="#d63a12" stop-opacity=".45"/><stop offset="1" stop-color="#ffe08a" stop-opacity="0"/></linearGradient></defs>`;
     for (let k = 0; k < 16; k++) {
       const x = 4 + k * 12.3 + rnd(-3, 3), w = rnd(9, 16), t = rnd(1, 12);
       const f = document.createElementNS(NS, 'path');
