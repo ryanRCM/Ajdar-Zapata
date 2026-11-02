@@ -50,7 +50,7 @@ def cutout_bg(img, tol=38, grow=2):
     rgba = img.convert('RGB').copy(); rgba.putalpha(alpha)
     return rgba.crop(rgba.getbbox())
 
-def save(im, name, width=900):
+def save(im, name, width=1500):  # big enough for the full-screen hero slides (Christmas update)
     if im.width > width: im = im.resize((width, round(im.height * width / im.width)), Image.LANCZOS)
     im.save(f'site/monitor-2/photo-{name}.webp', quality=86, method=6)
     print(name, im.size)

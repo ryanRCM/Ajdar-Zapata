@@ -24,10 +24,16 @@ Read this first, then `HANDOFF.md`. This repo is the TV menu website for **Ajdar
 - They reload themselves within a minute of every deploy (from a fresh address, so no old copy can stick; `/api/screen?status` shows each TV's `page_open_min`), so every push to `main` reaches the shop untouched.
 - **Keep the motion smooth on the TVs** (Ryan: "a tiny bit laggy", fixed 2 Nov): animate only `transform` and `opacity`; no `mix-blend-mode`, no animated `background-position`, `filter` or SVG transforms on many elements. Monitor 2 waits until every picture and font is loaded before anything moves. Measure with a 6x CPU-throttled Chromium: it went from 16 to 42 fps.
 
+## Seasons (Ryan, 2 Nov 2026: "Christmas versions, Halloween versions that automatically update")
+- `site/season.js` sets `<html data-season>` by date: **christmas 1 Nov - 6 Jan**, **halloween in October** (nothing built yet), otherwise none. `site/season.css` hides snow and `[data-season-only="christmas"]` outside the season. Preview any season with `?season=christmas`.
+- The Christmas update (PR #4, merged 2 Nov) added full-screen hero slides on the cycling TV (sauces, sandwiches, burgers, brand), its running order in `site/show.js`, and the snow and sparkles in `site/xmas.js`.
+
 ## Files
 | Path | What |
 |---|---|
 | `site/monitor-1/`, `site/monitor-2/` | The two TV pages. Shared look in `site/screen.css`, shared behaviour in `site/screen.js` (wake lock, hidden cursor, tap for full screen, check-in with `/api/screen`, hourly safety reload, image retry) |
+| `site/show.js`, `site/xmas.js`, `site/xmas.css`, `site/monitor-2/hero.css` | Christmas update: the running order and holds for both TVs (worked out from Netlify's clock, so the left TV sparkles round the section the right TV shows), the special offers list (empty = hidden), snow and sparkles (canvas), the full-screen hero slides. `?slide=<id>` starts the show at a slide |
+| `tools/build-sauces.py`, `tools/fps.cjs` | Sauce names cut off the PDF at 3x for the sauce hero · frame rate at 6x slower CPU |
 | `netlify/functions/screen.mjs` | `/api/screen`: each TV checks in every minute. Netlify (Blobs store `screens`) says which monitor that TV shows (first TV → 1, next → 2, kept from then on; `?screen=1`/`?screen=2` pins one) and which deploy is live, so TVs reload themselves on every deploy. `package.json` pins `@netlify/blobs`. Don't test it against the live site with fake TVs: each fake ID holds a monitor for 15 minutes |
 | `site/_redirects` | `/` → monitor 1, `/monitor1` and `/monitor2` → the dashed addresses |
 | `site/monitor-1/board-*.png`, `site/monitor-2/board-*.png` | The yellow and orange copies of the boards, made by `tools/yellow-boards.py` and `tools/orange-boards.py`. Re-run both after a new PDF |

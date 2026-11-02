@@ -1,0 +1,5 @@
+/* Seasonal extras show only in their season (set by /season.js). */
+html:not([data-season="christmas"]) .snow,
+html:not([data-season="christmas"]) .hero-snow,
+html:not([data-season="christmas"]) [data-season-only="christmas"] { display: none !important; }
+html:not([data-season="halloween"]) [data-season-only="halloween"] { display: none !important; }

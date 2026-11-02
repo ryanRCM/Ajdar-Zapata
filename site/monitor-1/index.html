@@ -7,14 +7,19 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@600;800&family=Vazirmatn:wght@600&display=swap">
+<script src="/season.js"></script>
+<link rel="stylesheet" href="/season.css">
 <link rel="stylesheet" href="/screen.css">
 <link rel="stylesheet" href="/monitor-1/theme.css">
 <link rel="stylesheet" href="/monitor-1/layout.css">
+<link rel="stylesheet" href="/xmas.css">
 </head>
 <body data-monitor="1">
 <!-- The left TV (yellow glass): the whole menu at once, in three columns (Ryan, 2 Nov 2026: one TV static
      with everything, the other cycling big). Every section is lifted straight off the boards by
-     tools/build-walls.py (nothing retyped). -->
+     tools/build-walls.py (nothing retyped). Christmas: the section the right TV is
+     showing sparkles round its rim (/show.js keeps both TVs in step; /xmas.js). The text never moves. (No snow here: the
+     panels cover nearly all the wall, and drawing it behind them cost a third of the frame rate.) -->
 <div id="stage">
   <div class="card sec-starters"><img src="/monitor-1/sec-starters.png" alt="Starters and sides, 1 to 10"></div>
   <div class="card sec-sauces"><img src="/monitor-1/sec-sauces.png" alt="Sauce selection"></div>
@@ -28,6 +33,8 @@
 </div>
 <div class="sweep"></div>
 <script src="/flame.js"></script>
+<script src="/show.js"></script>
+<script src="/xmas.js"></script>
 <script src="/screen.js"></script>
 </body>
 </html>

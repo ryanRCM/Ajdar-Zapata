@@ -55,7 +55,7 @@
     let last = 0;
     (function tick(now) {
       requestAnimationFrame(tick);
-      if (now - last < 50 || document.hidden) return;
+      if (now - last < 50 || document.hidden || document.getElementById('stage').classList.contains('hero-mode')) return;
       last = now;
       document.querySelectorAll('.scene.on .mflame').forEach(el => {
         el.setAttribute('d', window.Flames.path(shape, now / 1000, Number(el.dataset.layer)));
@@ -79,49 +79,97 @@
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
   addEventListener('resize', fit);
 
-  // ── The slideshow: one menu section at a time, each held for its data-hold seconds, sliding in from the
-  // right as the last one slides away. The food animation beside it switches to that section's scene
-  // (data-scene) with a slanted wipe; the old scene keeps its built state ('on') while it exits ('out').
-  const slides = [...document.querySelectorAll('.tvslide')];
+  // ── Special offers: built once from Ryan's written offers in /show.js (none yet, so the slide never shows).
+  const offerList = document.querySelector('.offer-list');
+  if (offerList && window.AZShow) window.AZShow.OFFERS.forEach((o, k) => {
+    const row = document.createElement('div');
+    row.className = 'offer'; row.style.setProperty('--k', k);
+    const en = document.createElement('span'); en.className = 'en'; en.textContent = o.en || '';
+    const fa = document.createElement('span'); fa.className = 'fa'; fa.textContent = o.fa || ''; fa.lang = 'fa';
+    row.append(en, fa); offerList.appendChild(row);
+  });
+
+  // ── Sauce names (pictures lifted off the board): all at one size, shrunk only if a long name needs it.
+  function sizeSauces() {
+    const px = innerHeight / 1080;
+    document.querySelectorAll('.sauce').forEach(card => {
+      const box = card.querySelector('.names'), en = card.querySelector('.en'), fa = card.querySelector('.fa-img');
+      if (!box.clientWidth || !en.naturalWidth) return;
+      const want = card.classList.contains('feature') ? 1.3 : .82;
+      const s = Math.min(want, box.clientWidth / (en.naturalWidth * px), box.clientWidth / (fa.naturalWidth * px));
+      en.style.height = (en.naturalHeight * s / 10.8) + 'vh';
+      fa.style.height = (fa.naturalHeight * s / 10.8) + 'vh';
+    });
+  }
+  addEventListener('resize', sizeSauces);
+
+  // ── The show. The running order and timing come from /show.js, which works them out from the clock so the
+  // left TV can sparkle round the same section. Menu sections glide in after a bright band sweeps across;
+  // a full-screen hero arrives under three sweeping slabs and leaves with a punch-out and a golden burst.
+  // The food animation beside a menu section switches to that section's scene (data-scene).
+  const slides = new Map([...document.querySelectorAll('#stage [data-id]')].map(el => [el.dataset.id, el]));
   const scenes = [...document.querySelectorAll('.scene')];
   const wipe = document.querySelector('.wipe');
-  let si = 0, sc = -1, timer = null, timer2 = null, timer3 = null;
+  const bigwipe = document.querySelector('.bigwipe'), slabs = document.querySelector('.slabs'), burst = document.querySelector('.burst');
+  const stage = document.getElementById('stage');
+  let cur = null, sc = -1, timer = null, timer2 = null, timer3 = null, timer4 = null;
+  const isHero = el => el.classList.contains('hero');
 
   function restart(el, cls) { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }
 
   function setScene(k) {
     if (k === sc || !scenes[k]) return;
-    const cur = scenes[sc];
+    const old = scenes[sc];
     sc = k;
-    if (cur) { cur.classList.add('out'); restart(wipe, 'go'); }
+    if (old) { old.classList.add('out'); restart(wipe, 'go'); }
     scenes[sc].classList.add('on');
     clearTimeout(timer2);
-    if (cur) timer2 = setTimeout(() => { cur.classList.remove('on', 'out'); wipe.classList.remove('go'); }, 760);
+    if (old) timer2 = setTimeout(() => { old.classList.remove('on', 'out'); wipe.classList.remove('go'); }, 760);
   }
 
-  // The whole screen changes: a bright band sweeps across, and while it covers the screen the slide, the
-  // food scene and the wall's glow all switch to the next section.
-  const bigwipe = document.querySelector('.bigwipe'), stage = document.getElementById('stage');
-  let started = false;
-  function nextSlide(k) {
-    if (!started) { started = true; return showSlide(k); }
-    restart(bigwipe, 'go');
-    setTimeout(() => showSlide(k), 380);
+  function show(el) {
+    el.classList.remove('gone', 'leave');
+    el.classList.add('on');
+    const hero = isHero(el);
+    stage.classList.toggle('hero-mode', hero);
+    stage.classList.remove('settled');
+    clearTimeout(timer4);
+    if (hero) timer4 = setTimeout(() => stage.classList.add('settled'), 700);   // the column has slid away: stop drawing it
+    if (hero) sizeSauces();
+    if (el.dataset.accent) stage.style.setProperty('--wall-hot', el.dataset.accent);
+    if (el.dataset.scene !== undefined) setScene(Number(el.dataset.scene));
+  }
+  function hide(el) {
+    el.classList.remove('on');
+    if (!isHero(el)) { el.classList.add('gone'); clearTimeout(timer3); timer3 = setTimeout(() => el.classList.remove('gone'), 900); }
   }
 
-  function showSlide(k) {
-    const prev = slides[si];
-    if (prev && k !== si) {
-      prev.classList.remove('on'); prev.classList.add('gone');
-      clearTimeout(timer3); timer3 = setTimeout(() => prev.classList.remove('gone'), 900);
-    }
-    si = k;
-    const s = slides[si];
-    s.classList.add('on');
-    if (s.dataset.accent) stage.style.setProperty('--wall-hot', s.dataset.accent);
-    if (s.dataset.scene !== undefined) setScene(Number(s.dataset.scene));
+  function go(slot, reset) {
+    const next = slides.get(slot.id);
+    if (!next) return;
     clearTimeout(timer);
-    timer = setTimeout(() => nextSlide((si + 1) % slides.length), parseFloat(s.dataset.hold || 8) * 1000);
+    const prev = cur;
+    cur = next;
+    if (reset || !prev) {
+      slides.forEach(x => x.classList.remove('on', 'gone', 'leave'));
+      scenes.forEach(x => x.classList.remove('on', 'out'));
+      [wipe, bigwipe, slabs, burst].forEach(x => x.classList.remove('go'));
+      sc = -1;
+      return show(next);
+    }
+    if (prev === next) return;
+    if (isHero(next)) {                       // slabs sweep across; the hero switches on while they cover the screen
+      restart(slabs, 'go');
+      timer = setTimeout(() => { hide(prev); show(next); }, 440);
+    } else if (isHero(prev)) {                // the hero punches out, a golden ring bursts, the menu glides in
+      prev.classList.remove('on'); prev.classList.add('leave');
+      restart(burst, 'go');
+      show(next);
+      timer = setTimeout(() => prev.classList.remove('leave'), 650);
+    } else {                                  // menu to menu: a bright band sweeps across
+      restart(bigwipe, 'go');
+      timer = setTimeout(() => { hide(prev); show(next); }, 380);
+    }
   }
 
   // Download and prepare everything first (every picture decoded, fonts loaded), then start: smooth from frame one.
@@ -132,18 +180,10 @@
   ]);
   Promise.race([ready, new Promise(r => setTimeout(r, 8000))]).then(() => {
     fit();
-    requestAnimationFrame(() => { document.body.classList.add('ready'); nextSlide(0); });
+    requestAnimationFrame(() => {
+      document.body.classList.add('ready');
+      if (window.AZShow) window.AZShow.on(go);
+    });
   });
-
-  // A hidden tab pauses animations; on return, restart the current slide and scene cleanly.
-  document.addEventListener('visibilitychange', () => {
-    clearTimeout(timer); clearTimeout(timer2); clearTimeout(timer3);
-    if (document.hidden) return;
-    slides.forEach(x => x.classList.remove('on', 'gone'));
-    scenes.forEach(x => x.classList.remove('on', 'out'));
-    wipe.classList.remove('go');
-    sc = -1;
-    started = false;
-    nextSlide(si);
-  });
+  // (A hidden tab: /show.js calls go() with reset when the tab is shown again, so the slide starts cleanly.)
 })();

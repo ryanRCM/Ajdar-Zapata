@@ -125,9 +125,11 @@ def lift(a, pal, rule):
     out = np.dstack([rgb, alpha * 255])
     return Image.fromarray(np.clip(out, 0, 255).round().astype(np.uint8), 'RGBA')
 
-def logo():
-    """The logo cut out of the original board: everything outside the oval becomes see-through."""
-    a = np.asarray(Image.open('site/board-2.png').convert('RGB').crop((372, 40, 843, 262)), float)
+def logo(src=None, k=1):
+    """The logo cut out of the original board: everything outside the oval becomes see-through.
+    With src (the board rendered at k times), a sharp big copy."""
+    src = src or Image.open('site/board-2.png')
+    a = np.asarray(src.convert('RGB').crop((372 * k, 40 * k, 843 * k, 262 * k)), float)
     dist = np.abs(a - B).max(axis=2)
     near = dist < 40
     out = np.zeros_like(near); out[0, :] = out[-1, :] = out[:, 0] = out[:, -1] = True; out &= near
@@ -137,6 +139,13 @@ def logo():
         out = g
     alpha = 1 - np.clip(1 - dist / 40, 0, 1) * out
     return Image.fromarray(np.dstack([a, alpha * 255]).round().astype(np.uint8), 'RGBA')
+
+def logo_big():
+    """A sharp big copy of the logo for the right TV's Christmas slide: the logo cut from the PDF rendered at 3x."""
+    import os, subprocess, tempfile
+    tmp = tempfile.mkdtemp()
+    subprocess.run(['pdftoppm', '-png', '-r', '324', '-f', '2', '-l', '2', 'menu/Ajdar_Zapata_Boards.pdf', os.path.join(tmp, 'b')], check=True)
+    logo(Image.open(os.path.join(tmp, 'b-2.png')), 3).save('site/monitor-2/logo-big.webp', quality=88, method=6)
 
 # ---- measure every section once (sizes are the same on both walls)
 boards = {n: np.asarray(Image.open(f'site/board-{n}.png').convert('RGB'), float) for n in (1, 2, 3)}
@@ -209,6 +218,7 @@ def common(mon, css):
     if mon == 2:  # the allergy notice, on the right TV only (Ryan, 2 Nov 2026: "only in one section")
         css.append(f'.allergy-bar {{ left: {pct(M, W)}; right: {pct(M, W)}; top: {pct(BOTTOM2 + 10, H)}; height: {pct(H - BOTTOM2 - 20, H)}; }}')
     logo().save(f'site/monitor-{mon}/logo.png', optimize=True)
+    if mon == 2: logo_big()
 
 for mon in (1, 2):
     for name, (img, rule) in tight.items():

@@ -1,0 +1,20 @@
+/* Christmas, shared by both TVs (Christmas update, 2 Nov 2026): light snow and golden sparkles drifting
+   behind the glass, in the brand's cream, yellow and orange, drawn on small canvases by /xmas.js. */
+.snow, .hero-snow { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.snow { z-index: 0; }                                   /* behind the glass panels (they are z-index 1) */
+/* the hero slides' golden stars use this twinkle (scale, turn, fade) */
+@keyframes twinkle { 0%, 100% { opacity: 0; transform: scale(.2) rotate(0deg); } 45% { opacity: 1; transform: scale(1) rotate(45deg); } 60% { opacity: .9; transform: scale(.85) rotate(60deg); } }
+
+/* Left TV: the section the right TV is showing glows round its rim, a soft light passes down it once, and
+   golden sparkles twinkle on its rim. The lettering never moves and is never covered by anything solid. */
+.card .live-glow { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0;
+  box-shadow: inset 0 0 0 .5vh #ffb000, inset 0 0 2.4vh rgba(255, 160, 0, .55); transition: opacity .8s ease-out; }
+.card.live .live-glow { opacity: 1; }
+.card .live-sweep { position: absolute; left: 0; right: 0; top: 0; height: 35%; pointer-events: none; opacity: 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0), rgba(255, 246, 200, .32) 50%, rgba(255, 255, 255, 0)); transform: translateY(-110%); }
+.card.live .live-sweep { animation: livesweep 1.6s cubic-bezier(.4, 0, .3, 1) .2s 1 both; }
+@keyframes livesweep { 0% { opacity: 1; transform: translateY(-110%); } 100% { opacity: 1; transform: translateY(300%); } }
+.rim-stars { position: absolute; z-index: 2; pointer-events: none; opacity: 0; transition: opacity .6s; }
+.rim-stars.on { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) { .card.live .live-sweep { animation: none; } }

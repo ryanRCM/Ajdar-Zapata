@@ -7,9 +7,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Semi+Condensed:wght@600;800&family=Vazirmatn:wght@600;700&display=swap">
+<script src="/season.js"></script>
+<link rel="stylesheet" href="/season.css">
 <link rel="stylesheet" href="/screen.css">
 <link rel="stylesheet" href="/monitor-2/motion.css">
 <link rel="stylesheet" href="/monitor-2/layout.css">
+<link rel="stylesheet" href="/xmas.css">
+<link rel="stylesheet" href="/monitor-2/hero.css">
 </head>
 <body data-monitor="2">
 <!-- Monitor 2 = the right wall: orange, with motion. Names and numbers in the reel are copied from the
@@ -17,19 +21,137 @@
 <!-- The right TV (orange glass): one menu section at a time, as big as the screen allows, with its food
      animation in the column beside it (Ryan, 2 Nov 2026: one TV static with everything, the other cycling
      big). Every section is lifted straight off the boards by tools/build-walls.py (nothing retyped).
-     data-hold = seconds on screen; data-scene = which food animation plays beside it. -->
+     data-id = the slide's name in the running order (/show.js, which also says how long each stays);
+     data-scene = which food animation plays beside it. -->
 <div id="stage">
   <div class="embers-bg" data-embers="8" data-rise="95vh"></div>
-  <div class="card tvslide sec-starters" data-hold="14" data-accent="#ffb000" data-scene="6"><img src="/monitor-2/sec-starters.png" alt="Starters and sides, 1 to 10"></div>
-  <div class="card tvslide sec-sauces" data-hold="12" data-accent="#ff2f1f" data-scene="7"><img src="/monitor-2/sec-sauces.png" alt="Sauce selection"></div>
-  <div class="card tvslide sec-sandwiches" data-hold="14" data-accent="#ff8a00" data-scene="0"><img src="/monitor-2/sec-sandwiches.png" alt="Sandwiches, 11 to 15"></div>
-  <div class="card tvslide sec-burgers" data-hold="13" data-accent="#ff2a10" data-scene="1"><img src="/monitor-2/sec-burgers.png" alt="Burgers, 16 to 20"></div>
-  <div class="card tvslide sec-doner" data-hold="12" data-accent="#ff5c00" data-scene="2"><img src="/monitor-2/sec-doner.png" alt="Doner baguettes, 21 to 24"></div>
-  <div class="card tvslide sec-platters" data-hold="11" data-accent="#ff7a10" data-scene="3"><img src="/monitor-2/sec-platters.png" alt="Doner platters, 25 to 27"></div>
-  <div class="card tvslide sec-shawarma" data-hold="11" data-accent="#ffa200" data-scene="4"><img src="/monitor-2/sec-shawarma.png" alt="Shawarma, 28 to 30"></div>
-  <div class="card tvslide sec-hotdogs" data-hold="13" data-accent="#ff3a1c" data-scene="5"><img src="/monitor-2/sec-hotdogs.png" alt="Hot dogs, 31 to 35"></div>
-  <div class="card tvslide sec-drinks" data-hold="11" data-accent="#ff9a1c" data-scene="8"><img src="/monitor-2/sec-drinks.png" alt="Drinks"></div>
+  <div class="card tvslide sec-starters" data-id="starters" data-accent="#ffb000" data-scene="6"><img src="/monitor-2/sec-starters.png" alt="Starters and sides, 1 to 10"></div>
+  <div class="card tvslide sec-sauces" data-id="sauces" data-accent="#ff2f1f" data-scene="7"><img src="/monitor-2/sec-sauces.png" alt="Sauce selection"></div>
+  <div class="card tvslide sec-sandwiches" data-id="sandwiches" data-accent="#ff8a00" data-scene="0"><img src="/monitor-2/sec-sandwiches.png" alt="Sandwiches, 11 to 15"></div>
+  <div class="card tvslide sec-burgers" data-id="burgers" data-accent="#ff2a10" data-scene="1"><img src="/monitor-2/sec-burgers.png" alt="Burgers, 16 to 20"></div>
+  <div class="card tvslide sec-doner" data-id="doner" data-accent="#ff5c00" data-scene="2"><img src="/monitor-2/sec-doner.png" alt="Doner baguettes, 21 to 24"></div>
+  <div class="card tvslide sec-platters" data-id="platters" data-accent="#ff7a10" data-scene="3"><img src="/monitor-2/sec-platters.png" alt="Doner platters, 25 to 27"></div>
+  <div class="card tvslide sec-shawarma" data-id="shawarma" data-accent="#ffa200" data-scene="4"><img src="/monitor-2/sec-shawarma.png" alt="Shawarma, 28 to 30"></div>
+  <div class="card tvslide sec-hotdogs" data-id="hotdogs" data-accent="#ff3a1c" data-scene="5"><img src="/monitor-2/sec-hotdogs.png" alt="Hot dogs, 31 to 35"></div>
+  <div class="card tvslide sec-drinks" data-id="drinks" data-accent="#ff9a1c" data-scene="8"><img src="/monitor-2/sec-drinks.png" alt="Drinks"></div>
+  <!-- ───── Full-screen hero slides (Christmas update, 2 Nov 2026): one dish or the sauces filling the whole
+       TV, giant type, moving photos. Names and numbers are copied from the boards; no prices, offers or
+       claims. The sauce names are pictures lifted straight off the board (tools/build-sauces.py). ───── -->
+  <section class="hero hero-sauce" data-id="hero-sauce" aria-label="Sauce selection: Zapata Special Sauce, Garlic, Garlic &amp; Dill, Spicy Chilli, Mushroom, Ketchup, Mayo, Cheddar Sauce, Green Sauce">
+    <div class="rays"></div>
+    <div class="hero-head"><div class="word smash" data-text="SAUCE SELECTION" data-accent="SAUCE"></div><span class="fa">انتخاب سس</span></div>
+    <div class="sauce-grid">
+      <div class="sauce feature" style="--c:#ff6a2b;--c2:#c2380e;--k:0"><div class="pour"><div class="bottle up"><i class="cap"></i><i class="body"></i><i class="label"></i></div><i class="stream"></i><div class="swirl"><i></i></div></div>
+        <div class="zig"><div class="zig-in"><svg viewBox="0 0 400 40" preserveAspectRatio="none"><path d="M0 20 Q 12.5 2 25 20 T 50 20 T 75 20 T 100 20 T 125 20 T 150 20 T 175 20 T 200 20 T 225 20 T 250 20 T 275 20 T 300 20 T 325 20 T 350 20 T 375 20 T 400 20"/><path class="hi" d="M0 20 Q 12.5 2 25 20 T 50 20 T 75 20 T 100 20 T 125 20 T 150 20 T 175 20 T 200 20 T 225 20 T 250 20 T 275 20 T 300 20 T 325 20 T 350 20 T 375 20 T 400 20"/></svg></div></div>
+        <i class="dripdot" style="--x:58%"></i>
+        <div class="names"><img class="en" src="/monitor-2/sauces/sauce-1-en.png" alt=""><img class="fa-img" src="/monitor-2/sauces/sauce-1-fa.png" alt=""></div>
+      </div>
+      <div class="sauce" style="--c:#fbf3dc;--c2:#d9c79a;--k:1">
+        <div class="zig"><div class="zig-in"><svg viewBox="0 0 400 40" preserveAspectRatio="none"><path d="M0 20 Q 12.5 2 25 20 T 50 20 T 75 20 T 100 20 T 125 20 T 150 20 T 175 20 T 200 20 T 225 20 T 250 20 T 275 20 T 300 20 T 325 20 T 350 20 T 375 20 T 400 20"/><path class="hi" d="M0 20 Q 12.5 2 25 20 T 50 20 T 75 20 T 100 20 T 125 20 T 150 20 T 175 20 T 200 20 T 225 20 T 250 20 T 275 20 T 300 20 T 325 20 T 350 20 T 375 20 T 400 20"/></svg></div></div>
+        <i class="dripdot" style="--x:58%"></i>
+        <div class="names"><img class="en" src="/monitor-2/sauces/sauce-2-en.png" alt=""><img class="fa-img" src="/monitor-2/sauces/sauce-2-fa.png" alt=""></div>
+      </div>
+      <div class="sauce has-pot" style="--c:#e6efc9;--c2:#8fae5a;--k:2">
+        <img class="pot" src="/monitor-2/photo-sauce-garlic-dill.webp" alt="">
+        <div class="zig"><div class="zig-in"><svg viewBox="0 0 400 40" preserveAspectRatio="none"><path d="M0 20 Q 12.5 2 25 20 T 50 20 T 75 20 T 100 20 T 125 20 T 150 20 T 175 20 T 200 20 T 225 20 T 250 20 T 275 20 T 300 20 T 325 20 T 350 20 T 375 20 T 400 20"/><path class="hi" d="M0 20 Q 12.5 2 25 20 T 50 20 T 75 20 T 100 20 T 125 20 T 150 20 T 175 20 T 200 20 T 225 20 T 250 20 T 275 20 T 300 20 T 325 20 T 350 20 T 375 20 T 400 20"/></svg></div></div>
+        <i class="dripdot" style="--x:58%"></i>
+        <div class="names"><img class="en" src="/monitor-2/sauces/sauce-3-en.png" alt=""><img class="fa-img" src="/monitor-2/sauces/sauce-3-fa.png" alt=""></div>
+      </div>
+      <div class="sauce has-pot" style="--c:#e3221b;--c2:#8f0d08;--k:3">
+        <img class="pot" src="/monitor-2/photo-sauce-spicy-chilli.webp" alt="">
+        <div class="zig"><div class="zig-in"><svg viewBox="0 0 400 40" preserveAspectRatio="none"><path d="M0 20 Q 12.5 2 25 20 T 50 20 T 75 20 T 100 20 T 125 20 T 150 20 T 175 20 T 200 20 T 225 20 T 250 20 T 275 20 T 300 20 T 325 20 T 350 20 T 375 20 T 400 20"/><path class="hi" d="M0 20 Q 12.5 2 25 20 T 50 20 T 75 20 T 100 20 T 125 20 T 150 20 T 175 20 T 200 20 T 225 20 T 250 20 T 275 20 T 300 20 T 325 20 T 350 20 T 375 20 T 400 20"/></svg></div></div>
+        <i class="dripdot" style="--x:58%"></i>
+        <div class="names"><img class="en" src="/monitor-2/sauces/sauce-4-en.png" alt=""><img class="fa-img" src="/monitor-2/sauces/sauce-4-fa.png" alt=""></div>
+      </div>
+      <div class="sauce" style="--c:#b98a5a;--c2:#6e4a26;--k:4">
+        <div class="zig"><div class="zig-in"><svg viewBox="0 0 400 40" preserveAspectRatio="none"><path d="M0 20 Q 12.5 2 25 20 T 50 20 T 75 20 T 100 20 T 125 20 T 150 20 T 175 20 T 200 20 T 225 20 T 250 20 T 275 20 T 300 20 T 325 20 T 350 20 T 375 20 T 400 20"/><path class="hi" d="M0 20 Q 12.5 2 25 20 T 50 20 T 75 20 T 100 20 T 125 20 T 150 20 T 175 20 T 200 20 T 225 20 T 250 20 T 275 20 T 300 20 T 325 20 T 350 20 T 375 20 T 400 20"/></svg></div></div>
+        <i class="dripdot" style="--x:58%"></i>
+        <div class="names"><img class="en" src="/monitor-2/sauces/sauce-5-en.png" alt=""><img class="fa-img" src="/monitor-2/sauces/sauce-5-fa.png" alt=""></div>
+      </div>
+      <div class="sauce" style="--c:#d0170f;--c2:#7c0a05;--k:5">
+        <div class="zig"><div class="zig-in"><svg viewBox="0 0 400 40" preserveAspectRatio="none"><path d="M0 20 Q 12.5 2 25 20 T 50 20 T 75 20 T 100 20 T 125 20 T 150 20 T 175 20 T 200 20 T 225 20 T 250 20 T 275 20 T 300 20 T 325 20 T 350 20 T 375 20 T 400 20"/><path class="hi" d="M0 20 Q 12.5 2 25 20 T 50 20 T 75 20 T 100 20 T 125 20 T 150 20 T 175 20 T 200 20 T 225 20 T 250 20 T 275 20 T 300 20 T 325 20 T 350 20 T 375 20 T 400 20"/></svg></div></div>
+        <i class="dripdot" style="--x:58%"></i>
+        <div class="names"><img class="en" src="/monitor-2/sauces/sauce-6-en.png" alt=""><img class="fa-img" src="/monitor-2/sauces/sauce-6-fa.png" alt=""></div>
+      </div>
+      <div class="sauce" style="--c:#fff2c2;--c2:#e2c56a;--k:6">
+        <div class="zig"><div class="zig-in"><svg viewBox="0 0 400 40" preserveAspectRatio="none"><path d="M0 20 Q 12.5 2 25 20 T 50 20 T 75 20 T 100 20 T 125 20 T 150 20 T 175 20 T 200 20 T 225 20 T 250 20 T 275 20 T 300 20 T 325 20 T 350 20 T 375 20 T 400 20"/><path class="hi" d="M0 20 Q 12.5 2 25 20 T 50 20 T 75 20 T 100 20 T 125 20 T 150 20 T 175 20 T 200 20 T 225 20 T 250 20 T 275 20 T 300 20 T 325 20 T 350 20 T 375 20 T 400 20"/></svg></div></div>
+        <i class="dripdot" style="--x:58%"></i>
+        <div class="names"><img class="en" src="/monitor-2/sauces/sauce-7-en.png" alt=""><img class="fa-img" src="/monitor-2/sauces/sauce-7-fa.png" alt=""></div>
+      </div>
+      <div class="sauce has-pot" style="--c:#ffb31a;--c2:#d4780a;--k:7">
+        <img class="pot" src="/monitor-2/photo-sauce-cheddar.webp" alt="">
+        <div class="zig"><div class="zig-in"><svg viewBox="0 0 400 40" preserveAspectRatio="none"><path d="M0 20 Q 12.5 2 25 20 T 50 20 T 75 20 T 100 20 T 125 20 T 150 20 T 175 20 T 200 20 T 225 20 T 250 20 T 275 20 T 300 20 T 325 20 T 350 20 T 375 20 T 400 20"/><path class="hi" d="M0 20 Q 12.5 2 25 20 T 50 20 T 75 20 T 100 20 T 125 20 T 150 20 T 175 20 T 200 20 T 225 20 T 250 20 T 275 20 T 300 20 T 325 20 T 350 20 T 375 20 T 400 20"/></svg></div></div>
+        <i class="dripdot" style="--x:58%"></i>
+        <div class="names"><img class="en" src="/monitor-2/sauces/sauce-8-en.png" alt=""><img class="fa-img" src="/monitor-2/sauces/sauce-8-fa.png" alt=""></div>
+      </div>
+      <div class="sauce" style="--c:#3c9f45;--c2:#1f6326;--k:8">
+        <div class="zig"><div class="zig-in"><svg viewBox="0 0 400 40" preserveAspectRatio="none"><path d="M0 20 Q 12.5 2 25 20 T 50 20 T 75 20 T 100 20 T 125 20 T 150 20 T 175 20 T 200 20 T 225 20 T 250 20 T 275 20 T 300 20 T 325 20 T 350 20 T 375 20 T 400 20"/><path class="hi" d="M0 20 Q 12.5 2 25 20 T 50 20 T 75 20 T 100 20 T 125 20 T 150 20 T 175 20 T 200 20 T 225 20 T 250 20 T 275 20 T 300 20 T 325 20 T 350 20 T 375 20 T 400 20"/></svg></div></div>
+        <i class="dripdot" style="--x:58%"></i>
+        <div class="names"><img class="en" src="/monitor-2/sauces/sauce-9-en.png" alt=""><img class="fa-img" src="/monitor-2/sauces/sauce-9-fa.png" alt=""></div>
+      </div>
+    </div>
+    <div class="hero-snow" data-snow="14"></div>
+  </section>
+
+  <section class="hero hero-sandwich" data-id="hero-sandwich" aria-label="Sandwiches, 11 to 15">
+    <div class="rays"></div>
+    <div class="kb">
+      <img class="back b1" src="/monitor-2/photo-minced-sub.webp" alt="">
+      <img class="back b2" src="/monitor-2/photo-salami-steak-sub.webp" alt="">
+      <div class="cutsub">
+        <div class="enter">
+          <div class="half l"><img src="/monitor-2/photo-salami-sub.webp" alt=""></div>
+          <div class="half r"><img src="/monitor-2/photo-salami-sub.webp" alt=""></div>
+          <div class="shine"><i></i></div>
+          <i class="slash"></i>
+          <i class="steam s1"></i><i class="steam s2"></i><i class="steam s3"></i>
+          <i class="crumb" style="--k:0;--x:47%;--dx:-3vw"></i><i class="crumb" style="--k:1;--x:50%;--dx:2vw"></i><i class="crumb" style="--k:2;--x:49%;--dx:-1vw"></i>
+          <i class="crumb" style="--k:3;--x:51%;--dx:3.5vw"></i><i class="crumb" style="--k:4;--x:48%;--dx:-4vw"></i><i class="crumb" style="--k:5;--x:50%;--dx:.5vw"></i>
+          <i class="sdrip" style="--x:44%;--k:0"></i><i class="sdrip" style="--x:56%;--k:1"></i>
+        </div>
+      </div>
+    </div>
+    <div class="hero-type"><div class="word smash" data-text="SANDWICHES"></div>
+      <div class="meta2"><span class="sub"><small>NO.</small> 11 – 15</span><span class="fa">ساندویچ</span></div></div>
+    <div class="hero-snow" data-snow="12"></div>
+  </section>
+
+  <section class="hero hero-burger" data-id="hero-burger" aria-label="Burgers, 16 to 20">
+    <div class="rays"></div>
+    <div class="plate"><i class="ring"></i></div>
+    <div class="turn"><img src="/monitor-2/photo-chicken-fillet-sub.webp" alt=""></div>
+    <div class="slam"><div class="squash"><img src="/monitor-2/photo-beef-patty-sub.webp" alt=""><div class="shine"><i></i></div></div></div>
+    <i class="shock"></i>
+    <div class="sparks"><i style="--a:-170deg;--r:26vh;--k:0"></i><i style="--a:-150deg;--r:34vh;--k:1"></i><i style="--a:-128deg;--r:22vh;--k:2"></i><i style="--a:-105deg;--r:30vh;--k:3"></i><i style="--a:-80deg;--r:36vh;--k:4"></i><i style="--a:-58deg;--r:24vh;--k:5"></i><i style="--a:-35deg;--r:32vh;--k:6"></i><i style="--a:-12deg;--r:26vh;--k:7"></i><i style="--a:10deg;--r:20vh;--k:8"></i><i style="--a:195deg;--r:18vh;--k:9"></i><i style="--a:170deg;--r:22vh;--k:10"></i><i style="--a:-95deg;--r:16vh;--k:11"></i></div>
+    <div class="hero-type"><div class="word smash" data-text="BURGERS"></div>
+      <div class="meta2"><span class="sub"><small>NO.</small> 16 – 20</span><span class="fa">برگر</span></div></div>
+    <div class="hero-snow" data-snow="12"></div>
+  </section>
+
+  <section class="hero hero-brand" data-id="hero-brand" aria-label="Ajdar Zapata, Merry Christmas">
+    <div class="rays"></div>
+    <div class="orbit">
+      <div class="ox" style="--ph:0s"><div class="oy"><img src="/monitor-2/photo-salami-sub.webp" alt=""></div></div>
+      <div class="ox" style="--ph:-4s"><div class="oy"><img src="/monitor-2/photo-minced-sub.webp" alt=""></div></div>
+      <div class="ox" style="--ph:-8s"><div class="oy"><img src="/monitor-2/photo-chicken-fillet-sub.webp" alt=""></div></div>
+    </div>
+    <img class="big-logo" src="/monitor-2/logo-big.webp" alt="Ajdar Zapata Sandwich">
+    <div class="stars"><i style="--x:12%;--y:18%;--k:0"></i><i style="--x:86%;--y:14%;--k:1"></i><i style="--x:22%;--y:70%;--k:2"></i><i style="--x:78%;--y:66%;--k:3"></i><i style="--x:50%;--y:8%;--k:4"></i><i style="--x:6%;--y:44%;--k:5"></i><i style="--x:94%;--y:42%;--k:6"></i><i style="--x:35%;--y:30%;--k:7"></i><i style="--x:66%;--y:30%;--k:8"></i></div>
+    <div class="hero-type" data-season-only="christmas"><div class="word smash" data-text="MERRY CHRISTMAS" data-accent="CHRISTMAS"></div></div>
+    <div class="hero-snow" data-snow="22"></div>
+  </section>
+
+  <!-- Special offers: shows only when Ryan's offers are written into OFFERS in /show.js. Never invent one. -->
+  <section class="hero hero-offers" data-id="hero-offers" aria-label="Special offers">
+    <div class="rays"></div>
+    <div class="hero-head"><div class="word smash" data-text="SPECIAL OFFERS" data-accent="OFFERS"></div></div>
+    <div class="offer-list"></div>
+    <div class="hero-snow" data-snow="12"></div>
+  </section>
+
   <div class="bigwipe"></div>
+  <div class="slabs"><i></i><i></i><i></i></div>
+  <i class="burst"></i>
   <div class="card side">
     <img class="side-logo" src="/monitor-2/logo.png" alt="Ajdar Zapata Sandwich">
       <div class="reel" aria-hidden="true">
@@ -86,6 +208,8 @@
 <div class="sweep"></div>
 
 <script src="/flame.js"></script>
+<script src="/show.js"></script>
+<script src="/xmas.js"></script>
 <script src="/monitor-2/motion.js"></script>
 <script src="/screen.js"></script>
 </body>
