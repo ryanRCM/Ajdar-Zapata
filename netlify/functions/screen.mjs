@@ -40,6 +40,11 @@ export function assign(state, id, want, now, kind = '') {
   let m;
   if (locked) {
     m = locked[1] === id ? 1 : locked[2] === id ? 2 : 0; // 0: not a shop TV, so it goes to the phone menu
+    const d = devices[id];
+    if (m && d && (now - d.seen > TOUCH_MS || (kind && d.kind !== kind))) { // keep ?status true for the TVs
+      devices[id] = { ...d, seen: now, ...(kind ? { kind } : {}) };
+      changed = true;
+    }
   } else {
     let d = devices[id];
     if (d && !d.first) { d = { ...d, first: d.seen }; changed = true; }
