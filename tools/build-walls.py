@@ -156,6 +156,7 @@ for name, (b, y0, y1) in SECTIONS.items():
 # ---- sauces: the board prints them small in a 3-across grid. Rebuild them as a list like the other
 # sections (Ryan, 2 Nov 2026: the sauces must be big): one sauce per row, English left, Persian right,
 # each name cut straight from the board (never retyped) and enlarged to match the other sections' names.
+# English and Persian meet in the middle, so the list sits centred (Ryan, 2 Nov 2026: it looked off-centre).
 def sauce_list():
     b, y0, y1 = SECTIONS['sauces']
     src = boards[b][y0:y1 + 1, X0:X1]
@@ -177,10 +178,29 @@ def sauce_list():
             en, fa = up(cut(ey, x)), up(cut(fy, x))
             h = max(en.shape[0], fa.shape[0])
             row = np.tile(B, (h, width, 1))
-            row[(h - en.shape[0]) // 2:(h - en.shape[0]) // 2 + en.shape[0], 8:8 + en.shape[1]] = en
-            row[(h - fa.shape[0]) // 2:(h - fa.shape[0]) // 2 + fa.shape[0], width - 8 - fa.shape[1]:width - 8] = fa
+            # centred pair: English ends just left of the middle, Persian starts just right of it
+            mid, gap = width // 2, 28
+            row[(h - en.shape[0]) // 2:(h - en.shape[0]) // 2 + en.shape[0], mid - gap - en.shape[1]:mid - gap] = en
+            row[(h - fa.shape[0]) // 2:(h - fa.shape[0]) // 2 + fa.shape[0], mid + gap:mid + gap + fa.shape[1]] = fa
             lines += [row, np.tile(B, (22, width, 1))]
     out = np.vstack(lines + [np.tile(B, (10, width, 1))])
+    # trim to the list's own width (title row included), so the column it sits in isn't forced wide
+    body = np.abs(out[100:] - B).max(axis=2) > 30
+    xs = np.where(body.any(axis=0))[0]
+    x0, x1 = max(0, xs.min() - 12), min(width, xs.max() + 13)
+    head_w = x1 - x0
+    t = head
+    tink = np.abs(t - B).max(axis=2) > 30
+    title_x = np.where(tink[:60].any(axis=0))[0]
+    en_end = title_x[title_x < width // 2].max() + 1 if (title_x < width // 2).any() else 0
+    fa_start = title_x[title_x > width // 2].min() if (title_x > width // 2).any() else width
+    newhead = np.tile(B, (t.shape[0], head_w, 1))
+    newhead[:, :min(en_end, head_w)] = t[:, :min(en_end, head_w)]
+    fa_w = width - fa_start
+    if fa_w < head_w: newhead[:, head_w - fa_w:] = t[:, fa_start:]
+    rule = np.abs(t - np.array([240, 124, 26])).max(axis=2) < 60
+    newhead[rule.mean(axis=1) > 0.8] = t[rule.mean(axis=1) > 0.8][:, :head_w]
+    out = np.vstack([newhead, out[t.shape[0]:, x0:x1]])
     return out, tight['sauces'][1]
 
 tight['sauces'] = sauce_list()

@@ -44,3 +44,14 @@ while y < len(rows):
 print('subs found in the stack:', len(bands))
 for (y0, y1), name in zip(bands, ['chicken-fillet-sub', 'beef-patty-sub', 'salami-steak-sub']):
     save(cutout(stack.crop((0, y0, stack.width, y1))), name)
+
+# Ryan's second batch (2 Nov): the doner platter on white (cut out), and the wraps on a blue table
+# (busy background: kept whole, shown with rounded corners).
+save(Image.open('menu/photos/doner-fries-platter.jpg').convert('RGB'), 'doner-platter', width=700)  # grey background: framed, not cut out
+wraps = Image.open('menu/photos/doner-wraps-tray.jpg').convert('RGB')
+w, h = wraps.size
+save(wraps.crop((0, int(h * 0.45), w, h)), 'shawarma-wraps', width=700)
+
+# Ryan's sauce pots (2 Nov): spicy chilli, cheddar, garlic & dill, on white -> cut out.
+for n in ('spicy-chilli', 'cheddar', 'garlic-dill'):
+    save(cutout(Image.open(f'menu/photos/sauce-{n}.jpg')), f'sauce-{n}', width=400)

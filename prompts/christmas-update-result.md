@@ -1,11 +1,12 @@
 # Christmas update · result · 2 Nov 2026
 
-Branch `christmas` (main merged in, including the TV lock 9651e56). **Not live.** Ryan decides when it merges.
+Branch `christmas` (main merged in up to 04251ce: TV lock, swapped monitors, 11-14 s holds, fire and fireworks, real platter/shawarma/sauce photos).
+Note the swap: monitor 2 (the cycling show with the heroes) is now on the LEFT TV, monitor 1 (full menu) on the right. **Not live.** Ryan decides when it merges.
 Every menu word, number and price still comes from the boards. No new claims, no offers.
 
-## What each slide does (right TV)
+## What each slide does (monitor 2, the cycling TV)
 Running order, same for both TVs (`site/show.js`, about 2 minutes a loop):
-starters → sauces → **SAUCES hero** → sandwiches → burgers → **SANDWICHES hero** → doner → platters →
+Menu slides hold 11–14 s as on main. starters → sauces → **SAUCES hero** → sandwiches → burgers → **SANDWICHES hero** → doner → platters →
 **BURGERS hero** → shawarma → hot dogs → drinks → **AJDAR ZAPATA / MERRY CHRISTMAS hero** → (offers hero, only once Ryan writes offers).
 
 - **Menu slides:** as before (the panel glides in, a band wipe between them, the food reel beside them).
@@ -19,44 +20,47 @@ starters → sauces → **SAUCES hero** → sandwiches → burgers → **SANDWIC
   a glowing turntable. "BURGERS", No. 16–20 and the Persian. (The photos are the same two the reel already uses for burgers.)
 - **AJDAR ZAPATA hero** (9 s): the logo (re-cut sharp from the PDF) zooms in, three subs orbit it in front and behind, gold stars twinkle, "MERRY CHRISTMAS".
 - **Special offers hero:** built, but hidden. To switch it on, put Ryan's written offers into `OFFERS` in `site/show.js`.
-- **Christmas:** light snow and gold sparkles drift behind the glass on the right TV. Sunburst rays sit behind every hero.
+- **Christmas:** snow and gold sparkles drift over each hero slide. Sunburst rays sit behind every hero. Main's fire, sparks and fireworks run behind the glass.
+- **Sauce pots:** the real photos of spicy chilli, cheddar and garlic & dill (from main) drop into their cards on the sauce hero.
 
-## Left TV
-Stays the calm, complete menu; the text never moves. The panel of the section the right TV is showing glows round its rim, a soft
+## Monitor 1 (the full-menu TV)
+Stays the calm, complete menu; the text never moves. The panel of the section monitor 2 is showing glows round its rim, a soft
 light passes down it once, and gold sparkles twinkle at its corners and down its price-side rim. Both TVs work this out from the
-clock (taken from Netlify), so they stay in step without talking to each other. No snow on the left TV: its panels cover nearly all
+clock (taken from Netlify), so they stay in step without talking to each other. No snow behind its panels: they cover nearly all
 the wall, and drawing snow behind them cost a third of the frame rate.
 
 ## Checks
 - `node tools/check.cjs --shots`: **all ✅** (both monitors at 1920×1080 and 1366×768, heroes never cover the allergy notice,
-  every slide shows, the left TV sparkles round the right section). Screenshots: `tools/shot-m2-<slide>.png`, `tools/shot-m1-live.png`.
-- `node tools/fps.cjs` (Chromium, CPU slowed 6x): this container gave very different numbers from run to run (main's own right TV
+  every slide shows, monitor 1 sparkles round the right section). Screenshots: `tools/shot-m2-<slide>.png`, `tools/shot-m1-live.png`.
+- `node tools/fps.cjs` (Chromium, CPU slowed 6x): this container gave very different numbers from run to run (main's own cycling TV
   read 32 one minute and 19 the next), so I measured main and this branch back to back. See "fps" below.
 - New images: about 0.9 MB (sauce names 84 KB, big logo 94 KB, food cut-outs enlarged to 1200–1500 px for the full-screen heroes).
 
-## fps (6x slower CPU, measured alternately against main)
+## fps (6x slower CPU, measured alternately against main 04251ce)
 Three runs each, alternating main / this branch, same machine, same minutes:
 
 | Screen | main | christmas |
 |---|---|---|
-| Left TV | 51 · 50 · 47 | 48 · 41 · 45 ✅ |
-| Right TV, menu slide (starters) | 28 · 20 · 23 | 17 · 20 · 21 |
-| Right TV, menu slide (hot dogs) | (same) | 17 · 18 · 17 |
-| SAUCES hero | – | 21 · 22 · 25 |
-| SANDWICHES hero | – | 21 · 24 · 26 |
-| BURGERS hero | – | 23 · 28 · 30 |
-| AJDAR ZAPATA hero | – | 27 · 21 · 27 |
+| Full-menu TV (monitor 1) | 47 · 52 · 36 | 43 · 39 · 39 ✅ |
+| Cycling TV (monitor 2), menu slide | 31 · 26 · 29 | 27 · 26 · 30 |
+| SAUCES hero | – | 33 · 30 · 30 |
+| AJDAR ZAPATA hero | – | 29 · 36 · 29 |
 
-**Honest read:** in this container even main's right TV is under the brief's 30 fps bar (20–28; it measured 32–34 earlier
-in the day, before the machine got busy). The heroes run at main's level; the right TV's menu slides are a few frames slower
-than main (the snow behind the glass). If the real TV stutters, first switch off the right TV's snow
-(`data-snow` on `.snow` in `site/monitor-2/index.html` → remove the div).
+The cycling TV now runs at main's level (around 30; this container swings a lot between runs). Earlier single runs:
+SANDWICHES hero 28, BURGERS hero 30.
 
 What I removed to get there: the turning sunburst (now still), the sauce cards' spotlight pulse, the small travelling bottles, snow on
-the left TV; snow and sparkles are drawn on small canvases instead of as dozens of moving dots; everything under a hero stops drawing.
+either TV's wall (main's new fire, sparks and fireworks already fill it; snow stays inside the hero slides); snow and sparkles are drawn on small canvases instead of as dozens of moving dots; everything under a hero stops drawing.
+
+## Chrome 97 (the shop TVs)
+Grepped all new CSS/JS: no standalone `translate`/`scale`/`rotate`, `:has()`, `color-mix()`, container queries, `@layer`, `@property`, dvh/svh,
+`text-wrap` or logical assignment. Masks carry the `-webkit-` prefix Chrome 97 needs. `aspect-ratio`, `inset` and flex `gap` are all older than 97.
 
 ## Not done / second pass
-- **Sharper menu text on the right TV.** Main now blows each section up 2.45x to 4.19x from a 1094 px picture, which is soft.
+- **Ryan's later asks (relayed after the first version):** realistic rendered sauce pots for the other six sauces, rendered art for
+  every section (drinks, fries, doner GDK-style), GDK-style product cards and header bars, bigger name/price type on the full-menu TV.
+  Main's drawn pictures (`art-*.png`) fill the reel meanwhile.
+- **Sharper menu text on monitor 2.** Main now blows each section up 2.45x to 4.19x from a 1094 px picture, which is soft.
   I had a version that renders the PDF at 3x and makes each picture at exactly the TV's pixel size (crisp), but it clashed with
   main's new layout, so I took main's and left this for a second pass.
 - The real TVs have a graphics chip; the headless test does not. Watch the sauce hero on the real TV.

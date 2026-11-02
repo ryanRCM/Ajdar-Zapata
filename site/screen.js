@@ -28,9 +28,9 @@
   if (stage) {
     if (window.Flames) {
       const c = document.createElement('canvas');
-      c.className = 'flames'; c.width = 480; c.height = 130; // drawn small, scaled up: light on the TVs
+      c.className = 'flames'; c.width = 384; c.height = 216; // the whole screen, drawn small and scaled up: light on the TVs
       stage.insertBefore(c, stage.firstChild);
-      window.Flames.canvas(c, { count: 16, height: 0.95 });
+      window.Flames.canvas(c, { count: 14, height: 0.42 });
     }
   }
 

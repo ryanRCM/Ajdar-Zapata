@@ -10,11 +10,11 @@ window.AZShow = (() => {
 
   // [slide id, seconds on screen]. Menu sections (ids as on the boards), then a full-screen hero every
   // two or three menu slides.
-  const SLIDES = [
-    ['starters', 10], ['sauces', 8], ['hero-sauce', 13],
-    ['sandwiches', 10], ['burgers', 9], ['hero-sandwich', 10],
-    ['doner', 8], ['platters', 7], ['hero-burger', 10],
-    ['shawarma', 7], ['hotdogs', 9], ['drinks', 7], ['hero-brand', 9],
+  const SLIDES = [   // menu holds as on main (Ryan, 2 Nov 2026: slower, 11-14 s)
+    ['starters', 14], ['sauces', 12], ['hero-sauce', 14],
+    ['sandwiches', 14], ['burgers', 13], ['hero-sandwich', 11],
+    ['doner', 12], ['platters', 11], ['hero-burger', 11],
+    ['shawarma', 11], ['hotdogs', 13], ['drinks', 11], ['hero-brand', 11],
   ];
   if (OFFERS.length) SLIDES.push(['hero-offers', 6 + 3 * OFFERS.length]);
 

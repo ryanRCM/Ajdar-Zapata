@@ -22,7 +22,6 @@
      data-id = the slide's name in the running order (/show.js, which also says how long each stays);
      data-scene = which food animation plays beside it. -->
 <div id="stage">
-  <div class="snow" data-snow="26"></div>
   <div class="embers-bg" data-embers="8" data-rise="95vh"></div>
   <div class="card tvslide sec-starters" data-id="starters" data-accent="#ffb000" data-scene="6"><img src="/monitor-2/sec-starters.png" alt="Starters and sides, 1 to 10"></div>
   <div class="card tvslide sec-sauces" data-id="sauces" data-accent="#ff2f1f" data-scene="7"><img src="/monitor-2/sec-sauces.png" alt="Sauce selection"></div>
@@ -50,12 +49,14 @@
         <i class="dripdot" style="--x:58%"></i>
         <div class="names"><img class="en" src="/monitor-2/sauces/sauce-2-en.png" alt=""><img class="fa-img" src="/monitor-2/sauces/sauce-2-fa.png" alt=""></div>
       </div>
-      <div class="sauce" style="--c:#e6efc9;--c2:#8fae5a;--k:2">
+      <div class="sauce has-pot" style="--c:#e6efc9;--c2:#8fae5a;--k:2">
+        <img class="pot" src="/monitor-2/photo-sauce-garlic-dill.webp" alt="">
         <div class="zig"><div class="zig-in"><svg viewBox="0 0 400 40" preserveAspectRatio="none"><path d="M0 20 Q 12.5 2 25 20 T 50 20 T 75 20 T 100 20 T 125 20 T 150 20 T 175 20 T 200 20 T 225 20 T 250 20 T 275 20 T 300 20 T 325 20 T 350 20 T 375 20 T 400 20"/><path class="hi" d="M0 20 Q 12.5 2 25 20 T 50 20 T 75 20 T 100 20 T 125 20 T 150 20 T 175 20 T 200 20 T 225 20 T 250 20 T 275 20 T 300 20 T 325 20 T 350 20 T 375 20 T 400 20"/></svg></div></div>
         <i class="dripdot" style="--x:58%"></i>
         <div class="names"><img class="en" src="/monitor-2/sauces/sauce-3-en.png" alt=""><img class="fa-img" src="/monitor-2/sauces/sauce-3-fa.png" alt=""></div>
       </div>
-      <div class="sauce" style="--c:#e3221b;--c2:#8f0d08;--k:3">
+      <div class="sauce has-pot" style="--c:#e3221b;--c2:#8f0d08;--k:3">
+        <img class="pot" src="/monitor-2/photo-sauce-spicy-chilli.webp" alt="">
         <div class="zig"><div class="zig-in"><svg viewBox="0 0 400 40" preserveAspectRatio="none"><path d="M0 20 Q 12.5 2 25 20 T 50 20 T 75 20 T 100 20 T 125 20 T 150 20 T 175 20 T 200 20 T 225 20 T 250 20 T 275 20 T 300 20 T 325 20 T 350 20 T 375 20 T 400 20"/><path class="hi" d="M0 20 Q 12.5 2 25 20 T 50 20 T 75 20 T 100 20 T 125 20 T 150 20 T 175 20 T 200 20 T 225 20 T 250 20 T 275 20 T 300 20 T 325 20 T 350 20 T 375 20 T 400 20"/></svg></div></div>
         <i class="dripdot" style="--x:58%"></i>
         <div class="names"><img class="en" src="/monitor-2/sauces/sauce-4-en.png" alt=""><img class="fa-img" src="/monitor-2/sauces/sauce-4-fa.png" alt=""></div>
@@ -75,7 +76,8 @@
         <i class="dripdot" style="--x:58%"></i>
         <div class="names"><img class="en" src="/monitor-2/sauces/sauce-7-en.png" alt=""><img class="fa-img" src="/monitor-2/sauces/sauce-7-fa.png" alt=""></div>
       </div>
-      <div class="sauce" style="--c:#ffb31a;--c2:#d4780a;--k:7">
+      <div class="sauce has-pot" style="--c:#ffb31a;--c2:#d4780a;--k:7">
+        <img class="pot" src="/monitor-2/photo-sauce-cheddar.webp" alt="">
         <div class="zig"><div class="zig-in"><svg viewBox="0 0 400 40" preserveAspectRatio="none"><path d="M0 20 Q 12.5 2 25 20 T 50 20 T 75 20 T 100 20 T 125 20 T 150 20 T 175 20 T 200 20 T 225 20 T 250 20 T 275 20 T 300 20 T 325 20 T 350 20 T 375 20 T 400 20"/><path class="hi" d="M0 20 Q 12.5 2 25 20 T 50 20 T 75 20 T 100 20 T 125 20 T 150 20 T 175 20 T 200 20 T 225 20 T 250 20 T 275 20 T 300 20 T 325 20 T 350 20 T 375 20 T 400 20"/></svg></div></div>
         <i class="dripdot" style="--x:58%"></i>
         <div class="names"><img class="en" src="/monitor-2/sauces/sauce-8-en.png" alt=""><img class="fa-img" src="/monitor-2/sauces/sauce-8-fa.png" alt=""></div>
@@ -163,37 +165,37 @@
             <div class="meta"><span class="sub"><small>NO.</small> 16 – 20</span><span class="fa">برگر</span></div></div>
         </div>
         <div class="scene">
-          <div class="art design"><svg class="emblem" viewBox="-30 -64 60 68"><path class="mflame" data-layer="0" fill="#e02010" d=""/><path class="mflame" data-layer="1" fill="#ff8a00" d=""/><path class="mflame" data-layer="2" fill="#ffd34d" d=""/></svg></div>
+          <div class="art photos n1"><img class="pic" src="/monitor-2/art-doner.png" alt="Doner baguette" style="--k:0"></div>
           <div class="words"><div class="word label" data-text="DONER BAGUETTES" data-accent="DONER"></div><div class="rule"></div>
             <div class="meta"><span class="sub"><small>NO.</small> 21 – 24</span><span class="fa">دونر باگت</span></div></div>
         </div>
         <div class="scene">
-          <div class="art design"><svg class="emblem" viewBox="-30 -64 60 68"><path class="mflame" data-layer="0" fill="#e02010" d=""/><path class="mflame" data-layer="1" fill="#ff8a00" d=""/><path class="mflame" data-layer="2" fill="#ffd34d" d=""/></svg></div>
+          <div class="art photos n1"><img class="pic framed" src="/monitor-2/photo-doner-platter.webp" alt="Doner platter with fries" style="--k:0"></div>
           <div class="words"><div class="word label" data-text="DONER PLATTERS" data-accent="PLATTERS"></div><div class="rule"></div>
             <div class="meta"><span class="sub"><small>NO.</small> 25 – 27</span><span class="fa">خوراک دونر</span></div></div>
         </div>
         <div class="scene">
-          <div class="art design"><svg class="emblem" viewBox="-30 -64 60 68"><path class="mflame" data-layer="0" fill="#e02010" d=""/><path class="mflame" data-layer="1" fill="#ff8a00" d=""/><path class="mflame" data-layer="2" fill="#ffd34d" d=""/></svg></div>
+          <div class="art photos n1"><img class="pic framed" src="/monitor-2/photo-shawarma-wraps.webp" alt="Shawarma wraps" style="--k:0"></div>
           <div class="words"><div class="word label" data-text="SHAWARMA"></div><div class="rule"></div>
             <div class="meta"><span class="sub"><small>NO.</small> 28 – 30</span><span class="fa">شاورما</span></div></div>
         </div>
         <div class="scene">
-          <div class="art design"><svg class="emblem" viewBox="-30 -64 60 68"><path class="mflame" data-layer="0" fill="#e02010" d=""/><path class="mflame" data-layer="1" fill="#ff8a00" d=""/><path class="mflame" data-layer="2" fill="#ffd34d" d=""/></svg></div>
+          <div class="art photos n1"><img class="pic" src="/monitor-2/art-hotdog.png" alt="Hot dog" style="--k:0"></div>
           <div class="words"><div class="word label" data-text="HOT DOGS" data-accent="DOGS"></div><div class="rule"></div>
             <div class="meta"><span class="sub"><small>NO.</small> 31 – 35</span><span class="fa">هات‌داگ</span></div></div>
         </div>
         <div class="scene">
-          <div class="art design"><svg class="emblem" viewBox="-30 -64 60 68"><path class="mflame" data-layer="0" fill="#e02010" d=""/><path class="mflame" data-layer="1" fill="#ff8a00" d=""/><path class="mflame" data-layer="2" fill="#ffd34d" d=""/></svg></div>
+          <div class="art photos n1"><img class="pic" src="/monitor-2/art-fries.png" alt="Fries" style="--k:0"></div>
           <div class="words"><div class="word label" data-text="STARTERS &amp; SIDES" data-accent="SIDES"></div><div class="rule"></div>
             <div class="meta"><span class="sub"><small>NO.</small> 1 – 10</span><span class="fa">پیش‌غذا</span></div></div>
         </div>
         <div class="scene">
-          <div class="art design"><svg class="emblem" viewBox="-30 -64 60 68"><path class="mflame" data-layer="0" fill="#e02010" d=""/><path class="mflame" data-layer="1" fill="#ff8a00" d=""/><path class="mflame" data-layer="2" fill="#ffd34d" d=""/></svg></div>
+          <div class="art photos pots"><img class="pic" src="/monitor-2/photo-sauce-spicy-chilli.webp" alt="Spicy chilli sauce" style="--k:0"><img class="pic" src="/monitor-2/photo-sauce-cheddar.webp" alt="Cheddar sauce" style="--k:1"><img class="pic" src="/monitor-2/photo-sauce-garlic-dill.webp" alt="Garlic and dill sauce" style="--k:2"></div>
           <div class="words"><div class="word label" data-text="SAUCE SELECTION" data-accent="SAUCE"></div><div class="rule"></div>
             <div class="meta"><span class="fa">انتخاب سس</span></div></div>
         </div>
         <div class="scene">
-          <div class="art design"><svg class="emblem" viewBox="-30 -64 60 68"><path class="mflame" data-layer="0" fill="#e02010" d=""/><path class="mflame" data-layer="1" fill="#ff8a00" d=""/><path class="mflame" data-layer="2" fill="#ffd34d" d=""/></svg></div>
+          <div class="art photos n1"><img class="pic" src="/monitor-2/art-drinks.png" alt="Drinks" style="--k:0"></div>
           <div class="words"><div class="word label" data-text="DRINKS"></div><div class="rule"></div>
             <div class="meta"><span class="fa">نوشیدنی‌ها</span></div></div>
         </div>
