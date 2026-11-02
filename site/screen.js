@@ -51,10 +51,16 @@
     p.set('v', v || Date.now().toString(36));
     location.replace(location.pathname + '?' + p);
   }
-  try {
-    id = localStorage.getItem('az-screen-id') || '';
-    if (!id) { id = Math.random().toString(36).slice(2, 10) + Date.now().toString(36); localStorage.setItem('az-screen-id', id); }
-  } catch (e) {}
+  // The TV's ID lives in two places (browser storage and a long-lived cookie), so it survives either being cleared.
+  const cookie = name => (document.cookie.match('(?:^|; )' + name + '=([^;]*)') || [])[1] || '';
+  const setCookie = (name, v) => { document.cookie = name + '=' + v + '; Max-Age=' + (v ? 5 * 365 * 86400 : 0) + '; Path=/; SameSite=Lax; Secure'; };
+  try { id = localStorage.getItem('az-screen-id') || ''; } catch (e) {}
+  if (!/^[a-z0-9]{8,40}$/i.test(id)) id = cookie('az_id');
+  if (!/^[a-z0-9]{8,40}$/i.test(id)) id = Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+  try { localStorage.setItem('az-screen-id', id); } catch (e) {}
+  setCookie('az_id', id);
+  // az_tv=1 or 2 marks a locked shop TV: the edge function (netlify/edge-functions/tv-lock.js) then shows
+  // it its monitor on every address of the domain. Cleared again if the TV is no longer locked.
   async function checkIn() {
     try {
       const q = new URLSearchParams({ id, up: Math.round((Date.now() - loadedAt) / 60000) });
@@ -62,6 +68,8 @@
       const r = await fetch('/api/screen?' + q, { cache: 'no-store' });
       if (!r.ok) return;
       const j = await r.json();
+      if (!preview && (j.monitor === 1 || j.monitor === 2)) { if (cookie('az_tv') !== String(j.monitor)) setCookie('az_tv', String(j.monitor)); }
+      if (!preview && j.monitor === 0 && cookie('az_tv')) setCookie('az_tv', '');
       if (!preview && here && (j.monitor === 1 || j.monitor === 2) && j.monitor !== here) { location.replace('/monitor-' + j.monitor + '/'); return; }
       if (!preview && j.monitor === 0) { location.replace('/menu/'); return; }
       // A new version is live: load the page again from a fresh address, so no browser or TV can show an old copy.
