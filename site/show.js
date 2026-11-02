@@ -15,7 +15,6 @@ window.AZShow = (() => {
     ['sandwiches', 10], ['burgers', 9], ['hero-sandwich', 10],
     ['doner', 8], ['platters', 7], ['hero-burger', 10],
     ['shawarma', 7], ['hotdogs', 9], ['drinks', 7], ['hero-brand', 9],
-    ['soon', 6],
   ];
   if (OFFERS.length) SLIDES.push(['hero-offers', 6 + 3 * OFFERS.length]);
 

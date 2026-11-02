@@ -1,2 +1,3 @@
 /* Monitor 1 = the left TV: yellow marble, pale yellow glass with a golden rim (Ryan, 2 Nov 2026). */
-:root { --marble: url(/marble-yellow.jpg); --rim: #ffaa00; }
+:root { --marble: url(/marble-yellow.jpg); --rim: #ff9a00;
+  --glass-top: rgba(255, 252, 225, .97); --glass-mid: rgba(255, 238, 150, .95); --glass-low: rgba(255, 220, 90, .95); } /* clearly yellow glass */

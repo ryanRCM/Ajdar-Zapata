@@ -93,8 +93,8 @@ def make(name, stops, ring, fill, glint, seed):
 
 # right TV: orange marble (deep red, red-orange, orange, light orange, cream)
 make('marble-orange.jpg',
-     [(0, (150, 20, 8)), (.22, (214, 46, 12)), (.42, (246, 92, 16)), (.6, (255, 140, 40)), (.78, (255, 178, 92)), (1, (255, 226, 190))],
-     ring=(196, 70, 24, 235), fill=(255, 214, 196, 240), glint=(255, 245, 238, 230), seed=11)
+     [(0, (196, 66, 0)), (.22, (232, 98, 0)), (.42, (250, 128, 8)), (.6, (255, 160, 30)), (.78, (255, 192, 90)), (1, (255, 232, 180))],  # warm orange: TVs push red
+     ring=(206, 96, 10, 235), fill=(255, 226, 180, 240), glint=(255, 248, 230, 230), seed=11)
 # left TV: yellow marble (amber, golden, yellow, pale yellow, cream)
 make('marble-yellow.jpg',
      [(0, (214, 104, 0)), (.22, (240, 150, 0)), (.42, (255, 190, 10)), (.6, (255, 214, 40)), (.78, (255, 232, 120)), (1, (255, 246, 210))],

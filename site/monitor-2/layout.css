@@ -1,13 +1,12 @@
-/* Made by tools/build-walls.py: do not edit by hand. Right TV, one section at a time, text scale 1.208. */
-.tvslide.sec-starters { left: 1.042%; top: 5.540%; width: 70.104%; height: 81.328%; }
-.tvslide.sec-sauces { left: 1.042%; top: 29.372%; width: 70.104%; height: 33.663%; }
-.tvslide.sec-drinks { left: 1.042%; top: 28.869%; width: 70.104%; height: 34.670%; }
-.tvslide.sec-sandwiches { left: 1.042%; top: 11.190%; width: 70.104%; height: 70.027%; }
-.tvslide.sec-burgers { left: 1.042%; top: 15.610%; width: 70.104%; height: 61.188%; }
-.tvslide.sec-doner { left: 1.042%; top: 27.078%; width: 70.104%; height: 38.251%; }
-.tvslide.sec-platters { left: 1.042%; top: 30.603%; width: 70.104%; height: 31.202%; }
-.tvslide.sec-shawarma { left: 1.042%; top: 30.547%; width: 70.104%; height: 31.314%; }
-.tvslide.sec-hotdogs { left: 1.042%; top: 24.001%; width: 70.104%; height: 44.405%; }
-.tvslide.soon { left: 1.042%; top: 6.852%; width: 70.104%; height: 78.704%; }
-.side { left: 71.875%; top: 1.296%; width: 27.083%; height: 89.815%; }
-.allergy-bar { left: 1.042%; right: 1.042%; top: 92.037%; height: 7.037%; }
+/* Made by tools/build-walls.py: do not edit by hand. Right TV, one section at a time, each as big as fits. */
+.tvslide.sec-starters { left: 9.157%; top: 1.111%; width: 53.977%; height: 90.000%; }
+.tvslide.sec-sauces { left: 0.729%; top: 9.347%; width: 70.833%; height: 73.529%; }
+.tvslide.sec-drinks { left: 0.729%; top: 28.627%; width: 70.833%; height: 34.969%; }
+.tvslide.sec-sandwiches { left: 0.729%; top: 10.651%; width: 70.833%; height: 70.921%; }
+.tvslide.sec-burgers { left: 0.729%; top: 15.074%; width: 70.833%; height: 62.074%; }
+.tvslide.sec-doner { left: 0.729%; top: 21.500%; width: 70.833%; height: 49.223%; }
+.tvslide.sec-platters { left: 0.729%; top: 23.821%; width: 70.833%; height: 44.579%; }
+.tvslide.sec-shawarma { left: 0.729%; top: 19.846%; width: 70.833%; height: 52.530%; }
+.tvslide.sec-hotdogs { left: 0.729%; top: 10.649%; width: 70.833%; height: 70.924%; }
+.side { left: 72.188%; top: 1.111%; width: 27.083%; height: 90.000%; }
+.allergy-bar { left: 0.729%; right: 0.729%; top: 92.037%; height: 7.037%; }

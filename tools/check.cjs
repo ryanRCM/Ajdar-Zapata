@@ -73,7 +73,7 @@ const server = http.createServer((req, res) => {
   // --shots: a screenshot of every slide on the right TV (tools/shot-m2-<slide>.png), taken a few seconds in,
   // and the left TV while each section is live (tools/shot-m1-live.png).
   if (process.argv.includes('--shots')) {
-    const ids = ['starters', 'sauces', 'hero-sauce', 'sandwiches', 'burgers', 'hero-sandwich', 'doner', 'platters', 'hero-burger', 'shawarma', 'hotdogs', 'drinks', 'hero-brand', 'soon'];
+    const ids = ['starters', 'sauces', 'hero-sauce', 'sandwiches', 'burgers', 'hero-sandwich', 'doner', 'platters', 'hero-burger', 'shawarma', 'hotdogs', 'drinks', 'hero-brand'];
     for (const id of ids) {
       const p = await b.newPage({ viewport: { width: 1920, height: 1080 } }); const errs = [];
       p.on('pageerror', e => errs.push(e.message));
