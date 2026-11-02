@@ -8,14 +8,15 @@ Read this first, then `HANDOFF.md`. This repo is the TV menu website for **Ajdar
 - **One address across the pair, no phone number** (Ryan, 2 Nov): each TV covers its three address boxes with one strip; monitor 1 (left TV) reads "864 High Road,", monitor 2 (right TV) "London N12 9RH", frames open on the inner side (`.address` in `screen.css`). Assumes monitor 1 hangs on the left.
 - Every board shows the full FSA allergy notice (English + Persian) under the address box, drawn by `screen.js` over the short printed line (Ryan, 2 Nov).
 - Netlify's free-plan "Powered by Netlify" badge (`#nl-badge-frame`, injected script) is hidden by `screen.css`. Ryan wanted it gone.
-- **Hosting:** Netlify (`netlify.toml` → serves `site/`). ⚠️ As of 2 Nov the site was **not** linked to this repo: it was uploaded once (30 Oct), so pushes did not deploy. Once Ryan links it (Site configuration → Build & deploy → Link repository → `Ajdar-Zapata`, branch `main`), **every push to `main` goes live** within about a minute. Check with the Netlify connector (`get-project` → currentDeploy) after a push; and the TVs reload every 10 minutes. So a push is a change in the shop: check before you push.
+- **Hosting:** Netlify (`netlify.toml` → serves `site/`). ⚠️ As of 2 Nov the site was **not** linked to this repo: it was uploaded once (30 Oct), so pushes did not deploy. Once Ryan links it (Site configuration → Build & deploy → Link repository → `Ajdar-Zapata`, branch `main`), **every push to `main` goes live** within about a minute. Check with the Netlify connector (`get-project` → currentDeploy) after a push; and the TVs reload themselves within about a minute of each deploy. So a push is a change in the shop: check before you push.
 - **Netlify site:** `ajdar-zapata` (site ID `e967ee2e-ffa8-4a1b-8d1c-cf932865d775`, team `6ae4978cb2c0fa267d6801f5`), dashboard https://app.netlify.com/projects/ajdar-zapata. Claude reaches it through the **Netlify connector** in Ryan's Claude (read deploys and logs; settings changes only with Ryan's yes).
 - **Domain:** `ajdarzapata.co.uk`, bought 30 Oct 2026 through Netlify (Netlify DNS), renews 30 Oct 2027. Ryan owns the Netlify account and pays for the domain.
 
 ## Files
 | Path | What |
 |---|---|
-| `site/monitor-1/`, `site/monitor-2/` | The two TV pages. Shared look in `site/screen.css`, shared behaviour in `site/screen.js` (wake lock, hidden cursor, tap for full screen, 10-min reload, image retry) |
+| `site/monitor-1/`, `site/monitor-2/` | The two TV pages. Shared look in `site/screen.css`, shared behaviour in `site/screen.js` (wake lock, hidden cursor, tap for full screen, check-in with `/api/screen`, hourly safety reload, image retry) |
+| `netlify/functions/screen.mjs` | `/api/screen`: each TV checks in every minute. Netlify (Blobs store `screens`) says which monitor that TV shows (first TV → 1, next → 2, kept from then on; `?screen=1`/`?screen=2` pins one) and which deploy is live, so TVs reload themselves on every deploy. `package.json` pins `@netlify/blobs`. Don't test it against the live site with fake TVs: each fake ID holds a monitor for 15 minutes |
 | `site/_redirects` | `/` → monitor 1, `/monitor1` and `/monitor2` → the dashed addresses |
 | `site/board-1..3.png` | The boards: `menu/Ajdar_Zapata_Boards.pdf` pages 1–3 at 1215×2160. 1 = starters, sauces, drinks · 2 = sandwiches, burgers · 3 = doner, platters, shawarma, hot dogs |
 | `menu/Ajdar_Zapata_Boards.pdf` | **The current menu design** (Ryan, 30 Oct 2026). The other PDFs in `menu/` are older versions, kept for reference |

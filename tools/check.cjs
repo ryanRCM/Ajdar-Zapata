@@ -8,6 +8,8 @@ const types = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascrip
 
 const server = http.createServer((req, res) => {
   let p = decodeURIComponent(req.url.split('?')[0]);
+  // Stand-in for the Netlify Function the TVs check in with (netlify/functions/screen.mjs).
+  if (p === '/api/screen') { res.writeHead(200, { 'content-type': 'application/json' }); return res.end('{"version":"local"}'); }
   if (p === '/') p = '/monitor-1/';
   if (p.endsWith('/')) p += 'index.html';
   const f = path.join(root, p);
@@ -22,7 +24,7 @@ const server = http.createServer((req, res) => {
   for (const page of ['/', '/monitor-1/', '/monitor-2/']) for (const [w, h] of [[1920, 1080], [1366, 768]]) {
     const p = await b.newPage({ viewport: { width: w, height: h } }); const errs = [];
     p.on('pageerror', e => errs.push(e.message));
-    p.on('requestfailed', r => { if (!r.url().includes('fonts.g')) errs.push('failed ' + r.url()); });
+    p.on('requestfailed', r => { if (!r.url().includes('fonts.g') && !(r.url().includes('/api/screen') && /ABORTED/.test(r.failure()?.errorText || ''))) errs.push('failed ' + r.url()); });
     await p.goto(base + page); await p.waitForTimeout(1500);
     const r = await p.evaluate(() => ({
       imgs: [...document.querySelectorAll('.board > img')].map(i => { const b = i.getBoundingClientRect(); return i.naturalWidth > 0 && Math.round(b.height) === innerHeight && Math.abs(b.width - innerWidth / 3) < 1; }),
