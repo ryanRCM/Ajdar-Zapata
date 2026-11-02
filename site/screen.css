@@ -23,3 +23,20 @@ body.hide-cursor, body.hide-cursor * { cursor: none; }
 .allergy p[lang="en"] { font: 400 1.3vh "Barlow Semi Condensed", "Arial Narrow", Arial, sans-serif; }
 .allergy p[lang="fa"] { font: 400 1.3vh Vazirmatn, Tahoma, sans-serif; }
 .allergy b { font-weight: 600; color: var(--cream); }
+
+/* One address across the pair of TVs (Ryan, 2 Nov 2026: no phone number, one address, the two
+   screens complementing each other side by side). Each TV covers the three per-board address boxes
+   (90.6%–94.8% of the height) with one strip. Monitor 1 (left TV) carries "864 High Road," and
+   Monitor 2 (right TV) "London N12 9RH". Each frame is open on the inner side, so the address
+   reads straight across the gap between the screens. */
+.address {
+  position: absolute; left: 0; right: 0; top: 90.35%; height: 4.6%;
+  background: var(--bg); pointer-events: none; z-index: 2;
+}
+.address .frame {
+  position: absolute; top: 4.5%; bottom: 3%; display: flex; align-items: center; justify-content: center;
+  border: .22vh solid var(--orange); color: var(--orange);
+  font: 800 2.7vh/1 "Barlow Condensed", "Arial Narrow", Impact, sans-serif; letter-spacing: .03em; white-space: nowrap;
+}
+.address.left  .frame { left: 1.84%; right: 0; border-right: 0; border-radius: .55vh 0 0 .55vh; }
+.address.right .frame { left: 0; right: 1.84%; border-left: 0; border-radius: 0 .55vh .55vh 0; }
