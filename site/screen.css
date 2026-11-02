@@ -33,7 +33,7 @@ body.hide-cursor, body.hide-cursor * { cursor: none; }
   content: ""; position: absolute; left: -10%; right: -10%; top: -40%; height: 70%; pointer-events: none;
   background: radial-gradient(60% 100% at 30% 100%, rgba(255, 255, 255, .55), rgba(255, 255, 255, 0) 70%);
 }
-.card > img { position: relative; display: block; width: 100%; height: 100%;
+.card > img { position: relative; display: block; width: 100%; height: 100%; object-fit: contain;
   filter: drop-shadow(0 .12vh 0 rgba(255, 255, 255, .55)); } /* a crisp highlight under the lettering: polished */
 
 /* The one logo, in the middle of the pair at the bottom: each TV shows its half. */

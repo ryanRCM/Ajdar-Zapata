@@ -1,7 +1,7 @@
 // Serves site/ locally and checks both TVs at TV sizes before every push:
 // every menu panel and picture loads, panels sit fully on screen and never overlap, nothing else
 // (reel, coming soon, address, logo) covers a panel, no side scroll, no errors,
-// and on monitor 2 the food reel plays. Also checks the phone menu page loads.
+// and on monitor 2 the slideshow moves on with a food scene playing. Also checks the phone menu page loads.
 // Run: node tools/check.cjs [--shots]   (needs Playwright + Chromium)
 const { chromium } = require('playwright');
 const http = require('http'), fs = require('fs'), path = require('path');
@@ -31,32 +31,38 @@ const server = http.createServer((req, res) => {
     const r = await p.evaluate(() => {
       const box = el => el.getBoundingClientRect();
       const meets = (a, c) => a.left < c.right - 1 && c.left < a.right - 1 && a.top < c.bottom - 1 && c.top < a.bottom - 1;
-      const secs = [...document.querySelectorAll('.card[class*="sec-"]')];
+      const secs = [...document.querySelectorAll('.card[class*="sec-"]:not(.tvslide)')];
+      const slides = [...document.querySelectorAll('.tvslide')]; // the right TV's slideshow: slides share one space
+      // where each slide comes to rest (its layout box, ignoring the glide-in transform)
+      const rest = el => ({ left: el.offsetLeft, top: el.offsetTop, right: el.offsetLeft + el.offsetWidth, bottom: el.offsetTop + el.offsetHeight });
       const imgs = [...document.querySelectorAll('#stage img:not([src=""])')];
       const bad = [];
       imgs.forEach(i => { if (!(i.naturalWidth > 0)) bad.push((i.className || i.parentNode.className) + ' not loaded'); });
       secs.forEach(c => { const r = box(c); if (r.left < 0 || r.top < 0 || r.right > innerWidth + 1 || r.bottom > innerHeight + 1) bad.push(c.className + ' off screen'); });
       // panels never overlap each other; nothing that moves or the address/logo covers a menu panel
-      const others = [...document.querySelectorAll('.extras, .address .frame, .logo')];
+      const others = [...document.querySelectorAll('.side, .address .frame, .logo')];
+      slides.forEach(c => { const r = rest(c); if (r.left < -1 || r.top < -1 || r.right > innerWidth + 1 || r.bottom > innerHeight + 1) bad.push(c.className + ' off screen'); });
+      others.forEach(o => slides.forEach(c => { if (meets(box(o), rest(c))) bad.push((o.className || 'frame') + ' covers ' + c.className); }));
       secs.forEach((a, i) => secs.slice(i + 1).forEach(c => { if (meets(box(a), box(c))) bad.push(a.className + ' overlaps ' + c.className); }));
       others.forEach(o => secs.forEach(c => { if (meets(box(o), box(c))) bad.push((o.className || 'frame') + ' covers ' + c.className); }));
       // the address frame stops short of the logo
       const f = document.querySelector('.address .frame'), l = document.querySelector('.logo');
       if (f && l && meets(box(f), box(l))) bad.push('address runs under the logo');
-      return { n: secs.length, bad, wide: document.documentElement.scrollWidth > innerWidth, reel: document.querySelectorAll('.scene.on').length };
+      return { n: secs.length + slides.length, bad, wide: document.documentElement.scrollWidth > innerWidth, reel: document.querySelectorAll('.scene.on').length };
     });
     let reelOk = true;
     if (page === '/monitor-2/') {
-      const [first, hold] = await p.evaluate(() => { const s = document.querySelector('.scene.on'); return [s.querySelector('.label').textContent, parseFloat(s.dataset.hold || 3.6)]; });
-      await p.waitForTimeout(hold * 1000 + 300);
-      const next = await p.evaluate(() => document.querySelector('.scene.on:not(.out) .label')?.textContent);
-      reelOk = r.reel === 1 && !!next && next !== first;
+      // the slideshow moves on after the first slide's hold, and a food scene is playing
+      const [first, hold] = await p.evaluate(() => { const s = document.querySelector('.tvslide.on'); return [s.className, parseFloat(s.dataset.hold || 8)]; });
       if (process.argv.includes('--shots')) await p.screenshot({ path: path.join(__dirname, `shot-m2-${w}.png`) });
+      await p.waitForTimeout(hold * 1000 + 1200);
+      const next = await p.evaluate(() => document.querySelector('.tvslide.on')?.className);
+      reelOk = r.reel === 1 && !!next && next !== first;
     }
     if (page === '/monitor-1/' && process.argv.includes('--shots')) await p.screenshot({ path: path.join(__dirname, `shot-m1-${w}.png`) });
     const pass = r.n >= 4 && !r.bad.length && !r.wide && !errs.length && reelOk;
     ok = ok && pass;
-    console.log(`${pass ? '✅' : '❌'} ${page} ${w}x${h}: sections ${r.n}, problems ${r.bad.length}, side scroll ${r.wide}, errors ${errs.length}${page === '/monitor-2/' ? ', reel moving ' + reelOk : ''}${r.bad.length ? ' ' + r.bad.join('; ') : ''}${errs.length ? ' ' + errs.join('; ') : ''}`);
+    console.log(`${pass ? '✅' : '❌'} ${page} ${w}x${h}: sections ${r.n}, problems ${r.bad.length}, side scroll ${r.wide}, errors ${errs.length}${page === '/monitor-2/' ? ', slideshow moving ' + reelOk : ''}${r.bad.length ? ' ' + r.bad.join('; ') : ''}${errs.length ? ' ' + errs.join('; ') : ''}`);
     await p.close();
   }
   const m = await b.newPage({ viewport: { width: 390, height: 844 } }); const merrs = [];

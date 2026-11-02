@@ -64,31 +64,38 @@
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
   addEventListener('resize', fit);
 
-  // ── The reel: each scene builds, holds for its data-hold, then a slanted wipe hands over to the next.
-  // The old scene keeps its built state ('on') while it exits ('out'), so the food leaves as a whole.
+  // ── The slideshow: one menu section at a time, each held for its data-hold seconds, sliding in from the
+  // right as the last one slides away. The food animation beside it switches to that section's scene
+  // (data-scene) with a slanted wipe; the old scene keeps its built state ('on') while it exits ('out').
+  const slides = [...document.querySelectorAll('.tvslide')];
   const scenes = [...document.querySelectorAll('.scene')];
   const wipe = document.querySelector('.wipe');
-  const hls = {};
-  document.querySelectorAll('.hl').forEach(h => hls[h.dataset.for] = h);
-  let i = 0, timer = null, timer2 = null;
+  let si = 0, sc = -1, timer = null, timer2 = null, timer3 = null;
 
   function restart(el, cls) { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }
 
-  function show(scene) {
-    scene.classList.add('on');
-    const h = hls[scene.dataset.hl];
-    if (h) restart(h, 'on');
-    timer = setTimeout(next, parseFloat(scene.dataset.hold || 6.4) * 1000);
+  function setScene(k) {
+    if (k === sc || !scenes[k]) return;
+    const cur = scenes[sc];
+    sc = k;
+    if (cur) { cur.classList.add('out'); restart(wipe, 'go'); }
+    scenes[sc].classList.add('on');
+    clearTimeout(timer2);
+    if (cur) timer2 = setTimeout(() => { cur.classList.remove('on', 'out'); wipe.classList.remove('go'); }, 760);
   }
 
-  function next() {
-    const cur = scenes[i];
-    i = (i + 1) % scenes.length;
-    cur.classList.add('out');
-    restart(wipe, 'go');
-    show(scenes[i]);
-    clearTimeout(timer2);
-    timer2 = setTimeout(() => { cur.classList.remove('on', 'out'); wipe.classList.remove('go'); }, 760);
+  function showSlide(k) {
+    const prev = slides[si];
+    if (prev && k !== si) {
+      prev.classList.remove('on'); prev.classList.add('gone');
+      clearTimeout(timer3); timer3 = setTimeout(() => prev.classList.remove('gone'), 900);
+    }
+    si = k;
+    const s = slides[si];
+    s.classList.add('on');
+    if (s.dataset.scene !== undefined) setScene(Number(s.dataset.scene));
+    clearTimeout(timer);
+    timer = setTimeout(() => showSlide((si + 1) % slides.length), parseFloat(s.dataset.hold || 8) * 1000);
   }
 
   // Download and prepare everything first (every picture decoded, fonts loaded), then start: smooth from frame one.
@@ -99,15 +106,17 @@
   ]);
   Promise.race([ready, new Promise(r => setTimeout(r, 8000))]).then(() => {
     fit();
-    requestAnimationFrame(() => { document.body.classList.add('ready'); show(scenes[0]); });
+    requestAnimationFrame(() => { document.body.classList.add('ready'); showSlide(0); });
   });
 
-  // A hidden tab pauses animations; on return, restart the current scene cleanly.
+  // A hidden tab pauses animations; on return, restart the current slide and scene cleanly.
   document.addEventListener('visibilitychange', () => {
-    clearTimeout(timer); clearTimeout(timer2);
+    clearTimeout(timer); clearTimeout(timer2); clearTimeout(timer3);
     if (document.hidden) return;
-    scenes.forEach(s => s.classList.remove('on', 'out'));
+    slides.forEach(x => x.classList.remove('on', 'gone'));
+    scenes.forEach(x => x.classList.remove('on', 'out'));
     wipe.classList.remove('go');
-    show(scenes[i]);
+    sc = -1;
+    showSlide(si);
   });
 })();

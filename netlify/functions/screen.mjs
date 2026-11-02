@@ -11,9 +11,9 @@ const KEY = "devices";
 const ACTIVE_MS = 15 * 60 * 1000;      // a TV seen in the last 15 minutes holds its monitor
 const TOUCH_MS = 4 * 60 * 1000;        // refresh a TV's "last seen" at most every 4 minutes, to keep writes low
 const LOCK_AFTER_MS = 20 * 60 * 1000;  // a device on its monitor for 20+ minutes is a TV, not a passing phone
-// Paused 2 Nov: Ryan's photo showed the TVs on an older version while two other devices were checking in.
-// Locking resumes when this is false, once ?status shows the two devices are the shop TVs.
-const LOCK_PAUSED = true;
+// Set true to pause locking (the saved lock is then ignored, not deleted). Paused once on 2 Nov while
+// checking which devices were the shop TVs; Ryan's next photo confirmed them, so locking is on.
+const LOCK_PAUSED = false;
 const MAX_DEVICES = 20;
 // The two shop TVs are locked in (Ryan, 2 Nov 2026). Monitor 1 = left wall (yellow), monitor 2 = right
 // wall (orange). If the locked TVs turn out to be on the wrong walls, set SWAP to true and push.

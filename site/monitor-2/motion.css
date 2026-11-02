@@ -22,15 +22,23 @@
 }
 
 /* ───────────────────────── The reel ───────────────────────── */
-/* Under the hot dogs (.extras, placed by layout.css): the reel on its own glass panel, scaled up by --z
-   from its original 13.2vh-tall strip, and the coming-soon panel below it. */
-.extras { position: absolute; display: flex; flex-direction: column; gap: 1.67vh; pointer-events: none; }
-.reelcard { position: relative; flex: none; height: 19.5vh; --z: 1.25; }
-.reel {
-  position: absolute; left: var(--pad); top: 50%; width: calc((100% - 2 * var(--pad)) / var(--z)); height: 13.2vh;
-  transform: translateY(-50%) scale(var(--z)); transform-origin: 0 50%;
-  overflow: hidden; pointer-events: none;
-}
+/* The slideshow (motion.js): each section's glass panel glides in from the right and away to the left.
+   Only transform and opacity move, so it stays smooth on TVs. Positions come from layout.css. */
+.tvslide { opacity: 0; transform: translateX(8%) scale(.97); transition: transform .85s cubic-bezier(.2,.8,.2,1), opacity .6s ease-out; }
+.tvslide.on { opacity: 1; transform: none; }
+.tvslide.gone { opacity: 0; transform: translateX(-8%) scale(.97); }
+
+/* The column beside it: the food animation for the section on screen, stacked tall (art above the words). */
+.side { --z: 1; }
+.reel { position: absolute; inset: var(--pad); overflow: hidden; pointer-events: none; }
+.side .scene { flex-direction: column; justify-content: center; gap: 4vh; padding: 0 1.5vh; }
+.side .art { width: 46vh; height: 30vh; margin: 0; }
+.side .words { width: 100%; flex: none; justify-items: center; text-align: center; gap: 1.2vh; }
+.side .word { font-size: calc(11vh * var(--fit, 1)); }
+.side .rule { width: 100%; transform-origin: center; }
+.side .meta { flex-direction: column; align-items: center; gap: 1vh; }
+.side .sub { font-size: calc(5vh * var(--fit, 1)); }
+.side .fa { font-size: calc(4.6vh * var(--fit, 1)); }
 .reel .floor { /* glowing floor line */
   position: absolute; left: 0; right: 0; bottom: 0; height: .28vh;
   background: linear-gradient(90deg, transparent, var(--ink) 20%, #4a1708 50%, var(--ink) 80%, transparent);
@@ -287,15 +295,15 @@ body:not(.ready) *, body:not(.ready) *::before, body:not(.ready) *::after { anim
 body:not(.ready) #stage { opacity: 0; }
 
 /* Coming soon: big polished words now; a real food photo (background cut out) joins them later. */
-.soon { position: relative; flex: 1; display: flex; align-items: center; justify-content: center; gap: 3vh; }
+.soon { display: flex; align-items: center; justify-content: center; gap: 4vh; }
 .soon-photo { position: relative; height: 100%; width: auto; max-width: 50%; object-fit: contain;
   filter: drop-shadow(0 .8vh 1.2vh rgba(90, 8, 0, .45)); animation: float 4s ease-in-out infinite; }
 @keyframes float { 50% { transform: translateY(-.8vh) rotate(-1.5deg); } }
 .soon-photo[hidden] { display: none; }
-.soon-words { position: relative; display: flex; align-items: baseline; gap: 2.4vh; white-space: nowrap; }
-.soon-en { font-family: var(--display); font-size: 7.4vh; line-height: 1; letter-spacing: .07em; color: var(--type);
+.soon-words { position: relative; display: flex; flex-direction: column; align-items: center; gap: 2vh; white-space: nowrap; }
+.soon-en { font-family: var(--display); font-size: 17vh; line-height: 1; letter-spacing: .07em; color: var(--type);
   text-shadow: 0 .16vh 0 rgba(255, 255, 255, .6); }
-.soon-fa { font-family: var(--fa); font-weight: 700; font-size: 4.6vh; color: var(--ink); direction: rtl; }
+.soon-fa { font-family: var(--fa); font-weight: 700; font-size: 8vh; color: var(--ink); direction: rtl; }
 .soon::after { /* a glint across the words now and then */
   content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 18%;
   background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .55) 50%, transparent);

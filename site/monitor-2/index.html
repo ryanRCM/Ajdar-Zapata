@@ -14,22 +14,29 @@
 <body data-monitor="2">
 <!-- Monitor 2 = the right wall: orange, with motion. Names and numbers in the reel are copied from the
      boards (menu/Ajdar_Zapata_Boards.pdf). -->
-<!-- The right TV (orange glass, with motion). The menu is split across the two TVs so the words are big:
-     this one has shawarma, hot dogs, doner, platters and drinks, plus the food reel and a coming-soon panel.
-     Every section is lifted straight off the boards by tools/build-walls.py (nothing retyped). -->
+<!-- The right TV (orange glass): one menu section at a time, as big as the screen allows, with its food
+     animation in the column beside it (Ryan, 2 Nov 2026: one TV static with everything, the other cycling
+     big). Every section is lifted straight off the boards by tools/build-walls.py (nothing retyped).
+     data-hold = seconds on screen; data-scene = which food animation plays beside it. -->
 <div id="stage">
   <div class="embers-bg" data-embers="18" data-rise="95vh"></div>
-  <div class="card sec-shawarma"><img src="/monitor-2/sec-shawarma.png" alt="Shawarma, 28 to 30"></div>
-  <div class="card sec-hotdogs"><img src="/monitor-2/sec-hotdogs.png" alt="Hot dogs, 31 to 35"></div>
-  <div class="card sec-doner"><img src="/monitor-2/sec-doner.png" alt="Doner baguettes, 21 to 24"></div>
-  <div class="card sec-platters"><img src="/monitor-2/sec-platters.png" alt="Doner platters, 25 to 27"></div>
-  <div class="card sec-drinks"><img src="/monitor-2/sec-drinks.png" alt="Drinks"></div>
-  <div class="hl" data-for="doner"></div>
-  <div class="hl" data-for="platters"></div>
-  <div class="hl" data-for="shawarma"></div>
-  <div class="hl" data-for="hotdogs"></div>
-  <div class="extras outer-free">
-    <div class="card reelcard">
+  <div class="card tvslide sec-starters" data-hold="10" data-scene="6"><img src="/monitor-2/sec-starters.png" alt="Starters and sides, 1 to 10"></div>
+  <div class="card tvslide sec-sauces" data-hold="7" data-scene="6"><img src="/monitor-2/sec-sauces.png" alt="Sauce selection"></div>
+  <div class="card tvslide sec-sandwiches" data-hold="10" data-scene="0"><img src="/monitor-2/sec-sandwiches.png" alt="Sandwiches, 11 to 15"></div>
+  <div class="card tvslide sec-burgers" data-hold="9" data-scene="1"><img src="/monitor-2/sec-burgers.png" alt="Burgers, 16 to 20"></div>
+  <div class="card tvslide sec-doner" data-hold="8" data-scene="2"><img src="/monitor-2/sec-doner.png" alt="Doner baguettes, 21 to 24"></div>
+  <div class="card tvslide sec-platters" data-hold="7" data-scene="3"><img src="/monitor-2/sec-platters.png" alt="Doner platters, 25 to 27"></div>
+  <div class="card tvslide sec-shawarma" data-hold="7" data-scene="4"><img src="/monitor-2/sec-shawarma.png" alt="Shawarma, 28 to 30"></div>
+  <div class="card tvslide sec-hotdogs" data-hold="9" data-scene="5"><img src="/monitor-2/sec-hotdogs.png" alt="Hot dogs, 31 to 35"></div>
+  <div class="card tvslide sec-drinks" data-hold="7"><img src="/monitor-2/sec-drinks.png" alt="Drinks"></div>
+  <!-- Coming soon (Ryan, 2 Nov 2026): real food photos with the background cut out. Until one is added it
+       shows the words only. To add one: put the cut-out PNG in site/monitor-2/, set it as .soon-photo's src
+       and remove the hidden attribute. -->
+  <div class="card tvslide soon" data-hold="6">
+    <img class="soon-photo" src="" alt="" hidden>
+    <div class="soon-words"><span class="soon-en">COMING SOON</span><span class="soon-fa">به‌زودی</span></div>
+  </div>
+  <div class="card side">
       <div class="reel" aria-hidden="true">
         <div class="floor"></div>
 
@@ -220,14 +227,6 @@
 
         <div class="wipe"></div>
       </div>
-    </div>
-    <!-- Coming soon (Ryan, 2 Nov 2026): a panel for real food photos with the background cut out.
-         Until a photo is added it shows the words only. To add one: put the cut-out PNG in
-         site/monitor-2/ and set its src on .soon-photo (and remove the hidden attribute). -->
-    <div class="card soon">
-      <img class="soon-photo" src="" alt="" hidden>
-      <div class="soon-words"><span class="soon-en">COMING SOON</span><span class="soon-fa">به‌زودی</span></div>
-    </div>
   </div>
   <div class="halo"></div>
   <div class="address right" aria-label="864 High Road, London N12 9RH"><div class="frame">London N12 9RH</div></div>
