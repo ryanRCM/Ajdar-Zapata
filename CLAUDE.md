@@ -12,12 +12,20 @@ Read this first, then `HANDOFF.md`. This repo is the TV menu website for **Ajdar
 - **Netlify site:** `ajdar-zapata` (site ID `e967ee2e-ffa8-4a1b-8d1c-cf932865d775`, team `6ae4978cb2c0fa267d6801f5`), dashboard https://app.netlify.com/projects/ajdar-zapata. Claude reaches it through the **Netlify connector** in Ryan's Claude (read deploys and logs; settings changes only with Ryan's yes).
 - **Domain:** `ajdarzapata.co.uk`, bought 30 Oct 2026 through Netlify (Netlify DNS), renews 30 Oct 2027. Ryan owns the Netlify account and pays for the domain.
 
+## The two TVs (Ryan, 2 Nov 2026: remember this)
+- **Locked in.** The two shop TVs are the only screens that show the monitors. `/api/screen` locks each TV's browser ID to its monitor once it has stayed on it 20 minutes. Every other device (phones, laptops) is sent to `/menu/`. A TV that loses its memory: open `ajdarzapata.co.uk/?screen=1` (or `=2`) on it to re-lock. To look at a monitor from a phone without being moved: add `?preview`.
+- **Left wall = Monitor 1 = yellow. Right wall = Monitor 2 = orange.** Mainly yellow: Monitor 2 uses yellow for its accents. The address reads across the pair: "864 High Road," on the left, "London N12 9RH" on the right. If the locked TVs are on the wrong walls, set `SWAP = true` in `netlify/functions/screen.mjs`.
+- **People read these from across the shop.** Big, bold, high contrast beats small and clever. No phone number on the TVs.
+- They reload themselves within a minute of every deploy, so every push to `main` reaches the shop untouched.
+
 ## Files
 | Path | What |
 |---|---|
 | `site/monitor-1/`, `site/monitor-2/` | The two TV pages. Shared look in `site/screen.css`, shared behaviour in `site/screen.js` (wake lock, hidden cursor, tap for full screen, check-in with `/api/screen`, hourly safety reload, image retry) |
 | `netlify/functions/screen.mjs` | `/api/screen`: each TV checks in every minute. Netlify (Blobs store `screens`) says which monitor that TV shows (first TV → 1, next → 2, kept from then on; `?screen=1`/`?screen=2` pins one) and which deploy is live, so TVs reload themselves on every deploy. `package.json` pins `@netlify/blobs`. Don't test it against the live site with fake TVs: each fake ID holds a monitor for 15 minutes |
 | `site/_redirects` | `/` → monitor 1, `/monitor1` and `/monitor2` → the dashed addresses |
+| `site/monitor-1/board-*.png`, `site/monitor-2/board-*.png` | The yellow and orange copies of the boards, made by `tools/yellow-boards.py` and `tools/orange-boards.py`. Re-run both after a new PDF |
+| `site/menu/` | The menu for everyone who isn't a shop TV: the yellow boards stacked for phones |
 | `site/board-1..3.png` | The boards: `menu/Ajdar_Zapata_Boards.pdf` pages 1–3 at 1215×2160. 1 = starters, sauces, drinks · 2 = sandwiches, burgers · 3 = doner, platters, shawarma, hot dogs |
 | `menu/Ajdar_Zapata_Boards.pdf` | **The current menu design** (Ryan, 30 Oct 2026). The other PDFs in `menu/` are older versions, kept for reference |
 | `tools/check.cjs` | The check before every push |

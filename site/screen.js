@@ -30,9 +30,11 @@
   // Check in with Netlify about once a minute (netlify/functions/screen.mjs). Each TV keeps an ID in its
   // browser; Netlify says which monitor that TV should show, and which deploy is live. If the TV is on
   // the wrong monitor it moves; if a new deploy is live it reloads, so updates reach the TVs untouched.
-  // Pin a TV by hand with ?screen=1 or ?screen=2 on the address.
+  // Only the two locked shop TVs stay on the monitors: any other device is sent to the phone menu (/menu/).
+  // Re-lock a TV by hand with ?screen=1 or ?screen=2 on the address; look without being moved with ?preview.
   const here = Number(document.body.dataset.monitor) || 0;
-  const want = new URLSearchParams(location.search).get('screen');
+  const params = new URLSearchParams(location.search);
+  const want = params.get('screen'), preview = params.has('preview');
   let id = '', live = '';
   try {
     id = localStorage.getItem('az-screen-id') || '';
@@ -45,7 +47,8 @@
       const r = await fetch('/api/screen?' + q, { cache: 'no-store' });
       if (!r.ok) return;
       const j = await r.json();
-      if (here && (j.monitor === 1 || j.monitor === 2) && j.monitor !== here) { location.replace('/monitor-' + j.monitor + '/'); return; }
+      if (!preview && here && (j.monitor === 1 || j.monitor === 2) && j.monitor !== here) { location.replace('/monitor-' + j.monitor + '/'); return; }
+      if (!preview && j.monitor === 0) { location.replace('/menu/'); return; }
       if (j.version) { if (live && j.version !== live) { location.reload(); return; } live = j.version; }
     } catch (e) {}
   }

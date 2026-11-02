@@ -1,36 +1,72 @@
 // /api/screen — each TV checks in about once a minute (site/screen.js).
-// 1. Which monitor should this TV show? The first TV gets monitor 1, the next a free one, and each
-//    keeps its monitor from then on (Ryan, 2 Nov 2026: two TVs, sent to different places).
-//    ?want=1 or ?want=2 pins a TV by hand.
+// 1. Which monitor should this TV show? The first TV gets monitor 1, the next a free one. Once each
+//    monitor has had the same device for 20 minutes, those two are locked in as the shop TVs, and
+//    every other device is told 0 and goes to the phone menu (Ryan, 2 Nov 2026).
+//    ?want=1 or ?want=2 (from ?screen= on the page) re-locks a TV by hand.
 // 2. Which deploy is live? When it changes, the TV reloads itself.
 // State lives in Netlify Blobs: one small JSON document, written only when something changes.
 import { getStore } from "@netlify/blobs";
 
 const KEY = "devices";
-const ACTIVE_MS = 15 * 60 * 1000; // a TV seen in the last 15 minutes holds its monitor
-const TOUCH_MS = 4 * 60 * 1000;   // refresh a TV's "last seen" at most every 4 minutes, to keep writes low
+const ACTIVE_MS = 15 * 60 * 1000;      // a TV seen in the last 15 minutes holds its monitor
+const TOUCH_MS = 4 * 60 * 1000;        // refresh a TV's "last seen" at most every 4 minutes, to keep writes low
+const LOCK_AFTER_MS = 20 * 60 * 1000;  // a device on its monitor for 20+ minutes is a TV, not a passing phone
 const MAX_DEVICES = 20;
+// The two shop TVs are locked in (Ryan, 2 Nov 2026). Monitor 1 = left wall (yellow), monitor 2 = right
+// wall (orange). If the locked TVs turn out to be on the wrong walls, set SWAP to true and push.
+const SWAP = false;
 
-export function assign(devices, id, want, now) {
-  const next = { ...devices };
-  let d = next[id];
-  let changed = false;
-  if ((want === 1 || want === 2) && (!d || d.m !== want)) { d = { m: want, seen: now }; changed = true; }
-  if (!d) {
-    const busy = new Set(Object.entries(next).filter(([k, v]) => k !== id && now - v.seen < ACTIVE_MS).map(([, v]) => v.m));
-    d = { m: busy.has(1) && !busy.has(2) ? 2 : 1, seen: now };
-    changed = true;
-  } else if (now - d.seen > TOUCH_MS) {
-    d = { ...d, seen: now };
-    changed = true;
+// state: { devices: { id: { m, first, seen } }, locked: { 1: id, 2: id } }. Older state was the devices map itself.
+export function assign(state, id, want, now) {
+  const legacy = state && !state.devices && !state.locked;
+  const devices = { ...(legacy ? state : state?.devices || {}) };
+  let locked = state?.locked ? { ...state.locked } : null;
+  let changed = legacy && Object.keys(devices).length > 0;
+
+  // ?screen=1 / ?screen=2 always wins: it (re)locks this device to that monitor, e.g. a TV that lost its memory.
+  if (want === 1 || want === 2) {
+    const d = devices[id];
+    if (!d || d.m !== want) { devices[id] = { m: want, first: now - LOCK_AFTER_MS, seen: now }; changed = true; }
+    if (locked && locked[want] !== id) {
+      locked[want] = id;
+      if (locked[3 - want] === id) delete locked[3 - want];
+      changed = true;
+    }
   }
-  next[id] = d;
-  const ids = Object.keys(next);
+
+  let m;
+  if (locked) {
+    m = locked[1] === id ? 1 : locked[2] === id ? 2 : 0; // 0: not a shop TV, so it goes to the phone menu
+  } else {
+    let d = devices[id];
+    if (d && !d.first) { d = { ...d, first: d.seen }; changed = true; }
+    if (!d) {
+      const busy = new Set(Object.entries(devices).filter(([k, v]) => k !== id && now - v.seen < ACTIVE_MS).map(([, v]) => v.m));
+      d = { m: busy.has(1) && !busy.has(2) ? 2 : 1, first: now, seen: now };
+      changed = true;
+    } else if (now - d.seen > TOUCH_MS) {
+      d = { ...d, seen: now };
+      changed = true;
+    }
+    devices[id] = d;
+    m = d.m;
+    // Lock once each monitor has a device that has stayed on it for 20+ minutes and is still checking in.
+    const pick = n => Object.entries(devices)
+      .filter(([, v]) => v.m === n && now - v.seen < ACTIVE_MS && (v.seen - (v.first || v.seen)) >= LOCK_AFTER_MS)
+      .sort((a, b) => b[1].seen - a[1].seen)[0]?.[0];
+    const one = pick(1), two = pick(2);
+    if (one && two) { locked = { 1: one, 2: two }; changed = true; }
+  }
+
+  const ids = Object.keys(devices);
   if (ids.length > MAX_DEVICES) {
-    ids.sort((a, b) => next[a].seen - next[b].seen).slice(0, ids.length - MAX_DEVICES).forEach(k => delete next[k]);
+    const keep = new Set(Object.values(locked || {}));
+    ids.filter(k => !keep.has(k)).sort((a, b) => devices[a].seen - devices[b].seen)
+      .slice(0, ids.length - MAX_DEVICES).forEach(k => delete devices[k]);
     changed = true;
   }
-  return { devices: next, monitor: d.m, changed };
+  if (SWAP && m) m = 3 - m;
+  return { state: locked ? { devices, locked } : { devices }, monitor: m, changed };
 }
 
 const reply = body => new Response(JSON.stringify(body), {
@@ -50,7 +86,7 @@ export default async (req, context) => {
     const r = assign(cur?.data || {}, id, want, Date.now());
     if (!r.changed) return reply({ monitor: r.monitor, version });
     // Only write if nobody else wrote in between, so two TVs starting together can't both get monitor 1.
-    const res = await store.setJSON(KEY, r.devices, cur ? { onlyIfMatch: cur.etag } : { onlyIfNew: true });
+    const res = await store.setJSON(KEY, r.state, cur ? { onlyIfMatch: cur.etag } : { onlyIfNew: true });
     if (res?.modified !== false) return reply({ monitor: r.monitor, version });
   }
   return reply({ version }); // still racing after 4 tries: the TV keeps its page and asks again next minute

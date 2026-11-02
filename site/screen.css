@@ -35,8 +35,8 @@ body.hide-cursor, body.hide-cursor * { cursor: none; }
 }
 .address .frame {
   position: absolute; top: 4.5%; bottom: 3%; display: flex; align-items: center; justify-content: center;
-  border: .22vh solid var(--orange); color: var(--orange);
-  font: 800 2.7vh/1 "Barlow Condensed", "Arial Narrow", Impact, sans-serif; letter-spacing: .03em; white-space: nowrap;
+  border: .3vh solid var(--orange); color: var(--orange);
+  font: 800 3.5vh/1 "Barlow Condensed", "Arial Narrow", Impact, sans-serif; letter-spacing: .03em; white-space: nowrap;
 }
 .address.left  .frame { left: 1.84%; right: 0; border-right: 0; border-radius: .55vh 0 0 .55vh; }
 .address.right .frame { left: 0; right: 1.84%; border-left: 0; border-radius: 0 .55vh .55vh 0; }

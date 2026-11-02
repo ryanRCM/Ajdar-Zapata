@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ajdar Zapata · Menu</title>
+<meta name="description" content="Ajdar Zapata menu: sandwiches, burgers, doner, shawarma and hot dogs. 864 High Road, London N12 9RH.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@800&family=Barlow+Semi+Condensed:wght@400;600&family=Vazirmatn:wght@400;600&display=swap">
+<style>
+  /* The menu for everyone who isn't one of the two shop TVs (phones, laptops): the yellow boards,
+     one under the other, readable at phone width. */
+  :root { --bg: #ffc61a; --ink: #121110; color-scheme: light; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink); }
+  main { max-width: 640px; margin: 0 auto; }
+  img { display: block; width: 100%; height: auto; }
+  .board { position: relative; }
+  /* Cover each board's printed address-and-phone box and short allergy line; the full versions are below. */
+  .board::after { content: ""; position: absolute; left: 0; right: 0; top: 90.3%; bottom: 1%; background: var(--bg); }
+  footer { padding: 20px 16px 32px; text-align: center; }
+  .addr { font: 800 clamp(22px, 6vw, 34px)/1.1 "Barlow Condensed", "Arial Narrow", Impact, sans-serif; border: 3px solid var(--ink); border-radius: 8px; padding: 10px 12px; }
+  .allergy { margin-top: 16px; font: 400 16px/1.4 "Barlow Semi Condensed", Arial, sans-serif; text-align: left; }
+  .allergy p { margin: 0 0 8px; }
+  .allergy [lang="fa"] { font-family: Vazirmatn, Tahoma, sans-serif; text-align: right; }
+</style>
+</head>
+<body>
+<main>
+  <div class="board"><img src="/monitor-1/board-1.png" alt="Starters and sides, sauce selection and drinks" width="1215" height="2160"></div>
+  <div class="board"><img src="/monitor-1/board-2.png" alt="Sandwiches and burgers" width="1215" height="2160" loading="lazy"></div>
+  <div class="board"><img src="/monitor-1/board-3.png" alt="Doner baguettes, doner platters, shawarma and hot dogs" width="1215" height="2160" loading="lazy"></div>
+  <footer>
+    <div class="addr">864 High Road, London N12 9RH</div>
+    <div class="allergy">
+      <p lang="en"><b>Food Allergies and Intolerances:</b> Before ordering please speak to our staff about your requirements.</p>
+      <p lang="fa" dir="rtl"><b>حساسیت و عدم تحمل غذایی:</b> لطفاً پیش از سفارش، نیازهای خود را با کارکنان ما در میان بگذارید.</p>
+    </div>
+  </footer>
+</main>
+<script>
+  // If this is actually one of the locked shop TVs (it lost its page), send it back to its monitor.
+  (async () => {
+    try {
+      const id = localStorage.getItem('az-screen-id');
+      if (!id) return;
+      const r = await fetch('/api/screen?' + new URLSearchParams({ id }), { cache: 'no-store' });
+      const j = r.ok ? await r.json() : {};
+      if (j.monitor === 1 || j.monitor === 2) location.replace('/monitor-' + j.monitor + '/');
+    } catch (e) {}
+  })();
+</script>
+</body>
+</html>
