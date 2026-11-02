@@ -51,3 +51,7 @@ save(Image.open('menu/photos/doner-fries-platter.jpg').convert('RGB'), 'doner-pl
 wraps = Image.open('menu/photos/doner-wraps-tray.jpg').convert('RGB')
 w, h = wraps.size
 save(wraps.crop((0, int(h * 0.45), w, h)), 'shawarma-wraps', width=700)
+
+# Ryan's sauce pots (2 Nov): spicy chilli, cheddar, garlic & dill, on white -> cut out.
+for n in ('spicy-chilli', 'cheddar', 'garlic-dill'):
+    save(cutout(Image.open(f'menu/photos/sauce-{n}.jpg')), f'sauce-{n}', width=400)

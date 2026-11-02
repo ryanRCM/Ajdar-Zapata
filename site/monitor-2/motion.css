@@ -41,6 +41,11 @@
 .photos .pic { position: absolute; left: 0; width: 100%; height: auto; opacity: 0; transform: translateX(40%) rotate(4deg); }
 .photos.n3 .pic { top: calc(var(--k) * 31%); }
 .photos.n2 .pic { top: calc(var(--k) * 48% + 2%); }
+/* Sauce pots (real photos): two on top, one in front, slightly overlapping. */
+.photos.pots .pic { width: 54%; }
+.photos.pots .pic[style*="--k:0"] { left: 0; top: 4%; }
+.photos.pots .pic[style*="--k:1"] { left: 46%; top: 4%; }
+.photos.pots .pic[style*="--k:2"] { left: 23%; top: 44%; }
 .photos .pic.framed { border-radius: 2vh; box-shadow: 0 1vh 2vh rgba(80, 20, 0, .45); }
 .photos.n1 .pic { top: 50%; left: 50%; width: auto; max-width: 100%; max-height: 100%; translate: -50% -50%; }
 .scene.on .photos .pic { animation: picIn .7s cubic-bezier(.2, 1.2, .3, 1) both, picBob 3.2s ease-in-out infinite;
