@@ -18,6 +18,7 @@ Read this first, then `HANDOFF.md`. This repo is the TV menu website for **Ajdar
 - **The menu is split across the two walls so the words are bigger** (Ryan chose this, 2 Nov): left = starters, sauces, sandwiches, burgers; right = doner, platters, drinks, shawarma, hot dogs + the food reel. Each section is cut straight from the boards by `tools/build-walls.py` (never retyped), 1.4x the old size, two columns per TV with the logo between. The phone page `/menu/` still shows the whole boards.
 - **People read these from across the shop.** Big, bold, high contrast beats small and clever. No phone number on the TVs.
 - They reload themselves within a minute of every deploy, so every push to `main` reaches the shop untouched.
+- **Keep the motion smooth on the TVs** (Ryan: "a tiny bit laggy", fixed 2 Nov): animate only `transform` and `opacity`; no `mix-blend-mode`, no animated `background-position`, `filter` or SVG transforms on many elements. Monitor 2 waits until every picture and font is loaded before anything moves. Measure with a 6x CPU-throttled Chromium: it went from 16 to 42 fps.
 
 ## Files
 | Path | What |

@@ -37,27 +37,15 @@
     }
   });
 
-  // ── Flame licks along the bottom of the free space under the drinks.
-  const NS = 'http://www.w3.org/2000/svg';
+  // ── Flame licks along the bottom of the free space under the drinks: plain elements, so they stay smooth.
   document.querySelectorAll('.hearth').forEach(h => {
-    const svg = document.createElementNS(NS, 'svg');
-    svg.setAttribute('viewBox', '0 0 200 20');
-    svg.setAttribute('preserveAspectRatio', 'none');
-    svg.style.height = '48%'; svg.style.top = 'auto';
-    // Each lick fades from deep red at the base to nothing at the tip, so it reads as fire on the orange.
-    const id = 'lk' + Math.random().toString(36).slice(2, 7);
-    svg.innerHTML = `<defs><linearGradient id="${id}" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#a3200c" stop-opacity=".8"/><stop offset=".5" stop-color="#d63a12" stop-opacity=".45"/><stop offset="1" stop-color="#ffe08a" stop-opacity="0"/></linearGradient></defs>`;
-    for (let k = 0; k < 16; k++) {
-      const x = 4 + k * 12.3 + rnd(-3, 3), w = rnd(9, 16), t = rnd(1, 12);
-      const f = document.createElementNS(NS, 'path');
-      f.setAttribute('d', `M${x - w / 2} 20 Q${x - w / 3} ${t + 5} ${x} ${t} Q${x + w / 3} ${t + 5} ${x + w / 2} 20 Z`);
-      f.setAttribute('fill', `url(#${id})`);
-      f.setAttribute('class', 'lick');
-      f.style.setProperty('--d', rnd(.35, .7) + 's');
-      f.style.setProperty('--ph', -rnd(0, 1) + 's');
-      svg.appendChild(f);
+    for (let k = 0; k < 14; k++) {
+      const f = document.createElement('i');
+      f.className = 'lick';
+      const w = rnd(5, 9);
+      f.style.cssText = `left:${(k + .5) * (100 / 14) - w / 2 + rnd(-1.5, 1.5)}%;width:${w}%;height:${rnd(22, 48)}%;--d:${rnd(.4, .75)}s;--ph:${-rnd(0, 1)}s`;
+      h.appendChild(f);
     }
-    h.appendChild(svg);
   });
 
   // ── Fit each category name (and its number line) to the width it has, at any screen size.
@@ -103,7 +91,16 @@
     timer2 = setTimeout(() => { cur.classList.remove('on', 'out'); wipe.classList.remove('go'); }, 760);
   }
 
-  show(scenes[0]);
+  // Download and prepare everything first (every picture decoded, fonts loaded), then start: smooth from frame one.
+  // Never wait longer than 8 seconds, so a slow picture can't keep the screen blank.
+  const ready = Promise.all([
+    ...[...document.querySelectorAll('#stage img')].map(img => (img.decode ? img.decode() : Promise.resolve()).catch(() => {})),
+    document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve(),
+  ]);
+  Promise.race([ready, new Promise(r => setTimeout(r, 8000))]).then(() => {
+    fit();
+    requestAnimationFrame(() => { document.body.classList.add('ready'); show(scenes[0]); });
+  });
 
   // A hidden tab pauses animations; on return, restart the current scene cleanly.
   document.addEventListener('visibilitychange', () => {
