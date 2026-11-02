@@ -31,9 +31,10 @@ const server = http.createServer((req, res) => {
     }));
     let reelOk = true;
     if (page === '/monitor-2/') {
-      const first = await p.evaluate(() => document.querySelector('.scene.on .label').textContent);
-      await p.waitForTimeout(3800);
-      const next = await p.evaluate(() => document.querySelector('.scene.on .label')?.textContent);
+      // Wait out the first scene's own hold time (data-hold, seconds), then the reel must show another scene.
+      const [first, hold] = await p.evaluate(() => { const s = document.querySelector('.scene.on'); return [s.querySelector('.label').textContent, parseFloat(s.dataset.hold || 3.6)]; });
+      await p.waitForTimeout(hold * 1000 + 300);
+      const next = await p.evaluate(() => document.querySelector('.scene.on:not(.out) .label')?.textContent);
       reelOk = r.reel === 1 && !!next && next !== first;
       if (process.argv.includes('--shots')) await p.screenshot({ path: path.join(__dirname, `shot-m2-${w}.png`) });
     }
