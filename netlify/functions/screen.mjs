@@ -76,6 +76,15 @@ const reply = body => new Response(JSON.stringify(body), {
 export default async (req, context) => {
   const url = new URL(req.url);
   const version = context?.deploy?.id || "";
+  // ?status: how many TVs are checking in, on which monitor, and whether they're locked (no IDs shown).
+  if (url.searchParams.has("status")) {
+    const cur = await getStore({ name: "screens", consistency: "strong" }).get(KEY, { type: "json" });
+    const devices = cur?.devices || (cur && !cur.locked ? cur : {}) || {};
+    const now = Date.now();
+    const active = Object.values(devices).filter(d => now - d.seen < ACTIVE_MS)
+      .map(d => ({ monitor: d.m, last_seen_min: Math.round((now - d.seen) / 60000), on_it_min: Math.round((d.seen - (d.first || d.seen)) / 60000) }));
+    return reply({ version, locked: !!cur?.locked, locked_monitors: Object.keys(cur?.locked || {}), active });
+  }
   const id = url.searchParams.get("id") || "";
   const want = Number(url.searchParams.get("want")) || 0;
   if (!/^[a-z0-9]{8,40}$/i.test(id)) return reply({ version });
