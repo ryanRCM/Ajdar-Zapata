@@ -55,3 +55,12 @@ save(wraps.crop((0, int(h * 0.45), w, h)), 'shawarma-wraps', width=700)
 # Ryan's sauce pots (2 Nov): spicy chilli, cheddar, garlic & dill, on white -> cut out.
 for n in ('spicy-chilli', 'cheddar', 'garlic-dill'):
     save(cutout(Image.open(f'menu/photos/sauce-{n}.jpg')), f'sauce-{n}', width=400)
+
+# Doner Baguettes (Ryan, 2 Nov: the drawn doner wasn't good enough): a close-up of the real doner meat,
+# cropped from the platter photo and enlarged, until real doner baguette photos come.
+from PIL import ImageOps
+pl = Image.open('menu/photos/doner-fries-platter.jpg').convert('RGB')
+w, h = pl.size
+meat = ImageOps.autocontrast(pl.crop((int(w * .42), int(h * .02), int(w * .92), int(h * .98))), cutoff=1)
+meat = meat.resize((meat.width * 2, meat.height * 2), Image.LANCZOS)
+meat.save('site/monitor-2/photo-doner-meat.webp', quality=88, method=6); print('doner-meat', meat.size)
