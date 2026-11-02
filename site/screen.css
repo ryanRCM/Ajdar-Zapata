@@ -7,7 +7,7 @@
   --pad: 1.48vh;                                  /* inside a glass panel (16px of 1080) */
   /* bright glass so the coloured lettering pops; each TV tints it and gives it a coloured rim */
   --glass-top: rgba(255, 255, 255, .97); --glass-mid: rgba(255, 249, 222, .95); --glass-low: rgba(255, 234, 160, .95);
-  --glass-edge: rgba(255, 255, 255, .9); --rim: #ffb000; --glass-shade: rgba(150, 70, 0, .22); --type: #8a0c00;
+  --glass-edge: rgba(255, 255, 255, .9); --rim: #ffb000; --glass-pool: rgba(255, 150, 20, .45); --glass-shade: rgba(150, 70, 0, .22); --type: #8a0c00;
   --marble: url(/marble-yellow.jpg);
   color-scheme: light;
 }
@@ -22,22 +22,31 @@ body.hide-cursor, body.hide-cursor * { cursor: none; }
   background: var(--marble) center / cover no-repeat, linear-gradient(180deg, #ff5a16 0%, var(--wall) 55%, #e8320c 100%);
 }
 
-/* A glass panel: bright tinted glass with a polished top edge, a soft inner shade and a drop shadow. */
+/* A glass panel, Apple "liquid glass" style (Ryan, 2 Nov 2026: "orange and yellowish, really pop, like Apple
+   glass"): richly tinted glass, a bright specular line along the top edge, a thin light rim with a
+   coloured outer edge, a glossy reflection across the upper part, a warm glow pooling at the bottom
+   and a soft lift off the wall. All static, so it costs the TVs nothing while things move behind. */
 .card {
-  position: absolute; padding: var(--pad); border-radius: 1.8vh; overflow: hidden;
-  background: linear-gradient(160deg, var(--glass-top) 0%, var(--glass-mid) 38%, var(--glass-low) 100%);
-  border: .36vh solid var(--rim);
-  box-shadow: inset 0 0 0 .2vh var(--glass-edge), inset 0 .5vh 0 rgba(255, 255, 255, .95), inset 0 -.8vh 1.6vh var(--glass-shade),
-              0 1.2vh 2.6vh rgba(90, 10, 0, .42), 0 .2vh .4vh rgba(90, 10, 0, .3);
+  position: absolute; padding: var(--pad); border-radius: 2.2vh; overflow: hidden;
+  background:
+    radial-gradient(120% 60% at 50% 115%, var(--glass-pool), transparent 60%),
+    linear-gradient(165deg, var(--glass-top) 0%, var(--glass-mid) 42%, var(--glass-low) 100%);
+  border: .3vh solid var(--rim);
+  box-shadow:
+    inset 0 .35vh 0 rgba(255, 255, 255, .95),            /* specular line along the top */
+    inset 0 0 0 .18vh rgba(255, 255, 255, .55),          /* thin light rim inside the edge */
+    inset .5vh 0 1.2vh rgba(255, 255, 255, .35),         /* light catching the left side */
+    inset 0 -1vh 2vh var(--glass-shade),                 /* depth at the bottom */
+    0 1.4vh 3vh rgba(90, 10, 0, .45), 0 .3vh .6vh rgba(90, 10, 0, .35);
 }
-.card::before { /* the glossy reflection across the top of the glass */
-  content: ""; position: absolute; left: -10%; right: -10%; top: -40%; height: 70%; pointer-events: none;
-  background: radial-gradient(60% 100% at 30% 100%, rgba(255, 255, 255, .55), rgba(255, 255, 255, 0) 70%);
+.card::before { /* the glossy reflection across the upper glass */
+  content: ""; position: absolute; left: -20%; right: -20%; top: -60%; height: 95%; pointer-events: none; border-radius: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, .5), rgba(255, 255, 255, .12) 60%, rgba(255, 255, 255, 0));
 }
 .card > img { position: relative; display: block; width: 100%; height: 100%; object-fit: contain; }
 
 /* Flames behind the glass (flame.js): rising from the bottom of the screen, glowing through the gaps. */
-.flames { position: absolute; left: 0; bottom: 0; width: 100%; height: 48%; z-index: 0; pointer-events: none; }
+.flames { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; } /* fire, sparks and fireworks, behind the glass */
 .card { z-index: 1; }
 
 /* The bottom bar: only the allergy notice (Ryan, 2 Nov 2026), English and Persian, big and clear. */

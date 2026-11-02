@@ -14,8 +14,8 @@
   /* The right TV: orange glass on the shared reddish-orange wall, hottest at its left edge where it meets
      the left TV. */
   --marble: url(/marble-orange.jpg); --rim: #ff8a00;
-  --glass-top: rgba(255, 250, 230, .97); --glass-mid: rgba(255, 228, 170, .95); --glass-low: rgba(255, 200, 110, .95); /* amber, not pink */
-  --glass-shade: rgba(150, 40, 0, .22); --type: #7a0800;
+  --glass-top: rgba(255, 230, 170, .96); --glass-mid: rgba(255, 186, 90, .94); --glass-low: rgba(255, 146, 40, .95); /* rich orange glass */
+  --glass-pool: rgba(255, 90, 0, .45); --glass-shade: rgba(150, 40, 0, .3); --type: #7a0800;
   --ink: #121110; /* type and badges on the orange boards */
   --yellow: #ffc61a; /* the left wall's yellow, used for accents here so the pair reads mainly yellow */
   --hold: 6.4s; /* default scene length; scenes override with data-hold */
