@@ -1,16 +1,13 @@
 /* Made by tools/build-walls.py: do not edit by hand. Right TV, one section at a time, text scale 1.208. */
-.tvslide.sec-starters { left: 1.042%; top: 1.689%; width: 70.104%; height: 81.664%; }
-.tvslide.sec-sauces { left: 1.042%; top: 25.578%; width: 70.104%; height: 33.887%; }
-.tvslide.sec-drinks { left: 1.042%; top: 25.074%; width: 70.104%; height: 34.894%; }
-.tvslide.sec-sandwiches { left: 1.042%; top: 7.340%; width: 70.104%; height: 70.363%; }
-.tvslide.sec-burgers { left: 1.042%; top: 11.703%; width: 70.104%; height: 61.636%; }
-.tvslide.sec-doner { left: 1.042%; top: 23.340%; width: 70.104%; height: 38.363%; }
-.tvslide.sec-platters { left: 1.042%; top: 26.864%; width: 70.104%; height: 31.314%; }
-.tvslide.sec-shawarma { left: 1.042%; top: 26.809%; width: 70.104%; height: 31.425%; }
-.tvslide.sec-hotdogs { left: 1.042%; top: 20.263%; width: 70.104%; height: 44.517%; }
-.tvslide.soon { left: 1.042%; top: 6.852%; width: 70.104%; height: 71.339%; }
-.side { left: 71.875%; top: 1.296%; width: 27.083%; height: 90.926%; }
-.logo { left: -8.594%; top: 85.042%; width: 17.188%; height: 14.402%; }
-.halo { left: -10.312%; top: 83.314%; width: 20.625%; height: 17.858%; }
-.address { top: 93.333%; height: 5.556%; }
-.address .frame { right: 1.042%; left: 9.531%; }
+.tvslide.sec-starters { left: 1.042%; top: 5.372%; width: 70.104%; height: 81.664%; }
+.tvslide.sec-sauces { left: 1.042%; top: 29.260%; width: 70.104%; height: 33.887%; }
+.tvslide.sec-drinks { left: 1.042%; top: 28.757%; width: 70.104%; height: 34.894%; }
+.tvslide.sec-sandwiches { left: 1.042%; top: 11.022%; width: 70.104%; height: 70.363%; }
+.tvslide.sec-burgers { left: 1.042%; top: 15.386%; width: 70.104%; height: 61.636%; }
+.tvslide.sec-doner { left: 1.042%; top: 27.022%; width: 70.104%; height: 38.363%; }
+.tvslide.sec-platters { left: 1.042%; top: 30.547%; width: 70.104%; height: 31.314%; }
+.tvslide.sec-shawarma { left: 1.042%; top: 30.491%; width: 70.104%; height: 31.425%; }
+.tvslide.sec-hotdogs { left: 1.042%; top: 23.945%; width: 70.104%; height: 44.517%; }
+.tvslide.soon { left: 1.042%; top: 6.852%; width: 70.104%; height: 78.704%; }
+.side { left: 71.875%; top: 1.296%; width: 27.083%; height: 89.815%; }
+.allergy-bar { left: 1.042%; right: 1.042%; top: 92.037%; height: 7.037%; }

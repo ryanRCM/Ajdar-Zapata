@@ -1,54 +1,56 @@
 /* Shared by both TVs (Ryan, 2 Nov 2026): one bright, screaming reddish-orange wall across the pair, the
    menu on glass panels (yellow glass on the left TV, orange glass on the right), text as big as fits,
-   and at the bottom only the address, read across the pair, with the one logo in the middle.
+   flames rising behind the glass, and at the bottom only the allergy notice.
    Panel positions come from each monitor's layout.css (made by tools/build-walls.py). */
 :root {
   --wall: #ff4314; --wall-hot: #ff7a12; --ink: #140c08; --orange: #f07c1a; --cream: #f6efe4;
   --pad: 1.48vh;                                  /* inside a glass panel (16px of 1080) */
-  --glass-top: rgba(255, 244, 190, .97); --glass-mid: rgba(255, 214, 52, .93); --glass-low: rgba(255, 186, 18, .95);
-  --glass-edge: rgba(255, 255, 255, .8); --glass-shade: rgba(150, 40, 0, .28); --type: #a8120a;
+  /* bright glass so the coloured lettering pops; each TV tints it and gives it a coloured rim */
+  --glass-top: rgba(255, 255, 255, .97); --glass-mid: rgba(255, 249, 222, .95); --glass-low: rgba(255, 234, 160, .95);
+  --glass-edge: rgba(255, 255, 255, .9); --rim: #ffb000; --glass-shade: rgba(150, 70, 0, .22); --type: #8a0c00;
+  --marble: url(/marble-yellow.jpg);
   color-scheme: light;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; overflow: hidden; background: var(--wall); }
 body.hide-cursor, body.hide-cursor * { cursor: none; }
 
-/* The wall: bright reddish-orange, hotter in the middle of the pair so both TVs read as one scene. */
+/* The wall: a marbled pattern like the shop's chair covers (tools/make-marble.py): yellow on the left TV,
+   orange on the right. A plain gradient shows if the picture hasn't loaded. */
 #stage {
   position: fixed; inset: 0; overflow: hidden;
-  background:
-    radial-gradient(120% 90% at var(--hot-x, 100%) 45%, var(--wall-hot) 0%, rgba(255, 122, 18, 0) 60%),
-    linear-gradient(180deg, #ff5a16 0%, var(--wall) 55%, #e8320c 100%);
+  background: var(--marble) center / cover no-repeat, linear-gradient(180deg, #ff5a16 0%, var(--wall) 55%, #e8320c 100%);
 }
 
 /* A glass panel: bright tinted glass with a polished top edge, a soft inner shade and a drop shadow. */
 .card {
   position: absolute; padding: var(--pad); border-radius: 1.8vh; overflow: hidden;
   background: linear-gradient(160deg, var(--glass-top) 0%, var(--glass-mid) 38%, var(--glass-low) 100%);
-  border: .22vh solid var(--glass-edge);
-  box-shadow: inset 0 .3vh 0 rgba(255, 255, 255, .95), inset 0 -.6vh 1.4vh var(--glass-shade),
-              0 1.1vh 2.4vh rgba(110, 10, 0, .38), 0 .2vh .4vh rgba(110, 10, 0, .3);
+  border: .36vh solid var(--rim);
+  box-shadow: inset 0 0 0 .2vh var(--glass-edge), inset 0 .5vh 0 rgba(255, 255, 255, .95), inset 0 -.8vh 1.6vh var(--glass-shade),
+              0 1.2vh 2.6vh rgba(90, 10, 0, .42), 0 .2vh .4vh rgba(90, 10, 0, .3);
 }
 .card::before { /* the glossy reflection across the top of the glass */
   content: ""; position: absolute; left: -10%; right: -10%; top: -40%; height: 70%; pointer-events: none;
   background: radial-gradient(60% 100% at 30% 100%, rgba(255, 255, 255, .55), rgba(255, 255, 255, 0) 70%);
 }
-.card > img { position: relative; display: block; width: 100%; height: 100%; object-fit: contain;
-  filter: drop-shadow(0 .12vh 0 rgba(255, 255, 255, .55)); } /* a crisp highlight under the lettering: polished */
+.card > img { position: relative; display: block; width: 100%; height: 100%; object-fit: contain; }
 
-/* The one logo, in the middle of the pair at the bottom: each TV shows its half. */
-.logo { position: absolute; display: block; z-index: 4; filter: drop-shadow(0 .6vh 1.2vh rgba(90, 8, 0, .5)); }
+/* Flames behind the glass (flame.js): rising from the bottom of the screen, glowing through the gaps. */
+.flames { position: absolute; left: 0; bottom: 0; width: 100%; height: 48%; z-index: 0; pointer-events: none; }
+.card { z-index: 1; }
 
-/* Only the address at the bottom: "864 High Road," on the left TV, "London N12 9RH" on the right. */
-.address { position: absolute; left: 0; right: 0; pointer-events: none; z-index: 3; }
-.address .frame {
-  position: absolute; top: 0; bottom: 0; display: flex; align-items: center; justify-content: center;
-  border-radius: 1.6vh; border: .22vh solid var(--glass-edge); color: var(--type);
+/* The bottom bar: only the allergy notice (Ryan, 2 Nov 2026), English and Persian, big and clear. */
+.allergy-bar {
+  position: absolute; z-index: 3; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .3vh;
+  border-radius: 1.4vh; border: .36vh solid var(--rim); color: var(--ink);
   background: linear-gradient(160deg, var(--glass-top), var(--glass-mid) 45%, var(--glass-low));
   box-shadow: inset 0 .3vh 0 rgba(255, 255, 255, .95), 0 .9vh 2vh rgba(110, 10, 0, .38);
-  font: 800 5vh/1 "Barlow Condensed", "Arial Narrow", Impact, sans-serif; letter-spacing: .04em; white-space: nowrap;
-  text-shadow: 0 .14vh 0 rgba(255, 255, 255, .6);
 }
+.allergy-bar p { margin: 0; white-space: nowrap; line-height: 1.1; }
+.allergy-bar [lang="en"] { font: 600 2.55vh "Barlow Semi Condensed", "Arial Narrow", Arial, sans-serif; letter-spacing: .01em; }
+.allergy-bar [lang="fa"] { font: 600 2.4vh Vazirmatn, Tahoma, sans-serif; }
+.allergy-bar b { color: var(--type); font-weight: 800; }
 
 /* A slow shine slides across the glass now and then: one moving band, so it stays smooth on TVs. */
 .sweep {

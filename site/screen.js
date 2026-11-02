@@ -1,5 +1,5 @@
 // Shared by both monitors: keep the screen on, full screen on tap, hide the pointer,
-// retry a failed image, reload by itself when a new version goes live,
+// draw the allergy bar and the flames, retry a failed image, reload by itself when a new version goes live,
 // and make sure each TV shows its own monitor.
 (() => {
   let lock = null, cursorTimer = null;
@@ -16,6 +16,22 @@
   function wake() { document.body.classList.remove('hide-cursor'); clearTimeout(cursorTimer); cursorTimer = setTimeout(() => document.body.classList.add('hide-cursor'), 3000); }
   document.addEventListener('mousemove', wake); wake();
 
+  // The bottom bar: only the allergy notice (Ryan, 2 Nov 2026), and the flames behind the glass (flame.js).
+  const stage = document.getElementById('stage');
+  if (stage) {
+    const bar = document.createElement('div');
+    bar.className = 'allergy-bar';
+    bar.innerHTML = '<p lang="en"><b>Food Allergies and Intolerances:</b> Before ordering please speak to our staff about your requirements.</p>'
+      + '<p lang="fa" dir="rtl"><b>حساسیت و عدم تحمل غذایی:</b> لطفاً پیش از سفارش، نیازهای خود را با کارکنان ما در میان بگذارید.</p>';
+    stage.appendChild(bar);
+    if (window.Flames) {
+      const c = document.createElement('canvas');
+      c.className = 'flames'; c.width = 480; c.height = 130; // drawn small, scaled up: light on the TVs
+      stage.insertBefore(c, stage.firstChild);
+      window.Flames.canvas(c, { count: 16, height: 0.95 });
+    }
+  }
+
   document.querySelectorAll('#stage img:not([src=""])').forEach(b => b.addEventListener('error', () => setTimeout(() => { b.src = b.src.split('?')[0] + '?r=' + Date.now(); }, 60000)));
 
   // Check in with Netlify about once a minute (netlify/functions/screen.mjs). Each TV keeps an ID in its
@@ -27,25 +43,32 @@
   const params = new URLSearchParams(location.search);
   const want = params.get('screen'), preview = params.has('preview');
   let id = '', live = '';
+  const loadedAt = Date.now();
+  function freshReload(v) {
+    const p = new URLSearchParams(location.search);
+    p.set('v', v || Date.now().toString(36));
+    location.replace(location.pathname + '?' + p);
+  }
   try {
     id = localStorage.getItem('az-screen-id') || '';
     if (!id) { id = Math.random().toString(36).slice(2, 10) + Date.now().toString(36); localStorage.setItem('az-screen-id', id); }
   } catch (e) {}
   async function checkIn() {
     try {
-      const q = new URLSearchParams({ id });
+      const q = new URLSearchParams({ id, up: Math.round((Date.now() - loadedAt) / 60000) });
       if (want === '1' || want === '2') q.set('want', want);
       const r = await fetch('/api/screen?' + q, { cache: 'no-store' });
       if (!r.ok) return;
       const j = await r.json();
       if (!preview && here && (j.monitor === 1 || j.monitor === 2) && j.monitor !== here) { location.replace('/monitor-' + j.monitor + '/'); return; }
       if (!preview && j.monitor === 0) { location.replace('/menu/'); return; }
-      if (j.version) { if (live && j.version !== live) { location.reload(); return; } live = j.version; }
+      // A new version is live: load the page again from a fresh address, so no browser or TV can show an old copy.
+      if (j.version) { if (live && j.version !== live) { freshReload(j.version); return; } live = j.version; }
     } catch (e) {}
   }
   setTimeout(checkIn, 1000 + Math.random() * 3000); // a little apart, so two TVs starting together don't collide
   setInterval(checkIn, 60 * 1000);
 
   // Safety net: a full reload every hour anyway (clears any memory build-up, retries anything that failed).
-  setTimeout(() => location.reload(), 60 * 60 * 1000);
+  setTimeout(() => freshReload(), 60 * 60 * 1000);
 })();

@@ -101,7 +101,7 @@ export default async (req, context) => {
     const devices = cur?.devices || (cur && !cur.locked ? cur : {}) || {};
     const now = Date.now();
     const active = Object.values(devices).filter(d => now - d.seen < ACTIVE_MS)
-      .map(d => ({ monitor: d.m, device: d.kind || '?', last_seen_min: Math.round((now - d.seen) / 60000), on_it_min: Math.round((d.seen - (d.first || d.seen)) / 60000) }));
+      .map(d => ({ monitor: d.m, device: d.kind || '?', page_open_min: d.page ? Math.round((now - d.page) / 60000) : null, last_seen_min: Math.round((now - d.seen) / 60000), on_it_min: Math.round((d.seen - (d.first || d.seen)) / 60000) }));
     return reply({ version, locked: !!cur?.locked && !LOCK_PAUSED, lock_paused: LOCK_PAUSED, locked_monitors: Object.keys(cur?.locked || {}), active });
   }
   const id = url.searchParams.get("id") || "";
@@ -112,6 +112,13 @@ export default async (req, context) => {
   for (let tries = 0; tries < 4; tries++) {
     const cur = await store.getWithMetadata(KEY, { type: "json" });
     const r = assign(cur?.data || {}, id, want, Date.now(), kindOf(req.headers.get("user-agent") || ""));
+    // How long this TV's page has been open (minutes), so ?status shows whether it reloaded after the last deploy.
+    const up = Number(url.searchParams.get("up"));
+    const d = r.state.devices[id];
+    if (d && Number.isFinite(up)) {
+      const since = Date.now() - up * 60000;
+      if (!d.page || Math.abs(d.page - since) > 90000) { d.page = since; r.changed = true; }
+    }
     if (!r.changed) return reply({ monitor: r.monitor, version });
     // Only write if nobody else wrote in between, so two TVs starting together can't both get monitor 1.
     const res = await store.setJSON(KEY, r.state, cur ? { onlyIfMatch: cur.etag } : { onlyIfNew: true });

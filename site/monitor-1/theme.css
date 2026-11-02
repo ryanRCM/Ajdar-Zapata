@@ -1,3 +1,2 @@
-/* Monitor 1 = the left TV: yellow glass (Ryan, 2 Nov 2026). The wall glows hottest at its right edge,
-   where it meets the right TV, so the pair reads as one scene. */
-:root { --hot-x: 100%; }
+/* Monitor 1 = the left TV: yellow marble, pale yellow glass with a golden rim (Ryan, 2 Nov 2026). */
+:root { --marble: url(/marble-yellow.jpg); --rim: #ffaa00; }

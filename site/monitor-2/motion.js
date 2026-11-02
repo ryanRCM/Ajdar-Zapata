@@ -48,6 +48,21 @@
     }
   });
 
+  // ── The flame emblem (sections without photos): the same cosine maths as the big flames (flame.js),
+  // redrawn 20 times a second, only in the scene that is on screen.
+  if (window.Flames) {
+    const shape = { x: 0, y: 0, h: 60, w: 36, tilt: 0.04, amp: 0.13, k: 0.9, f: 1.1, ph: 0 };
+    let last = 0;
+    (function tick(now) {
+      requestAnimationFrame(tick);
+      if (now - last < 50 || document.hidden) return;
+      last = now;
+      document.querySelectorAll('.scene.on .mflame').forEach(el => {
+        el.setAttribute('d', window.Flames.path(shape, now / 1000, Number(el.dataset.layer)));
+      });
+    })(0);
+  }
+
   // ── Fit each category name (and its number line) to the width it has, at any screen size.
   function fit() {
     document.querySelectorAll('.words').forEach(box => {
@@ -84,6 +99,16 @@
     if (cur) timer2 = setTimeout(() => { cur.classList.remove('on', 'out'); wipe.classList.remove('go'); }, 760);
   }
 
+  // The whole screen changes: a bright band sweeps across, and while it covers the screen the slide, the
+  // food scene and the wall's glow all switch to the next section.
+  const bigwipe = document.querySelector('.bigwipe'), stage = document.getElementById('stage');
+  let started = false;
+  function nextSlide(k) {
+    if (!started) { started = true; return showSlide(k); }
+    restart(bigwipe, 'go');
+    setTimeout(() => showSlide(k), 380);
+  }
+
   function showSlide(k) {
     const prev = slides[si];
     if (prev && k !== si) {
@@ -93,9 +118,10 @@
     si = k;
     const s = slides[si];
     s.classList.add('on');
+    if (s.dataset.accent) stage.style.setProperty('--wall-hot', s.dataset.accent);
     if (s.dataset.scene !== undefined) setScene(Number(s.dataset.scene));
     clearTimeout(timer);
-    timer = setTimeout(() => showSlide((si + 1) % slides.length), parseFloat(s.dataset.hold || 8) * 1000);
+    timer = setTimeout(() => nextSlide((si + 1) % slides.length), parseFloat(s.dataset.hold || 8) * 1000);
   }
 
   // Download and prepare everything first (every picture decoded, fonts loaded), then start: smooth from frame one.
@@ -106,7 +132,7 @@
   ]);
   Promise.race([ready, new Promise(r => setTimeout(r, 8000))]).then(() => {
     fit();
-    requestAnimationFrame(() => { document.body.classList.add('ready'); showSlide(0); });
+    requestAnimationFrame(() => { document.body.classList.add('ready'); nextSlide(0); });
   });
 
   // A hidden tab pauses animations; on return, restart the current slide and scene cleanly.
@@ -117,6 +143,7 @@
     scenes.forEach(x => x.classList.remove('on', 'out'));
     wipe.classList.remove('go');
     sc = -1;
-    showSlide(si);
+    started = false;
+    nextSlide(si);
   });
 })();

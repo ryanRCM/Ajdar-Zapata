@@ -9,8 +9,8 @@ Every section is lifted straight off the original boards (site/board-N.png): not
   2. The lettering is lifted off the black background as see-through ink and recoloured by which ink it
      was (orange headings/prices/tags, yellow Persian names, cream/grey English), per wall palette.
 The left TV shows every section at once on glass panels in three columns; the right TV cycles through the
-sections one at a time, each as big as fits, beside its food animation. The bottom has only the address,
-read across the pair, with the one logo in the middle of it, straddling the gap between the two TVs.
+sections one at a time, each as big as fits, beside its food animation. The bottom bar has only the allergy notice;
+the one logo sits at the top of the right TV's food column.
 Output per monitor: sec-*.png, logo.png (left or right half is shown by CSS), layout.css.
     python3 tools/build-walls.py        (re-measure SECTIONS below if a new PDF moves things)
 """
@@ -29,10 +29,12 @@ SECTIONS = {
 # half the logo). Right TV: one section at a time, as big as the screen allows (Ryan, 2 Nov 2026: "one of
 # them static with everything, the other one cycling big").
 STATIC = [['starters', 'sauces', 'drinks'], ['sandwiches', 'burgers'], ['doner', 'platters', 'shawarma', 'hotdogs']]
-# ink colours on each wall: orange ink (headings, prices, number tags), yellow ink (Persian names, pills),
-# neutral ink (English names and descriptions)
-PALETTE = {1: {'orange': (176, 18, 8), 'yellow': (92, 26, 0), 'neutral': (18, 12, 8)},
-           2: {'orange': (110, 8, 0), 'yellow': (70, 14, 0), 'neutral': (18, 12, 8)}}
+# Colours on each wall (Ryan, 2 Nov 2026: "different colours ... very nice", like the big chains' boards:
+# strong red prices, dark headings, black item names, high contrast on bright glass).
+#   heading: section titles · price: prices and number tags · persian: Persian names · name: English item
+#   names · desc: the small descriptions
+PALETTE = {1: {'heading': (120, 10, 0), 'price': (222, 22, 10), 'persian': (168, 58, 0), 'name': (14, 10, 8), 'desc': (72, 52, 36)},
+           2: {'heading': (110, 6, 0), 'price': (206, 14, 30), 'persian': (150, 46, 0), 'name': (14, 10, 8), 'desc': (70, 46, 34)}}
 CAP = 16  # longest blank gap kept inside a section, in board pixels
 
 def tighten(a):
@@ -69,24 +71,45 @@ def tighten(a):
     rule = int(np.argmax(o)) if o.any() else 60
     return out, rule
 
-def lift(a, pal):
-    """Black-background lettering -> see-through ink in the wall's colours."""
+def lift(a, pal, rule):
+    """Black-background lettering -> see-through ink in the wall's colours, each part its own colour:
+    orange ink above the heading rule is the heading, the rest of the orange ink is prices and number tags;
+    yellow ink is Persian; cream ink is item names, the dimmer grey lines are descriptions. Everything but
+    the descriptions is thickened by a pixel so it reads bolder from across the shop."""
+    from PIL import ImageFilter
     v = a - B
     r = np.maximum(v[..., 0], 1)
     ratio = v[..., 1] / r
-    alpha = np.clip(np.abs(v).max(axis=2) / 228, 0, 1)
-    rgba = np.zeros(a.shape[:2] + (4,), float)
-    cls = np.where(ratio < 0.6, 0, np.where(ratio < 0.86, 1, 2))
-    for k, name in enumerate(['orange', 'yellow', 'neutral']):
-        m = cls == k
-        rgba[m, :3] = pal[name]
-        if name == 'orange':
-            alpha = np.where(m, np.clip(v[..., 0] / 222, 0, 1), alpha)
-        if name == 'yellow':
-            alpha = np.where(m, np.clip(v[..., 0] / 227, 0, 1), alpha)
-    rgba[..., 3] = alpha * 255
-    rgba[alpha < 0.04] = 0
-    return Image.fromarray(np.clip(rgba, 0, 255).round().astype(np.uint8), 'RGBA')
+    peak = np.abs(v).max(axis=2)
+    alpha = np.clip(peak / 228, 0, 1)
+    orange, yellow, neutral = ratio < 0.6, (ratio >= 0.6) & (ratio < 0.86), ratio >= 0.86
+    alpha = np.where(orange, np.clip(v[..., 0] / 222, 0, 1), alpha)
+    alpha = np.where(yellow, np.clip(v[..., 0] / 227, 0, 1), alpha)
+    # description rows: neutral ink there never gets as bright as the cream item names
+    rowmax = np.where(neutral & (alpha > 0.05), peak, 0).max(axis=1)
+    desc_rows = (rowmax > 0) & (rowmax < 205)
+    desc = neutral & desc_rows[:, None]
+    alpha = np.where(desc, np.clip(alpha / 0.71, 0, 1), alpha)   # full strength, not grey
+    ink = alpha >= 0.04
+    heading = ink & orange & (np.arange(a.shape[0])[:, None] <= rule + 6)
+    parts = {'heading': heading, 'price': ink & orange & ~heading, 'persian': ink & yellow,
+             'name': ink & neutral & ~desc, 'desc': ink & desc}
+    # each part on its own layer, thickened on its own (except descriptions), so colours never bleed
+    layers = {}
+    for name, m in parts.items():
+        la = np.where(m, alpha, 0)
+        if name != 'desc':
+            grown = np.asarray(Image.fromarray((la * 255).astype(np.uint8)).filter(ImageFilter.MaxFilter(3)), float) / 255
+            la = np.maximum(la, grown * 0.92)
+        layers[name] = la
+    names = list(layers)
+    stack = np.stack([layers[n] for n in names])
+    alpha = stack.max(axis=0)
+    pick = stack.argmax(axis=0)
+    rgb = np.zeros(a.shape[:2] + (3,), float)
+    for k, n in enumerate(names): rgb[pick == k] = pal[n]
+    out = np.dstack([rgb, alpha * 255])
+    return Image.fromarray(np.clip(out, 0, 255).round().astype(np.uint8), 'RGBA')
 
 def logo():
     """The logo cut out of the original board: everything outside the oval becomes see-through."""
@@ -110,38 +133,31 @@ for name, (b, y0, y1) in SECTIONS.items():
 # ---- layout, in pixels of a 1920x1080 screen
 W, H = 1920.0, 1080.0
 M, GAP, PAD = 20.0, 14.0, 12.0          # outer margin, between panels, inside a panel
-TOP, BOTTOM = 14.0, 1080 - 84.0         # the address bar sits below BOTTOM
-LOGO_W = 330.0                          # the whole logo, across both TVs (half on each), at the bottom middle
-LOGO_H = LOGO_W * 222 / 471
-LOGO_TOP = H - LOGO_H - 6
+TOP, BOTTOM = 14.0, 1080 - 96.0         # the allergy bar sits below BOTTOM
 pct = lambda v, ref: f'{v / ref * 100:.3f}%'
 CW = X1 - X0
 
 def common(mon, css):
-    lx = W - LOGO_W / 2 if mon == 1 else -LOGO_W / 2
-    css.append(f'.logo {{ left: {pct(lx, W)}; top: {pct(LOGO_TOP, H)}; width: {pct(LOGO_W, W)}; height: {pct(LOGO_H, H)}; }}')
-    css.append(f'.halo {{ left: {pct(lx - LOGO_W * .1, W)}; top: {pct(LOGO_TOP - LOGO_H * .12, H)}; width: {pct(LOGO_W * 1.2, W)}; height: {pct(LOGO_H * 1.24, H)}; }}')
-    side = 'left' if mon == 1 else 'right'
-    css.append(f'.address {{ top: {pct(BOTTOM + 12, H)}; height: {pct(H - BOTTOM - 24, H)}; }}')
-    css.append(f'.address .frame {{ {side}: {pct(M, W)}; {"right" if mon == 1 else "left"}: {pct(LOGO_W / 2 + 18, W)}; }}')
+    # the bottom bar: only the allergy notice (Ryan, 2 Nov 2026), on both TVs
+    css.append(f'.allergy-bar {{ left: {pct(M, W)}; right: {pct(M, W)}; top: {pct(BOTTOM + 10, H)}; height: {pct(H - BOTTOM - 20, H)}; }}')
     logo().save(f'site/monitor-{mon}/logo.png', optimize=True)
 
 for mon in (1, 2):
     for name, (img, rule) in tight.items():
-        lift(img, PALETTE[mon]).save(f'site/monitor-{mon}/sec-{name}.png', optimize=True)
+        lift(img, PALETTE[mon], rule).save(f'site/monitor-{mon}/sec-{name}.png', optimize=True)
 
 # Left TV: everything, three columns, one scale.
 col_w = (W - 2 * M - 2 * GAP) / 3
 s1 = (col_w - 2 * PAD) / CW
 for i, names in enumerate(STATIC):
-    bottom = LOGO_TOP - GAP if i == 2 else BOTTOM
+    bottom = BOTTOM
     while TOP + sum(tight[n][0].shape[0] * s1 + 2 * PAD for n in names) + GAP * (len(names) - 1) > bottom:
         s1 -= 0.002
 css = [f'/* Made by tools/build-walls.py: do not edit by hand. Left TV, everything at once, text scale {s1:.3f}. */']
 for i, names in enumerate(STATIC):
     x = M + i * (col_w + GAP)
     y = TOP
-    bottom = LOGO_TOP - GAP if i == 2 else BOTTOM
+    bottom = BOTTOM
     used = sum(tight[n][0].shape[0] * s1 + 2 * PAD for n in names) + GAP * (len(names) - 1)
     grow = (bottom - TOP - used) / sum(tight[n][0].shape[0] for n in names)  # fill the column to the bottom:
     for n in names:                                                         # taller glass, lettering centred
@@ -154,7 +170,7 @@ open('site/monitor-1/layout.css', 'w').write('\n'.join(css) + '\n')
 # Right TV: one section at a time on the left, its food animation in a column on the right.
 SIDE_W = 520.0
 area_x, area_w = M, W - 2 * M - SIDE_W - GAP
-area_top, area_bottom = TOP, LOGO_TOP - GAP          # the panel's left edge is above the logo half
+area_top, area_bottom = TOP, BOTTOM
 s2 = (area_w - 2 * PAD) / CW
 tallest = max(t[0].shape[0] for t in tight.values())
 s2 = min(s2, (area_bottom - area_top - 2 * PAD) / tallest)
