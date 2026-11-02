@@ -1,0 +1,13 @@
+/* Shared by both monitors: three boards filling the whole TV. */
+:root { --bg: #121110; --orange: #f07c1a; --cream: #f6efe4; color-scheme: dark; }
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--bg); overflow: hidden; }
+body.hide-cursor, body.hide-cursor * { cursor: none; }
+
+/* Each board takes a third of the width, full height: a touch wider than the PDF. */
+#stage { position: fixed; inset: 0; display: grid; grid-template-columns: repeat(3, 1fr); background: var(--bg); }
+.board { position: relative; overflow: hidden; }
+.board > img { display: block; width: 100%; height: 100%; object-fit: fill; }
+
+/* Netlify adds a "Powered by Netlify" badge on free sites; keep it off the TVs. */
+#nl-badge-frame, #nl-hud-frame { display: none !important; }

@@ -1,0 +1,4 @@
+# The plain address shows monitor 1, so TVs already on ajdarzapata.co.uk keep working.
+/            /monitor-1/   200!
+/monitor1    /monitor-1/   301
+/monitor2    /monitor-2/   301
