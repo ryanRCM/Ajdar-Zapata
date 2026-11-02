@@ -55,7 +55,7 @@
     let last = 0;
     (function tick(now) {
       requestAnimationFrame(tick);
-      if (now - last < 50 || document.hidden) return;
+      if (now - last < 50 || document.hidden || document.getElementById('stage').classList.contains('hero-mode')) return;
       last = now;
       document.querySelectorAll('.scene.on .mflame').forEach(el => {
         el.setAttribute('d', window.Flames.path(shape, now / 1000, Number(el.dataset.layer)));
@@ -95,7 +95,7 @@
     document.querySelectorAll('.sauce').forEach(card => {
       const box = card.querySelector('.names'), en = card.querySelector('.en'), fa = card.querySelector('.fa-img');
       if (!box.clientWidth || !en.naturalWidth) return;
-      const want = card.classList.contains('feature') ? 1.35 : 1;
+      const want = card.classList.contains('feature') ? 1.3 : .82;
       const s = Math.min(want, box.clientWidth / (en.naturalWidth * px), box.clientWidth / (fa.naturalWidth * px));
       en.style.height = (en.naturalHeight * s / 10.8) + 'vh';
       fa.style.height = (fa.naturalHeight * s / 10.8) + 'vh';
@@ -112,7 +112,7 @@
   const wipe = document.querySelector('.wipe');
   const bigwipe = document.querySelector('.bigwipe'), slabs = document.querySelector('.slabs'), burst = document.querySelector('.burst');
   const stage = document.getElementById('stage');
-  let cur = null, sc = -1, timer = null, timer2 = null, timer3 = null;
+  let cur = null, sc = -1, timer = null, timer2 = null, timer3 = null, timer4 = null;
   const isHero = el => el.classList.contains('hero');
 
   function restart(el, cls) { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }
@@ -132,6 +132,9 @@
     el.classList.add('on');
     const hero = isHero(el);
     stage.classList.toggle('hero-mode', hero);
+    stage.classList.remove('settled');
+    clearTimeout(timer4);
+    if (hero) timer4 = setTimeout(() => stage.classList.add('settled'), 700);   // the column has slid away: stop drawing it
     if (hero) sizeSauces();
     if (el.dataset.accent) stage.style.setProperty('--wall-hot', el.dataset.accent);
     if (el.dataset.scene !== undefined) setScene(Number(el.dataset.scene));

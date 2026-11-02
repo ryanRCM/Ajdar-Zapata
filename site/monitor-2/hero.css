@@ -19,15 +19,17 @@
 /* the right-hand column (logo and food reel) steps aside while a hero fills the screen */
 .side { transition: transform .6s cubic-bezier(.6, 0, .3, 1), opacity .5s; }
 #stage.hero-mode .side { transform: translateX(110%); opacity: 0; }
+/* while a hero covers the screen, nothing underneath is drawn (keeps the TVs smooth) */
+#stage.hero-mode .flames, #stage.hero-mode .embers-bg, #stage.hero-mode .snow, #stage.hero-mode .tvslide:not(.gone) { visibility: hidden; }
+#stage.hero-mode.settled .side { visibility: hidden; }
 
-/* sunburst rays turning slowly behind everything, like the big chains' boards */
+/* sunburst rays behind everything, like the big chains' boards */
 .rays {
   position: absolute; left: 50%; top: 45%; width: 130vh; height: 130vh; margin: -65vh 0 0 -65vh; border-radius: 50%;
   background: radial-gradient(closest-side, rgba(255, 236, 140, .55), rgba(255, 210, 80, .12) 45%, rgba(255, 200, 60, 0) 100%),
               repeating-conic-gradient(rgba(255, 214, 60, .2) 0 7deg, rgba(255, 214, 60, 0) 7deg 18deg);
-  will-change: transform; animation: rays 40s linear infinite;
+  transform: scale(1.7);   /* still: a turning sunburst this size cost the TVs too many frames */
 }
-@keyframes rays { from { transform: scale(1.7) rotate(0deg); } to { transform: scale(1.7) rotate(360deg); } }
 .hero-snow { z-index: 6; }
 
 /* ───── Big kinetic type: each letter smashes in from huge, then the word settles ───── */
@@ -61,26 +63,25 @@
   position: relative; overflow: hidden; border-radius: 1.6vh; border: .45vh solid var(--c2);
   background: linear-gradient(160deg, #fffdf8 0%, #fff4e0 55%, #ffe3b8 100%);
   box-shadow: inset 0 .4vh 0 rgba(255, 255, 255, .95), 0 .9vh 1.8vh rgba(70, 0, 0, .4);
-  opacity: 0;
 }
 .sauce.feature { grid-column: 1 / -1; }
-.hero-sauce.on .sauce { animation: cardIn .55s cubic-bezier(.2, 1.3, .4, 1) both, spot .7s ease-in-out both;
-  animation-delay: calc(.5s + var(--k) * .09s), calc(3.4s + var(--k) * .8s); }
+.hero-sauce.on .sauce { animation: cardIn .55s cubic-bezier(.2, 1.3, .4, 1) backwards; animation-delay: calc(.5s + var(--k) * .09s); }
 @keyframes cardIn { from { opacity: 0; transform: translateY(30%) scale(.7) rotate(calc((var(--k) - 4) * 1.4deg)); } to { opacity: 1; transform: none; } }
-@keyframes spot { 0% { opacity: 1; transform: none; } 45% { opacity: 1; transform: scale(1.045) rotate(-.6deg); } 100% { opacity: 1; transform: none; } }
 
-/* the zig-zag line of sauce, revealed left to right (outer moves in, inner moves back: transforms only) */
-.zig { position: absolute; left: 5%; right: 5%; top: 9%; height: 26%; overflow: hidden; transform: translateX(-101%); }
-.zig-in { position: absolute; inset: 0; transform: translateX(101%); }
+/* the zig-zag line of sauce, revealed left to right (outer moves in, inner moves back: transforms only).
+   Entrances here hold their first frame only while waiting ('backwards'): once done, a piece is plain and
+   stops costing the TV a layer (a hero that is off is display:none, so the resting look is the final one). */
+.zig { position: absolute; left: 5%; right: 5%; top: 6%; height: 17%; overflow: hidden; }
+.zig-in { position: absolute; inset: 0; }
 .zig svg { width: 100%; height: 100%; display: block; overflow: visible; }
 .zig path { fill: none; stroke: var(--c); stroke-width: 1.5vh; stroke-linecap: round; vector-effect: non-scaling-stroke; }
 .zig path.hi { stroke: rgba(255, 255, 255, .6); stroke-width: .35vh; transform: translateY(-2.5px); }
 .sauce .zig path:first-child { filter: drop-shadow(0 .3vh 0 var(--c2)); }
-.hero-sauce.on .zig, .hero-sauce.on .zig-in, .hero-sauce.on .squeezer { animation: draw 1.15s cubic-bezier(.5, .1, .5, .9) both; animation-delay: calc(1s + var(--k) * .2s); }
+.hero-sauce.on .zig, .hero-sauce.on .zig-in { animation: draw 1.15s cubic-bezier(.5, .1, .5, .9) backwards; animation-delay: calc(1s + var(--k) * .2s); }
 .hero-sauce.on .zig-in { animation-name: drawBack; }
 @keyframes draw { from { transform: translateX(-101%); } to { transform: none; } }
 @keyframes drawBack { from { transform: translateX(101%); } to { transform: none; } }
-.squeezer { position: absolute; left: 5%; right: 5%; top: 9%; height: 26%; transform: translateX(-101%); }
+.squeezer { position: absolute; left: 5%; right: 5%; top: 6%; height: 17%; transform: translateX(-101%); }
 .squeezer .bottle { position: absolute; right: -1.5vh; top: -8.5vh; transform: rotate(-150deg); transform-origin: 50% 0; }
 .hero-sauce.on .squeezer .bottle { animation: tip 1.15s ease-out both, away .45s ease-in both; animation-delay: calc(1s + var(--k) * .2s), calc(2.15s + var(--k) * .2s); }
 @keyframes tip { from { transform: rotate(-120deg) translateY(-30%); } 15% { transform: rotate(-150deg); } to { transform: rotate(-150deg); } }
@@ -99,21 +100,17 @@
 /* drops fall from the line once it is drawn */
 .dripdot { position: absolute; left: var(--x); top: 30%; width: 1.3vh; height: 1.7vh; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
   background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, .7), var(--c) 40%, var(--c2)); opacity: 0; }
-.hero-sauce.on .dripdot { animation: dripfall 2.6s cubic-bezier(.5, 0, .9, .6) infinite; animation-delay: calc(2.4s + var(--k) * .2s + var(--x) * .02s); }
+.hero-sauce.on .dripdot { animation: dripfall 2.6s cubic-bezier(.5, 0, .9, .6) 3; animation-delay: calc(2.4s + var(--k) * .2s + var(--x) * .02s); }
 @keyframes dripfall { 0% { opacity: 0; transform: translateY(0) scaleY(.4); } 12% { opacity: 1; transform: translateY(0) scaleY(1); }
   55% { opacity: 1; transform: translateY(5vh) scaleY(1.3); } 70%, 100% { opacity: 0; transform: translateY(7vh) scaleY(.6); } }
 .sauce.feature .dripdot { display: none; }
 
-.names { position: absolute; left: 4%; right: 4%; bottom: 7%; display: flex; flex-direction: column; align-items: center; gap: .8vh; }
-.names img { display: block; height: 5.6vh; width: auto; opacity: 0; }
-.hero-sauce.on .names img { animation: nameIn .5s cubic-bezier(.2, 1.4, .4, 1) both; animation-delay: calc(.85s + var(--k) * .09s); }
-.hero-sauce.on .names img.fa-img { animation-name: nameInFa; animation-delay: calc(1.05s + var(--k) * .09s); }
-@keyframes nameIn { from { opacity: 0; transform: scale(1.6); } to { opacity: 1; transform: none; } }
-@keyframes nameInFa { from { opacity: 0; transform: translateY(40%); } to { opacity: 1; transform: none; } }
+.names { position: absolute; left: 4%; right: 4%; bottom: 5%; display: flex; flex-direction: column; align-items: center; gap: .8vh; }
+.names img { display: block; height: 5.6vh; width: auto; }   /* they arrive with their card */
 
 /* the house sauce: a big bottle upside down, squeezing a stream into a turning swirl */
-.sauce.feature .names { left: 24%; right: 3%; top: 0; bottom: 0; justify-content: center; gap: 1.2vh; }
-.sauce.feature .zig { left: 24%; right: 3%; top: auto; bottom: 5%; height: 14%; }
+.sauce.feature .names { left: 24%; right: 3%; top: 0; bottom: 14%; justify-content: center; gap: 1.2vh; }
+.sauce.feature .zig { left: 24%; right: 3%; top: auto; bottom: 4%; height: 10%; }
 .sauce.feature .squeezer { display: none; }
 .pour { position: absolute; left: 0; top: 0; bottom: 0; width: 22%; }
 .pour .bottle.up { left: 50%; top: -2vh; width: 8vh; height: 17vh; margin-left: -4vh; transform: rotate(180deg); transform-origin: 50% 50%; }
@@ -122,9 +119,8 @@
 @keyframes squeeze { 0%, 100% { transform: rotate(180deg); } 40% { transform: rotate(180deg) scaleX(.86) scaleY(1.03); } }
 .pour .stream { position: absolute; left: 50%; top: 14.6vh; width: 1.5vh; margin-left: -.75vh; height: 7vh; border-radius: .8vh;
   background: linear-gradient(90deg, var(--c2), var(--c) 35%, rgba(255, 255, 255, .7) 50%, var(--c) 65%, var(--c2)); transform: scaleY(0); transform-origin: 50% 0; }
-.hero-sauce.on .pour .stream { animation: stream .5s ease-in 1.25s both, streamWob .4s ease-in-out 1.75s infinite alternate; }
+.hero-sauce.on .pour .stream { animation: stream .5s ease-in 1.25s both; }
 @keyframes stream { to { transform: scaleY(1); } }
-@keyframes streamWob { from { transform: scaleX(.85); } to { transform: scaleX(1.15); } }
 .pour .swirl { position: absolute; left: 50%; bottom: 3%; width: 20vh; height: 20vh; margin-left: -10vh; transform: scaleY(.3) scale(0); transform-origin: 50% 100%; }
 .hero-sauce.on .pour .swirl { animation: puddle .9s cubic-bezier(.2, 1.2, .4, 1) 1.5s both; }
 @keyframes puddle { to { transform: translateY(35%) scaleY(.3); } }
@@ -147,7 +143,7 @@
 @keyframes backIn { from { opacity: 0; } to { opacity: .55; } }
 @keyframes driftL { from { transform: translateX(0) rotate(-7deg) scale(.95); } to { transform: translateX(-5vw) rotate(-9deg) scale(.95); } }
 @keyframes driftR { from { transform: translateX(0) rotate(7deg) scale(.95); } to { transform: translateX(5vw) rotate(9deg) scale(.95); } }
-.cutsub { position: absolute; left: 50%; top: 25%; width: 66%; margin-left: -33%; }
+.cutsub { position: absolute; left: 50%; top: 17%; width: 58%; margin-left: -29%; }
 .cutsub .enter { position: relative; width: 100%; aspect-ratio: 1500 / 505; transform: translateX(130%); }
 .hero-sandwich.on .cutsub .enter { animation: subIn .8s cubic-bezier(.2, 1.15, .35, 1) .25s both, subBob 3.4s ease-in-out 9.5s infinite; }
 @keyframes subIn { 0% { transform: translateX(130%) rotate(6deg); } 70% { transform: translateX(-2%) rotate(-1deg); } 100% { transform: none; } }
@@ -182,8 +178,8 @@
 .sdrip { position: absolute; left: var(--x); top: 66%; width: 1.4vh; height: 2vh; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
   background: radial-gradient(circle at 35% 35%, #ffd0a0, #ff6a2b 45%, #c2380e); opacity: 0; }
 .hero-sandwich.on .sdrip { animation: dripfall 2.2s cubic-bezier(.5, 0, .9, .6) infinite; animation-delay: calc(1.9s + var(--k) * .7s); }
-.hero-sandwich .hero-type { left: 0; right: 0; bottom: 5%; display: flex; flex-direction: column; align-items: center; gap: 1vh; }
-.hero-sandwich .word { font-size: 23vh; }
+.hero-sandwich .hero-type { left: 0; right: 0; bottom: 3%; display: flex; flex-direction: column; align-items: center; gap: 1vh; }
+.hero-sandwich .word { font-size: 20vh; }
 
 /* ───────────── Burgers: the front sub slams down (squash and settle), sparks and a shock ring; behind it a
    second one turns on a glowing turntable ───────────── */
@@ -223,19 +219,19 @@
 
 /* ───────────── Ajdar Zapata at Christmas: the logo zooms in, three subs orbit it, sparkles, snow ───────────── */
 .hero-brand { background: radial-gradient(110% 95% at 50% 40%, #ff7a12 0%, #e02a00 40%, #8f0a00 85%, #5e0600 100%); }
-.big-logo { position: absolute; z-index: 2; left: 50%; top: 9%; width: 50%; margin-left: -25%; height: auto; opacity: 0; }
+.big-logo { position: absolute; z-index: 2; left: 50%; top: 5%; width: 44%; margin-left: -22%; height: auto; opacity: 0; }
 .hero-brand.on .big-logo { animation: logoIn .8s cubic-bezier(.2, 1.3, .4, 1) .3s both, logoBreathe 4s ease-in-out 1.2s infinite; }
 @keyframes logoIn { from { opacity: 0; transform: scale(.15) rotate(-12deg); } to { opacity: 1; transform: none; } }
 @keyframes logoBreathe { 0%, 100% { opacity: 1; transform: none; } 50% { opacity: 1; transform: scale(1.035); } }
-.orbit { position: absolute; left: 50%; top: 40%; width: 0; height: 0; }
+.orbit { position: absolute; left: 50%; top: 44%; width: 0; height: 0; }
 .orbit .ox { position: absolute; left: 0; top: 0; z-index: 1; opacity: 0; }
-.orbit .oy img { display: block; width: 52vh; height: auto; margin: -9vh 0 0 -26vh; }
+.orbit .oy img { display: block; width: 46vh; height: auto; margin: -8vh 0 0 -23vh; }
 .hero-brand.on .orbit .ox { animation: fadeUp .6s ease-out .9s both, ox 6s ease-in-out infinite alternate, oz 12s steps(1, end) infinite;
   animation-delay: .9s, var(--ph), var(--ph); }
 .hero-brand.on .orbit .oy { animation: oy 6s ease-in-out infinite alternate; animation-delay: calc(var(--ph) - 3s); }
 @keyframes fadeUp { from { opacity: 0; } to { opacity: 1; } }
-@keyframes ox { from { transform: translateX(40vh); } to { transform: translateX(-40vh); } }
-@keyframes oy { from { transform: translateY(-11vh) scale(.62); } to { transform: translateY(17vh) scale(1.05); } }
+@keyframes ox { from { transform: translateX(62vh); } to { transform: translateX(-62vh); } }
+@keyframes oy { from { transform: translateY(-12vh) scale(.6); } to { transform: translateY(19vh) scale(1.05); } }
 @keyframes oz { 0% { z-index: 3; } 50% { z-index: 1; } }
 .hero-brand .hero-type { left: 0; right: 0; bottom: 4%; display: flex; justify-content: center; }
 .hero-brand .word { font-size: 17vh; }

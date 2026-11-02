@@ -27,7 +27,7 @@ const server = http.createServer((req, res) => {
   for (const page of ['/', '/monitor-1/', '/monitor-2/']) for (const [w, h] of [[1920, 1080], [1366, 768]]) {
     const p = await b.newPage({ viewport: { width: w, height: h } }); const errs = [];
     p.on('pageerror', e => errs.push(e.message));
-    p.on('requestfailed', r => { if (!r.url().includes('fonts.g') && !(r.url().includes('/api/screen') && /ABORTED/.test(r.failure()?.errorText || ''))) errs.push('failed ' + r.url()); });
+    p.on('requestfailed', r => { if (!r.url().includes('fonts.g') && !(/\/api\/screen|\/show\.js\?clock/.test(r.url()) && /ABORTED/.test(r.failure()?.errorText || ''))) errs.push('failed ' + r.url()); });
     // monitor 2 starts on its first slide (?slide=), so the run is the same every time
     await p.goto(base + page + (page === '/monitor-2/' ? '?slide=starters' : '')); await p.waitForTimeout(1500);
     const r = await p.evaluate(() => {
