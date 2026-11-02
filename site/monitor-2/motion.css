@@ -47,7 +47,7 @@
 .photos.pots .pic[style*="--k:1"] { left: 46%; top: 4%; }
 .photos.pots .pic[style*="--k:2"] { left: 23%; top: 44%; }
 .photos .pic.framed { border-radius: 2vh; box-shadow: 0 1vh 2vh rgba(80, 20, 0, .45); }
-.photos.n1 .pic { top: 50%; left: 50%; width: auto; max-width: 100%; max-height: 100%; translate: -50% -50%; }
+.photos.n1 .pic { top: 0; right: 0; bottom: 0; left: 0; margin: auto; width: auto; height: auto; max-width: 100%; max-height: 100%; } /* centred the old-browser way: the TVs' Chrome ignores 'translate' */
 .scene.on .photos .pic { animation: picIn .7s cubic-bezier(.2, 1.2, .3, 1) both, picBob 3.2s ease-in-out infinite;
   animation-delay: calc(.15s + var(--k) * .22s), calc(1.2s + var(--k) * .4s); }
 @keyframes picIn { from { opacity: 0; transform: translateX(40%) rotate(4deg); } to { opacity: 1; transform: none; } }

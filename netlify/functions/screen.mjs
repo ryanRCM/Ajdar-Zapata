@@ -84,8 +84,8 @@ export function assign(state, id, want, now, kind = '') {
 function kindOf(ua) {
   const tv = /Tizen|Web0S|webOS|SMART-TV|SmartTV|HbbTV|BRAVIA|AFT|Android TV|GoogleTV|CrKey|Roku|VIDAA|NetCast|Philips|Hisense|TCL|Vestel/i.exec(ua);
   const os = /iPhone|iPad|Android|Windows|Mac OS X|CrOS|Linux/i.exec(ua);
-  const br = /Edg|SamsungBrowser|Firefox|Chrome|Safari/i.exec(ua);
-  return [tv ? 'TV:' + tv[0] : '', os ? os[0] : '', br ? br[0] : ''].filter(Boolean).join(' ').slice(0, 40);
+  const br = /(Edg|SamsungBrowser|Firefox|Chrome|Safari)\/?(\d+)?/i.exec(ua);
+  return [tv ? 'TV:' + tv[0] : '', os ? os[0] : '', br ? br[1] + (br[2] ? ' ' + br[2] : '') : ''].filter(Boolean).join(' ').slice(0, 40);
 }
 
 const reply = body => new Response(JSON.stringify(body), {
