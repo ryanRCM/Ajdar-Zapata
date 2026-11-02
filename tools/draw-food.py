@@ -70,20 +70,36 @@ shade(img, z, (255, 222, 40), (240, 190, 0))                                    
 shade(img, rrect((100, 200, 800, 290), 70), (244, 186, 100), (204, 128, 50), light=0.35)      # top bun, behind look
 save(img, 'hotdog')
 
-# ---- doner baguette
-img = canvas(); shadow(img, (60, 470, 840, 560))
-shade(img, rrect((50, 330, 850, 480), 70), (236, 180, 100), (190, 120, 50), light=0.2)
-for k in range(46):
-    x = 80 + k * 16 + random.uniform(-5, 5); y = 300 + random.uniform(-12, 12)
-    shade(img, ell((x, y, x + 46, y + 40)), random.choice([(176, 86, 40), (150, 66, 26), (196, 110, 52)]), (110, 46, 18), light=0.2)
-for k in range(14):
-    x = 90 + k * 52 + random.uniform(-8, 8)
-    shade(img, ell((x, 318, x + 36, 344)), (226, 40, 30), (170, 20, 14), light=0.3)
-    shade(img, ell((x + 20, 330, x + 64, 352)), (110, 190, 60), (70, 140, 30))
-shade(img, rrect((40, 180, 860, 320), 75), (246, 196, 116), (206, 134, 56), light=0.4)
-for k in range(30):
-    x = 120 + random.uniform(0, 660); y = 205 + random.uniform(0, 40)
-    shade(img, ell((x, y, x + 10, y + 6)), (255, 244, 214), (230, 210, 170))
+# ---- doner baguette, GDK-style (Ryan, 2 Nov 2026: "take inspiration from the best parts of GDK"):
+# a toasted, seeded Turkish bread wedge, overstuffed with shaved doner, red cabbage, crisp lettuce,
+# tomato, a garlic-sauce drizzle and grated cheese spilling out of the open side.
+img = canvas(); shadow(img, (40, 470, 860, 575), blur=45, a=130)
+shade(img, rrect((40, 360, 860, 495), 60), (226, 160, 80), (168, 98, 36), light=0.2)                 # bottom bread
+for k in range(70):                                                                                     # shaved meat, layered
+    x = 60 + random.uniform(0, 760); y = 300 + random.uniform(-10, 70); w = random.uniform(50, 110)
+    m = poly([(x, y + 22), (x + w * .3, y), (x + w, y + 8), (x + w * .8, y + 30), (x + w * .2, y + 34)])
+    shade(img, m, random.choice([(186, 104, 52), (160, 80, 34), (204, 128, 66), (140, 66, 26)]), (100, 42, 14), light=0.25)
+for k in range(46):                                                                                     # red cabbage shreds
+    x = 60 + random.uniform(0, 760); y = 270 + random.uniform(0, 50)
+    shade(img, shape(lambda d, x=x, y=y: d.line([(x * S, y * S), ((x + random.uniform(20, 46)) * S, (y + random.uniform(-14, 14)) * S)], fill=255, width=7 * S)), (150, 40, 120), (100, 20, 80))
+for k in range(30):                                                                                     # lettuce
+    x = 60 + random.uniform(0, 760); y = 262 + random.uniform(0, 40)
+    shade(img, ell((x, y, x + random.uniform(30, 60), y + 22)), (176, 222, 110), (110, 170, 60), light=0.2)
+for k in range(12):                                                                                     # tomato
+    x = 80 + k * 64 + random.uniform(-10, 10)
+    shade(img, rrect((x, 290, x + 44, 314), 8), (232, 52, 36), (176, 24, 16), light=0.35)
+for k in range(30):                                                                                     # grated cheese
+    x = 80 + random.uniform(0, 720); y = 258 + random.uniform(0, 30)
+    shade(img, shape(lambda d, x=x, y=y: d.line([(x * S, y * S), ((x + 16) * S, (y + random.uniform(-6, 6)) * S)], fill=255, width=4 * S)), (255, 214, 60), (240, 180, 20))
+sauce = shape(lambda d: d.line([((70 + k * 30) * S, (262 + (12 if k % 2 else -4) + random.uniform(-4, 4)) * S) for k in range(26)], fill=255, width=9 * S, joint='curve'))
+shade(img, sauce, (255, 252, 242), (236, 230, 216), light=0.3)                                         # garlic sauce drizzle
+top = rrect((30, 120, 870, 268), 75)
+shade(img, top, (240, 182, 96), (196, 122, 48), light=0.45)                                             # top bread, toasted
+gloss(img, (120, 140, 560, 175), a=90, blur=14)
+for k in range(70):                                                                                     # sesame and nigella seeds
+    x = 80 + random.uniform(0, 740); y = 140 + random.uniform(0, 70)
+    col = (255, 244, 214) if k % 3 else (40, 30, 26)
+    shade(img, ell((x, y, x + 9, y + 5)), col, col)
 save(img, 'doner')
 
 # ---- shawarma wrap

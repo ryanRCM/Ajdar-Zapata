@@ -64,7 +64,7 @@ body.hide-cursor, body.hide-cursor * { cursor: none; }
 /* A slow shine slides across the glass now and then: one moving band, so it stays smooth on TVs. */
 .sweep {
   position: fixed; top: 0; bottom: 0; left: 0; width: 30%; pointer-events: none; z-index: 5;
-  background: linear-gradient(105deg, transparent, rgba(255, 255, 255, .06) 40%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .06) 60%, transparent);
+  background: linear-gradient(105deg, transparent, rgba(255, 255, 255, .02) 40%, rgba(255, 255, 255, .07) 50%, rgba(255, 255, 255, .02) 60%, transparent); /* faint: the TVs show it far stronger */
   transform: translateX(-110%); will-change: transform; animation: sweep 16s ease-in-out infinite;
 }
 @keyframes sweep { 0%, 70% { transform: translateX(-110%); } 100% { transform: translateX(350%); } }

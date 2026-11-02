@@ -147,6 +147,7 @@ for name, (b, y0, y1) in SECTIONS.items():
 # ---- sauces: the board prints them small in a 3-across grid. Rebuild them as a list like the other
 # sections (Ryan, 2 Nov 2026: the sauces must be big): one sauce per row, English left, Persian right,
 # each name cut straight from the board (never retyped) and enlarged to match the other sections' names.
+# English and Persian meet in the middle, so the list sits centred (Ryan, 2 Nov 2026: it looked off-centre).
 def sauce_list():
     b, y0, y1 = SECTIONS['sauces']
     src = boards[b][y0:y1 + 1, X0:X1]
@@ -168,8 +169,10 @@ def sauce_list():
             en, fa = up(cut(ey, x)), up(cut(fy, x))
             h = max(en.shape[0], fa.shape[0])
             row = np.tile(B, (h, width, 1))
-            row[(h - en.shape[0]) // 2:(h - en.shape[0]) // 2 + en.shape[0], 8:8 + en.shape[1]] = en
-            row[(h - fa.shape[0]) // 2:(h - fa.shape[0]) // 2 + fa.shape[0], width - 8 - fa.shape[1]:width - 8] = fa
+            # centred pair: English ends just left of the middle, Persian starts just right of it
+            mid, gap = width // 2, 28
+            row[(h - en.shape[0]) // 2:(h - en.shape[0]) // 2 + en.shape[0], mid - gap - en.shape[1]:mid - gap] = en
+            row[(h - fa.shape[0]) // 2:(h - fa.shape[0]) // 2 + fa.shape[0], mid + gap:mid + gap + fa.shape[1]] = fa
             lines += [row, np.tile(B, (22, width, 1))]
     out = np.vstack(lines + [np.tile(B, (10, width, 1))])
     return out, tight['sauces'][1]
