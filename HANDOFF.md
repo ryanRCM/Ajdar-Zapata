@@ -21,6 +21,7 @@
 - [ ] **Unblock Netlify builds.** The repo is linked (2 Nov), but Netlify's free plan blocks builds of commits from an "unrecognized Git contributor" (Claude's commits) on a private repo. Fix in Netlify: approve the contributor on the blocked deploy (Deploys), or change the setting under Team settings → contributors; or make the repo public.
 - [ ] Put /monitor-1 and /monitor-2 on the TVs; say hit or miss on the monitor 2 animation.
 - [ ] Persian allergy line (Fable's translation, reviewed 2 Nov, reads correctly): Ryan to confirm with the shop.
+- [ ] Hang **monitor 1 on the left**, monitor 2 on the right: the address reads across the pair.
 - [ ] Any more specs.
 
 **Paste-in:** "Read CLAUDE.md and HANDOFF.md in ryanRCM/Ajdar-Zapata, then do Next 1."
