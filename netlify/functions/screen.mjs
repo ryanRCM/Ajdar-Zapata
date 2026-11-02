@@ -17,7 +17,7 @@ const LOCK_PAUSED = false;
 const MAX_DEVICES = 20;
 // The two shop TVs are locked in (Ryan, 2 Nov 2026). Monitor 1 = left wall (yellow), monitor 2 = right
 // wall (orange). If the locked TVs turn out to be on the wrong walls, set SWAP to true and push.
-const SWAP = false;
+const SWAP = true;   // Ryan, 2 Nov 2026: "switch the monitors ... on the switched sides"
 
 // state: { devices: { id: { m, first, seen } }, locked: { 1: id, 2: id } }. Older state was the devices map itself.
 export function assign(state, id, want, now, kind = '') {
