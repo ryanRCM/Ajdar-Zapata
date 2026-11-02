@@ -18,12 +18,14 @@
 
   // The bottom bar: only the allergy notice (Ryan, 2 Nov 2026), and the flames behind the glass (flame.js).
   const stage = document.getElementById('stage');
-  if (stage) {
+  if (stage && document.body.dataset.monitor === '2') { // the allergy notice: right TV only (Ryan: "only in one section")
     const bar = document.createElement('div');
     bar.className = 'allergy-bar';
     bar.innerHTML = '<p lang="en"><b>Food Allergies and Intolerances:</b> Before ordering please speak to our staff about your requirements.</p>'
       + '<p lang="fa" dir="rtl"><b>حساسیت و عدم تحمل غذایی:</b> لطفاً پیش از سفارش، نیازهای خود را با کارکنان ما در میان بگذارید.</p>';
     stage.appendChild(bar);
+  }
+  if (stage) {
     if (window.Flames) {
       const c = document.createElement('canvas');
       c.className = 'flames'; c.width = 480; c.height = 130; // drawn small, scaled up: light on the TVs

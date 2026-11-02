@@ -28,14 +28,15 @@ SECTIONS = {
 # Left TV: the whole menu at once, three columns (the last one is next to the middle of the pair, above
 # half the logo). Right TV: one section at a time, as big as the screen allows (Ryan, 2 Nov 2026: "one of
 # them static with everything, the other one cycling big").
-STATIC = [['starters', 'sauces', 'drinks'], ['sandwiches', 'burgers'], ['doner', 'platters', 'shawarma', 'hotdogs']]
+STATIC = [['starters', 'sauces'], ['sandwiches', 'burgers', 'drinks'], ['doner', 'platters', 'shawarma', 'hotdogs']]
 # Colours on each wall (Ryan, 2 Nov 2026: "different colours ... very nice", like the big chains' boards:
 # strong red prices, dark headings, black item names, high contrast on bright glass).
 #   heading: section titles · price: prices and number tags · persian: Persian names · name: English item
 #   names · desc: the small descriptions
 PALETTE = {1: {'heading': (120, 10, 0), 'price': (222, 22, 10), 'persian': (168, 58, 0), 'name': (14, 10, 8), 'desc': (72, 52, 36)},
            2: {'heading': (110, 6, 0), 'price': (206, 14, 30), 'persian': (150, 46, 0), 'name': (14, 10, 8), 'desc': (70, 46, 34)}}
-CAP = 16  # longest blank gap kept inside a section, in board pixels
+CAP = 16  # longest blank gap kept inside a section, in board pixels (down)
+HCAP = 34  # longest blank gap kept across a row (between a name and its price)
 
 def tighten(a):
     """Drop thin divider lines and cap blank gaps. Returns the new image and the heading-rule row."""
@@ -66,6 +67,22 @@ def tighten(a):
         else:
             y += 1
     out = a[keep]
+    # the same across: cap the empty space between names and prices (full-width lines are ignored when
+    # looking for it, and simply come out shorter)
+    ink2 = np.abs(out - B).max(axis=2) > 30
+    lines = ink2.mean(axis=1) > 0.5
+    cols = ink2[~lines].any(axis=0)
+    keepc = np.ones(len(cols), bool)
+    x = 0
+    while x < len(cols):
+        if not cols[x]:
+            e = x
+            while e < len(cols) and not cols[e]: e += 1
+            if x > 0 and e < len(cols) and e - x > HCAP: keepc[x + HCAP:e] = False
+            x = e
+        else:
+            x += 1
+    out = out[:, keepc]
     # heading rule: the first thick full-width orange band
     o = (np.abs(out - np.array([240, 124, 26])).max(axis=2) < 60).mean(axis=1) > 0.8
     rule = int(np.argmax(o)) if o.any() else 60
@@ -75,7 +92,7 @@ def lift(a, pal, rule):
     """Black-background lettering -> see-through ink in the wall's colours, each part its own colour:
     orange ink above the heading rule is the heading, the rest of the orange ink is prices and number tags;
     yellow ink is Persian; cream ink is item names, the dimmer grey lines are descriptions. Everything but
-    the descriptions is thickened by a pixel so it reads bolder from across the shop."""
+    nothing is thickened (Ryan: thickening closed up the 6s and 9s)."""
     from PIL import ImageFilter
     v = a - B
     r = np.maximum(v[..., 0], 1)
@@ -98,9 +115,6 @@ def lift(a, pal, rule):
     layers = {}
     for name, m in parts.items():
         la = np.where(m, alpha, 0)
-        if name != 'desc':
-            grown = np.asarray(Image.fromarray((la * 255).astype(np.uint8)).filter(ImageFilter.MaxFilter(3)), float) / 255
-            la = np.maximum(la, grown * 0.92)
         layers[name] = la
     names = list(layers)
     stack = np.stack([layers[n] for n in names])
@@ -132,56 +146,58 @@ for name, (b, y0, y1) in SECTIONS.items():
 
 # ---- layout, in pixels of a 1920x1080 screen
 W, H = 1920.0, 1080.0
-M, GAP, PAD = 20.0, 14.0, 12.0          # outer margin, between panels, inside a panel
-TOP, BOTTOM = 14.0, 1080 - 96.0         # the allergy bar sits below BOTTOM
+M, GAP, PAD = 14.0, 12.0, 10.0          # outer margin, between panels, inside a panel
+TOP = 12.0
+BOTTOM1 = H - 12.0                      # left TV: no bottom bar (allergy notice only on the right TV)
+BOTTOM2 = H - 96.0                      # right TV: the allergy bar sits below this
 pct = lambda v, ref: f'{v / ref * 100:.3f}%'
-CW = X1 - X0
+size = {n: (t[0].shape[1], t[0].shape[0]) for n, t in tight.items()}   # (width, height) in board pixels
 
 def common(mon, css):
-    # the bottom bar: only the allergy notice (Ryan, 2 Nov 2026), on both TVs
-    css.append(f'.allergy-bar {{ left: {pct(M, W)}; right: {pct(M, W)}; top: {pct(BOTTOM + 10, H)}; height: {pct(H - BOTTOM - 20, H)}; }}')
+    if mon == 2:  # the allergy notice, on the right TV only (Ryan, 2 Nov 2026: "only in one section")
+        css.append(f'.allergy-bar {{ left: {pct(M, W)}; right: {pct(M, W)}; top: {pct(BOTTOM2 + 10, H)}; height: {pct(H - BOTTOM2 - 20, H)}; }}')
     logo().save(f'site/monitor-{mon}/logo.png', optimize=True)
 
 for mon in (1, 2):
     for name, (img, rule) in tight.items():
         lift(img, PALETTE[mon], rule).save(f'site/monitor-{mon}/sec-{name}.png', optimize=True)
 
-# Left TV: everything, three columns, one scale.
-col_w = (W - 2 * M - 2 * GAP) / 3
-s1 = (col_w - 2 * PAD) / CW
-for i, names in enumerate(STATIC):
-    bottom = BOTTOM
-    while TOP + sum(tight[n][0].shape[0] * s1 + 2 * PAD for n in names) + GAP * (len(names) - 1) > bottom:
-        s1 -= 0.002
+# Left TV: everything at once. Each column is as wide as its widest section needs, all at one text scale,
+# as big as both the screen's width and each column's height allow.
+def col_w_board(names): return max(size[n][0] for n in names)
+def col_h_board(names): return sum(size[n][1] for n in names)
+fixed_w = 2 * M + GAP * (len(STATIC) - 1) + 2 * PAD * len(STATIC)
+s1 = (W - fixed_w) / sum(col_w_board(c) for c in STATIC)
+for names in STATIC:
+    s1 = min(s1, (BOTTOM1 - TOP - GAP * (len(names) - 1) - 2 * PAD * len(names)) / col_h_board(names))
 css = [f'/* Made by tools/build-walls.py: do not edit by hand. Left TV, everything at once, text scale {s1:.3f}. */']
-for i, names in enumerate(STATIC):
-    x = M + i * (col_w + GAP)
+extra_w = (W - fixed_w - s1 * sum(col_w_board(c) for c in STATIC)) / len(STATIC)   # share any spare width
+x = M
+for names in STATIC:
+    cw = col_w_board(names) * s1 + 2 * PAD + extra_w
+    used = sum(size[n][1] * s1 + 2 * PAD for n in names) + GAP * (len(names) - 1)
+    grow = (BOTTOM1 - TOP - used) / len(names)          # panels share the leftover height: fill to the bottom
     y = TOP
-    bottom = BOTTOM
-    used = sum(tight[n][0].shape[0] * s1 + 2 * PAD for n in names) + GAP * (len(names) - 1)
-    grow = (bottom - TOP - used) / sum(tight[n][0].shape[0] for n in names)  # fill the column to the bottom:
-    for n in names:                                                         # taller glass, lettering centred
-        h = tight[n][0].shape[0] * (s1 + grow) + 2 * PAD
-        css.append(f'.sec-{n} {{ left: {pct(x, W)}; top: {pct(y, H)}; width: {pct(col_w, W)}; height: {pct(h, H)}; }}')
+    for n in names:
+        h = size[n][1] * s1 + 2 * PAD + grow
+        css.append(f'.sec-{n} {{ left: {pct(x, W)}; top: {pct(y, H)}; width: {pct(cw, W)}; height: {pct(h, H)}; }}')
         y += h + GAP
+    x += cw + GAP
 common(1, css)
 open('site/monitor-1/layout.css', 'w').write('\n'.join(css) + '\n')
 
-# Right TV: one section at a time on the left, its food animation in a column on the right.
+# Right TV: one section at a time, each scaled to fill the space beside the food column.
 SIDE_W = 520.0
 area_x, area_w = M, W - 2 * M - SIDE_W - GAP
-area_top, area_bottom = TOP, BOTTOM
-s2 = (area_w - 2 * PAD) / CW
-tallest = max(t[0].shape[0] for t in tight.values())
-s2 = min(s2, (area_bottom - area_top - 2 * PAD) / tallest)
-css = [f'/* Made by tools/build-walls.py: do not edit by hand. Right TV, one section at a time, text scale {s2:.3f}. */']
-for n, (img, rule) in tight.items():
-    h = img.shape[0] * s2 + 2 * PAD
-    w = CW * s2 + 2 * PAD
-    y = area_top + (area_bottom - area_top - h) / 2
-    css.append(f'.tvslide.sec-{n} {{ left: {pct(area_x + (area_w - w) / 2, W)}; top: {pct(y, H)}; width: {pct(w, W)}; height: {pct(h, H)}; }}')
-css.append(f'.tvslide.soon {{ left: {pct(area_x, W)}; top: {pct(area_top + 60, H)}; width: {pct(area_w, W)}; height: {pct(area_bottom - area_top - 120, H)}; }}')
-css.append(f'.side {{ left: {pct(W - M - SIDE_W, W)}; top: {pct(TOP, H)}; width: {pct(SIDE_W, W)}; height: {pct(BOTTOM - TOP, H)}; }}')
+area_top, area_bottom = TOP, BOTTOM2
+css = ['/* Made by tools/build-walls.py: do not edit by hand. Right TV, one section at a time, each as big as fits. */']
+scales = []
+for n, (w0, h0) in size.items():
+    s2 = min((area_w - 2 * PAD) / w0, (area_bottom - area_top - 2 * PAD) / h0)
+    scales.append(s2)
+    w, h = w0 * s2 + 2 * PAD, h0 * s2 + 2 * PAD
+    css.append(f'.tvslide.sec-{n} {{ left: {pct(area_x + (area_w - w) / 2, W)}; top: {pct(area_top + (area_bottom - area_top - h) / 2, H)}; width: {pct(w, W)}; height: {pct(h, H)}; }}')
+css.append(f'.side {{ left: {pct(W - M - SIDE_W, W)}; top: {pct(TOP, H)}; width: {pct(SIDE_W, W)}; height: {pct(BOTTOM2 - TOP, H)}; }}')
 common(2, css)
 open('site/monitor-2/layout.css', 'w').write('\n'.join(css) + '\n')
-print(f'left TV (everything): text {s1 / 0.5:.2f}x the original boards | right TV (one at a time): text {s2 / 0.5:.2f}x')
+print(f'left TV (everything): text {s1 / 0.5:.2f}x the original boards (was 1.08x) | right TV: {min(scales) / 0.5:.2f}x to {max(scales) / 0.5:.2f}x (was 2.42x for all)')

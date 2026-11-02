@@ -13,8 +13,8 @@
   --fa: "Vazirmatn", Tahoma, sans-serif;
   /* The right TV: orange glass on the shared reddish-orange wall, hottest at its left edge where it meets
      the left TV. */
-  --marble: url(/marble-orange.jpg); --rim: #ff5a00;
-  --glass-top: rgba(255, 255, 255, .97); --glass-mid: rgba(255, 240, 222, .95); --glass-low: rgba(255, 210, 160, .95);
+  --marble: url(/marble-orange.jpg); --rim: #ff8a00;
+  --glass-top: rgba(255, 250, 230, .97); --glass-mid: rgba(255, 228, 170, .95); --glass-low: rgba(255, 200, 110, .95); /* amber, not pink */
   --glass-shade: rgba(150, 40, 0, .22); --type: #7a0800;
   --ink: #121110; /* type and badges on the orange boards */
   --yellow: #ffc61a; /* the left wall's yellow, used for accents here so the pair reads mainly yellow */
