@@ -23,7 +23,7 @@ const SWAP = false;
 export function assign(state, id, want, now, kind = '') {
   const legacy = state && !state.devices && !state.locked;
   const devices = { ...(legacy ? state : state?.devices || {}) };
-  let locked = state?.locked ? { ...state.locked } : null;
+  let locked = state?.locked && !LOCK_PAUSED ? { ...state.locked } : null; // paused: any saved lock is ignored
   let changed = legacy && Object.keys(devices).length > 0;
 
   // ?screen=1 / ?screen=2 always wins: it (re)locks this device to that monitor, e.g. a TV that lost its memory.
@@ -70,7 +70,9 @@ export function assign(state, id, want, now, kind = '') {
     changed = true;
   }
   if (SWAP && m) m = 3 - m;
-  return { state: locked ? { devices, locked } : { devices }, monitor: m, changed };
+  // While paused, keep any saved lock in the store untouched (so un-pausing can restore it).
+  const keepLock = LOCK_PAUSED && state?.locked ? state.locked : locked;
+  return { state: keepLock ? { devices, locked: keepLock } : { devices }, monitor: m, changed };
 }
 
 // A short, non-identifying description of the device from its browser: enough to tell a TV from a phone.
@@ -95,7 +97,7 @@ export default async (req, context) => {
     const now = Date.now();
     const active = Object.values(devices).filter(d => now - d.seen < ACTIVE_MS)
       .map(d => ({ monitor: d.m, device: d.kind || '?', last_seen_min: Math.round((now - d.seen) / 60000), on_it_min: Math.round((d.seen - (d.first || d.seen)) / 60000) }));
-    return reply({ version, locked: !!cur?.locked, locked_monitors: Object.keys(cur?.locked || {}), active });
+    return reply({ version, locked: !!cur?.locked && !LOCK_PAUSED, lock_paused: LOCK_PAUSED, locked_monitors: Object.keys(cur?.locked || {}), active });
   }
   const id = url.searchParams.get("id") || "";
   const want = Number(url.searchParams.get("want")) || 0;
