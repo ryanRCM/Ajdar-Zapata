@@ -18,7 +18,7 @@
 3. **Later:** a staff page to change prices or mark sold out from a phone, plus a dated log of what's going on. Needs a real database (e.g. Netlify Blobs or a small backend), so plan it with Ryan first.
 
 ## Waiting on Ryan
-- [ ] **Unblock Netlify builds.** The repo is linked (2 Nov), but Netlify's free plan blocks builds of commits from an "unrecognized Git contributor" (Claude's commits) on a private repo. Fix in Netlify: approve the contributor on the blocked deploy (Deploys), or change the setting under Team settings → contributors; or make the repo public.
+- [x] **Unblock Netlify builds.** Ryan upgraded the Netlify plan (2 Nov), which lifts the free plan's block on commits from an "unrecognized Git contributor" (Claude's commits).
 - [ ] Put /monitor-1 and /monitor-2 on the TVs; say hit or miss on the monitor 2 animation.
 - [ ] Persian allergy line (Fable's translation, reviewed 2 Nov, reads correctly): Ryan to confirm with the shop.
 - [ ] Hang **monitor 1 on the left**, monitor 2 on the right: the address reads across the pair.
