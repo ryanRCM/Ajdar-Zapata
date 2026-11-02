@@ -1,2 +1,6 @@
 [build]
   publish = "site"
+
+# /api/screen: tells each TV which monitor to show and which deploy is live (see netlify/functions/screen.mjs).
+[functions]
+  directory = "netlify/functions"

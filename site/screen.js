@@ -1,5 +1,6 @@
 // Shared by both monitors: keep the screen on, full screen on tap, hide the pointer,
-// show the full allergy notice, retry a failed image, and reload every 10 minutes so menu changes reach the TVs.
+// show the full allergy notice, retry a failed image, reload by itself when a new version goes live,
+// and make sure each TV shows its own monitor.
 (() => {
   let lock = null, cursorTimer = null;
   async function keepAwake() {
@@ -26,5 +27,31 @@
 
   document.querySelectorAll('.board > img').forEach(b => b.addEventListener('error', () => setTimeout(() => { b.src = b.src.split('?')[0] + '?r=' + Date.now(); }, 60000)));
 
-  setTimeout(() => location.reload(), 10 * 60 * 1000);
+  // Check in with Netlify about once a minute (netlify/functions/screen.mjs). Each TV keeps an ID in its
+  // browser; Netlify says which monitor that TV should show, and which deploy is live. If the TV is on
+  // the wrong monitor it moves; if a new deploy is live it reloads, so updates reach the TVs untouched.
+  // Pin a TV by hand with ?screen=1 or ?screen=2 on the address.
+  const here = Number(document.body.dataset.monitor) || 0;
+  const want = new URLSearchParams(location.search).get('screen');
+  let id = '', live = '';
+  try {
+    id = localStorage.getItem('az-screen-id') || '';
+    if (!id) { id = Math.random().toString(36).slice(2, 10) + Date.now().toString(36); localStorage.setItem('az-screen-id', id); }
+  } catch (e) {}
+  async function checkIn() {
+    try {
+      const q = new URLSearchParams({ id });
+      if (want === '1' || want === '2') q.set('want', want);
+      const r = await fetch('/api/screen?' + q, { cache: 'no-store' });
+      if (!r.ok) return;
+      const j = await r.json();
+      if (here && (j.monitor === 1 || j.monitor === 2) && j.monitor !== here) { location.replace('/monitor-' + j.monitor + '/'); return; }
+      if (j.version) { if (live && j.version !== live) { location.reload(); return; } live = j.version; }
+    } catch (e) {}
+  }
+  setTimeout(checkIn, 1000 + Math.random() * 3000); // a little apart, so two TVs starting together don't collide
+  setInterval(checkIn, 60 * 1000);
+
+  // Safety net: a full reload every hour anyway (clears any memory build-up, retries anything that failed).
+  setTimeout(() => location.reload(), 60 * 60 * 1000);
 })();

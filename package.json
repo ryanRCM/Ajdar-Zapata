@@ -1,0 +1,9 @@
+{
+  "name": "ajdar-zapata",
+  "private": true,
+  "description": "TV menu for Ajdar Zapata. site/ is served by Netlify; netlify/functions/screen.mjs runs on Netlify.",
+  "type": "module",
+  "dependencies": {
+    "@netlify/blobs": "11.1.4"
+  }
+}
