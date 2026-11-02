@@ -10,12 +10,15 @@
 <link rel="stylesheet" href="/screen.css">
 <link rel="stylesheet" href="/monitor-1/theme.css">
 <link rel="stylesheet" href="/monitor-1/layout.css">
+<link rel="stylesheet" href="/xmas.css">
 </head>
 <body data-monitor="1">
 <!-- The left TV (yellow glass): the whole menu at once, in three columns (Ryan, 2 Nov 2026: one TV static
      with everything, the other cycling big). Every section is lifted straight off the boards by
-     tools/build-walls.py (nothing retyped). -->
+     tools/build-walls.py (nothing retyped). Christmas: snow behind the glass, and the section the right TV is
+     showing sparkles round its rim (/show.js keeps both TVs in step; /xmas.js). The text never moves. -->
 <div id="stage">
+  <div class="snow" data-snow="40"></div>
   <div class="card sec-starters"><img src="/monitor-1/sec-starters.png" alt="Starters and sides, 1 to 10"></div>
   <div class="card sec-sauces"><img src="/monitor-1/sec-sauces.png" alt="Sauce selection"></div>
   <div class="card sec-drinks"><img src="/monitor-1/sec-drinks.png" alt="Drinks"></div>
@@ -28,6 +31,8 @@
 </div>
 <div class="sweep"></div>
 <script src="/flame.js"></script>
+<script src="/show.js"></script>
+<script src="/xmas.js"></script>
 <script src="/screen.js"></script>
 </body>
 </html>

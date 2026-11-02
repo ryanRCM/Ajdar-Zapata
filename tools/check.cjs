@@ -17,6 +17,7 @@ const server = http.createServer((req, res) => {
   const f = path.join(root, p);
   if (!f.startsWith(root) || !fs.existsSync(f)) { res.writeHead(404); return res.end(); }
   res.writeHead(200, { 'content-type': types[path.extname(f)] || 'application/octet-stream' });
+  if (req.method === 'HEAD') return res.end();   // the clock check (/show.js) only reads the Date header
   fs.createReadStream(f).pipe(res);
 }).listen(0);
 
@@ -27,7 +28,8 @@ const server = http.createServer((req, res) => {
     const p = await b.newPage({ viewport: { width: w, height: h } }); const errs = [];
     p.on('pageerror', e => errs.push(e.message));
     p.on('requestfailed', r => { if (!r.url().includes('fonts.g') && !(r.url().includes('/api/screen') && /ABORTED/.test(r.failure()?.errorText || ''))) errs.push('failed ' + r.url()); });
-    await p.goto(base + page); await p.waitForTimeout(1500);
+    // monitor 2 starts on its first slide (?slide=), so the run is the same every time
+    await p.goto(base + page + (page === '/monitor-2/' ? '?slide=starters' : '')); await p.waitForTimeout(1500);
     const r = await p.evaluate(() => {
       const box = el => el.getBoundingClientRect();
       const meets = (a, c) => a.left < c.right - 1 && c.left < a.right - 1 && a.top < c.bottom - 1 && c.top < a.bottom - 1;
@@ -41,6 +43,9 @@ const server = http.createServer((req, res) => {
       secs.forEach(c => { const r = box(c); if (r.left < 0 || r.top < 0 || r.right > innerWidth + 1 || r.bottom > innerHeight + 1) bad.push(c.className + ' off screen'); });
       // panels never overlap each other; nothing that moves or the address/logo covers a menu panel
       const others = [...document.querySelectorAll('.side, .allergy-bar')];
+      // full-screen hero slides never run into the allergy notice
+      const bar = document.querySelector('.allergy-bar');
+      document.querySelectorAll('.hero').forEach(h => { const r = rest(h); if (bar && meets(box(bar), r)) bad.push(h.className + ' covers the allergy notice'); });
       slides.forEach(c => { const r = rest(c); if (r.left < -1 || r.top < -1 || r.right > innerWidth + 1 || r.bottom > innerHeight + 1) bad.push(c.className + ' off screen'); });
       others.forEach(o => slides.forEach(c => { if (meets(box(o), rest(c))) bad.push((o.className || 'frame') + ' covers ' + c.className); }));
       secs.forEach((a, i) => secs.slice(i + 1).forEach(c => { if (meets(box(a), box(c))) bad.push(a.className + ' overlaps ' + c.className); }));
@@ -53,16 +58,38 @@ const server = http.createServer((req, res) => {
     let reelOk = true;
     if (page === '/monitor-2/') {
       // the slideshow moves on after the first slide's hold, and a food scene is playing
-      const [first, hold] = await p.evaluate(() => { const s = document.querySelector('.tvslide.on'); return [s.className, parseFloat(s.dataset.hold || 8)]; });
+      const [first, left] = await p.evaluate(() => [document.querySelector('.tvslide.on, .hero.on')?.dataset.id, AZShow.at().ends - AZShow.now()]);
       if (process.argv.includes('--shots')) await p.screenshot({ path: path.join(__dirname, `shot-m2-${w}.png`) });
-      await p.waitForTimeout(hold * 1000 + 1200);
-      const next = await p.evaluate(() => document.querySelector('.tvslide.on')?.className);
+      await p.waitForTimeout(left + 1200);
+      const next = await p.evaluate(() => document.querySelector('.tvslide.on, .hero.on')?.dataset.id);
       reelOk = r.reel === 1 && !!next && next !== first;
     }
     if (page === '/monitor-1/' && process.argv.includes('--shots')) await p.screenshot({ path: path.join(__dirname, `shot-m1-${w}.png`) });
     const pass = r.n >= 4 && !r.bad.length && !r.wide && !errs.length && reelOk;
     ok = ok && pass;
     console.log(`${pass ? '✅' : '❌'} ${page} ${w}x${h}: sections ${r.n}, problems ${r.bad.length}, side scroll ${r.wide}, errors ${errs.length}${page === '/monitor-2/' ? ', slideshow moving ' + reelOk : ''}${r.bad.length ? ' ' + r.bad.join('; ') : ''}${errs.length ? ' ' + errs.join('; ') : ''}`);
+    await p.close();
+  }
+  // --shots: a screenshot of every slide on the right TV (tools/shot-m2-<slide>.png), taken a few seconds in,
+  // and the left TV while each section is live (tools/shot-m1-live.png).
+  if (process.argv.includes('--shots')) {
+    const ids = ['starters', 'sauces', 'hero-sauce', 'sandwiches', 'burgers', 'hero-sandwich', 'doner', 'platters', 'hero-burger', 'shawarma', 'hotdogs', 'drinks', 'hero-brand', 'soon'];
+    for (const id of ids) {
+      const p = await b.newPage({ viewport: { width: 1920, height: 1080 } }); const errs = [];
+      p.on('pageerror', e => errs.push(e.message));
+      await p.goto(base + '/monitor-2/?preview&slide=' + id); await p.waitForTimeout(id.startsWith('hero') ? 3600 : 2000);
+      await p.screenshot({ path: path.join(__dirname, `shot-m2-${id}.png`) });
+      const on = await p.evaluate(() => document.querySelector('.tvslide.on, .hero.on')?.dataset.id);
+      const pass = on === id && !errs.length; ok = ok && pass;
+      console.log(`${pass ? '✅' : '❌'} shot /monitor-2/ ${id}: showing ${on}${errs.length ? ' ' + errs.join('; ') : ''}`);
+      await p.close();
+    }
+    const p = await b.newPage({ viewport: { width: 1920, height: 1080 } });
+    await p.goto(base + '/monitor-1/?preview&slide=hero-sauce'); await p.waitForTimeout(1600);
+    await p.screenshot({ path: path.join(__dirname, 'shot-m1-live.png') });
+    const live = await p.evaluate(() => document.querySelector('.card.live')?.className);
+    const pass = /sec-sauces/.test(live || ''); ok = ok && pass;
+    console.log(`${pass ? '✅' : '❌'} /monitor-1/ sparkles round the section the right TV shows: ${live}`);
     await p.close();
   }
   const m = await b.newPage({ viewport: { width: 390, height: 844 } }); const merrs = [];

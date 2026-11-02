@@ -14,8 +14,9 @@ the one logo sits at the top of the right TV's food column.
 Output per monitor: sec-*.png, logo.png (left or right half is shown by CSS), layout.css.
     python3 tools/build-walls.py        (re-measure SECTIONS below if a new PDF moves things)
 """
+import os, subprocess, tempfile
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageFilter
 
 B = np.array([18, 17, 16], float)
 X0, X1 = 60, 1154
@@ -36,6 +37,13 @@ STATIC = [['starters', 'sauces', 'drinks'], ['sandwiches', 'burgers'], ['doner',
 PALETTE = {1: {'heading': (120, 10, 0), 'price': (222, 22, 10), 'persian': (168, 58, 0), 'name': (14, 10, 8), 'desc': (72, 52, 36)},
            2: {'heading': (110, 6, 0), 'price': (206, 14, 30), 'persian': (150, 46, 0), 'name': (14, 10, 8), 'desc': (70, 46, 34)}}
 CAP = 16  # longest blank gap kept inside a section, in board pixels
+# Clean text (Christmas update, 2 Nov 2026): the lettering is lifted from the PDF rendered at K times the
+# board size, then shrunk to exactly the pixels each TV shows it at, so edges stay crisp (no stretching).
+K = 3
+PDF = 'menu/Ajdar_Zapata_Boards.pdf'
+# Thickening (in output pixels of each TV) so the lettering reads bolder from across the shop: a little,
+# never so much that letters run together.
+GROW = {1: 0.55, 2: 0.45}
 
 def tighten(a):
     """Drop thin divider lines and cap blank gaps. Returns the new image and the heading-rule row."""
@@ -49,7 +57,7 @@ def tighten(a):
             e = y
             while e < len(rows) and rows[e]: e += 1
             band = slice(y, e)
-            wide = ink[band].mean(axis=0).mean() > 0.6 if e - y <= 3 else False
+            wide = ink[band].mean(axis=0).mean() > 0.6 if e - y <= 3 * K else False
             faint = d[band][ink[band]].max() < 110
             if wide and faint: keep[band] = False
             y = e
@@ -61,7 +69,7 @@ def tighten(a):
         if not rows[y]:
             e = y
             while e < len(rows) and not rows[e]: e += 1
-            if e - y > CAP: keep[y + CAP:e] = False
+            if e - y > CAP * K: keep[y + CAP * K:e] = False
             y = e
         else:
             y += 1
@@ -71,12 +79,13 @@ def tighten(a):
     rule = int(np.argmax(o)) if o.any() else 60
     return out, rule
 
-def lift(a, pal, rule):
+def lift(a, pal, rule, width, grow):
     """Black-background lettering -> see-through ink in the wall's colours, each part its own colour:
     orange ink above the heading rule is the heading, the rest of the orange ink is prices and number tags;
     yellow ink is Persian; cream ink is item names, the dimmer grey lines are descriptions. Everything but
-    the descriptions is thickened by a pixel so it reads bolder from across the shop."""
-    from PIL import ImageFilter
+    the descriptions is thickened a little so it reads bolder from across the shop. The work is done at the
+    high-resolution render; each part is then shrunk on its own to the TV's width (so colours never bleed
+    into each other) and thickened by `grow` output pixels."""
     v = a - B
     r = np.maximum(v[..., 0], 1)
     ratio = v[..., 1] / r
@@ -91,29 +100,34 @@ def lift(a, pal, rule):
     desc = neutral & desc_rows[:, None]
     alpha = np.where(desc, np.clip(alpha / 0.71, 0, 1), alpha)   # full strength, not grey
     ink = alpha >= 0.04
-    heading = ink & orange & (np.arange(a.shape[0])[:, None] <= rule + 6)
+    heading = ink & orange & (np.arange(a.shape[0])[:, None] <= rule + 6 * K)
     parts = {'heading': heading, 'price': ink & orange & ~heading, 'persian': ink & yellow,
              'name': ink & neutral & ~desc, 'desc': ink & desc}
-    # each part on its own layer, thickened on its own (except descriptions), so colours never bleed
+    # each part on its own layer, shrunk and thickened on its own (except descriptions), so colours never bleed
+    height = round(a.shape[0] * width / a.shape[1])
     layers = {}
     for name, m in parts.items():
-        la = np.where(m, alpha, 0)
-        if name != 'desc':
-            grown = np.asarray(Image.fromarray((la * 255).astype(np.uint8)).filter(ImageFilter.MaxFilter(3)), float) / 255
-            la = np.maximum(la, grown * 0.92)
-        layers[name] = la
+        la = Image.fromarray((np.where(m, alpha, 0) * 255).round().astype(np.uint8))
+        la = np.asarray(la.resize((width, height), Image.LANCZOS, reducing_gap=3.0), float) / 255
+        if name != 'desc' and grow > 0:
+            # grow by a fraction of a pixel: blend in the 1-pixel dilation at that strength
+            grown = np.asarray(Image.fromarray((la * 255).round().astype(np.uint8)).filter(ImageFilter.MaxFilter(3)), float) / 255
+            la = np.maximum(la, grown * grow)
+        layers[name] = np.clip(la, 0, 1)
     names = list(layers)
     stack = np.stack([layers[n] for n in names])
     alpha = stack.max(axis=0)
     pick = stack.argmax(axis=0)
-    rgb = np.zeros(a.shape[:2] + (3,), float)
+    rgb = np.zeros(alpha.shape + (3,), float)
     for k, n in enumerate(names): rgb[pick == k] = pal[n]
     out = np.dstack([rgb, alpha * 255])
     return Image.fromarray(np.clip(out, 0, 255).round().astype(np.uint8), 'RGBA')
 
-def logo():
-    """The logo cut out of the original board: everything outside the oval becomes see-through."""
-    a = np.asarray(Image.open('site/board-2.png').convert('RGB').crop((372, 40, 843, 262)), float)
+def logo(src=None, k=1):
+    """The logo cut out of the original board: everything outside the oval becomes see-through.
+    With src (the board rendered at k times), a sharp big copy for the right TV's full-screen slide."""
+    src = src or Image.open('site/board-2.png')
+    a = np.asarray(src.convert('RGB').crop((372 * k, 40 * k, 843 * k, 262 * k)), float)
     dist = np.abs(a - B).max(axis=2)
     near = dist < 40
     out = np.zeros_like(near); out[0, :] = out[-1, :] = out[:, 0] = out[:, -1] = True; out &= near
@@ -125,10 +139,14 @@ def logo():
     return Image.fromarray(np.dstack([a, alpha * 255]).round().astype(np.uint8), 'RGBA')
 
 # ---- measure every section once (sizes are the same on both walls)
-boards = {n: np.asarray(Image.open(f'site/board-{n}.png').convert('RGB'), float) for n in (1, 2, 3)}
-tight = {}
+tmp = tempfile.mkdtemp()
+subprocess.run(['pdftoppm', '-png', '-r', str(108 * K), '-f', '1', '-l', '3', PDF, os.path.join(tmp, 'b')], check=True)
+boards = {n: Image.open(os.path.join(tmp, f'b-{n}.png')).convert('RGB') for n in (1, 2, 3)}
+hi, tight = {}, {}
 for name, (b, y0, y1) in SECTIONS.items():
-    tight[name] = tighten(boards[b][y0:y1 + 1, X0:X1])
+    img, rule = tighten(np.asarray(boards[b].crop((X0 * K, y0 * K, X1 * K, (y1 + 1) * K)), float))
+    hi[name] = (img, rule)
+    tight[name] = (img[::K], rule)   # board-pixel sizes, for the layout below
 
 # ---- layout, in pixels of a 1920x1080 screen
 W, H = 1920.0, 1080.0
@@ -141,10 +159,14 @@ def common(mon, css):
     # the bottom bar: only the allergy notice (Ryan, 2 Nov 2026), on both TVs
     css.append(f'.allergy-bar {{ left: {pct(M, W)}; right: {pct(M, W)}; top: {pct(BOTTOM + 10, H)}; height: {pct(H - BOTTOM - 20, H)}; }}')
     logo().save(f'site/monitor-{mon}/logo.png', optimize=True)
+    if mon == 2: logo(boards[2], K).save('site/monitor-2/logo-big.webp', quality=88, method=6)
 
-for mon in (1, 2):
-    for name, (img, rule) in tight.items():
-        lift(img, PALETTE[mon], rule).save(f'site/monitor-{mon}/sec-{name}.png', optimize=True)
+# Inside a panel, the picture fits the box left by the CSS padding (1.48vh) and rim (.36vh) on a 1080 screen.
+INSET = 2 * (16 + 3.9)
+def save_section(mon, name, box_w, box_h):
+    img, rule = hi[name]
+    w = min(box_w - INSET, (box_h - INSET) * img.shape[1] / img.shape[0])
+    lift(img, PALETTE[mon], rule, int(round(w)), GROW[mon]).save(f'site/monitor-{mon}/sec-{name}.png', optimize=True)
 
 # Left TV: everything, three columns, one scale.
 col_w = (W - 2 * M - 2 * GAP) / 3
@@ -163,6 +185,7 @@ for i, names in enumerate(STATIC):
     for n in names:                                                         # taller glass, lettering centred
         h = tight[n][0].shape[0] * (s1 + grow) + 2 * PAD
         css.append(f'.sec-{n} {{ left: {pct(x, W)}; top: {pct(y, H)}; width: {pct(col_w, W)}; height: {pct(h, H)}; }}')
+        save_section(1, n, col_w, h)
         y += h + GAP
 common(1, css)
 open('site/monitor-1/layout.css', 'w').write('\n'.join(css) + '\n')
@@ -180,6 +203,7 @@ for n, (img, rule) in tight.items():
     w = CW * s2 + 2 * PAD
     y = area_top + (area_bottom - area_top - h) / 2
     css.append(f'.tvslide.sec-{n} {{ left: {pct(area_x + (area_w - w) / 2, W)}; top: {pct(y, H)}; width: {pct(w, W)}; height: {pct(h, H)}; }}')
+    save_section(2, n, w, h)
 css.append(f'.tvslide.soon {{ left: {pct(area_x, W)}; top: {pct(area_top + 60, H)}; width: {pct(area_w, W)}; height: {pct(area_bottom - area_top - 120, H)}; }}')
 css.append(f'.side {{ left: {pct(W - M - SIDE_W, W)}; top: {pct(TOP, H)}; width: {pct(SIDE_W, W)}; height: {pct(BOTTOM - TOP, H)}; }}')
 common(2, css)

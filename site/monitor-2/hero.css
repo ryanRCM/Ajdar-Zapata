@@ -1,0 +1,272 @@
+/* Monitor 2's full-screen hero slides (Christmas update, 2 Nov 2026: "really go all out ... McDonald's-like
+   visuals moving around live"). Each hero fills the right TV above the allergy notice, with its own
+   choreography on the real food photos. Only transform and opacity animate (plus z-index flips in the
+   orbit), so it stays smooth on the TVs; a hero that is not on screen is display:none and costs nothing.
+   Timing: a hero switches on while the slabs (below) cover the screen; every delay counts from then. */
+
+.hero {
+  position: absolute; z-index: 2; left: 1.042%; right: 1.042%; top: 1.296%; height: 89.815%;
+  display: none; overflow: hidden; border-radius: 1.8vh; border: .4vh solid #ffc61a;
+  background: radial-gradient(120% 95% at 50% 38%, #ff6a12 0%, #e02a00 42%, #9a0c00 82%, #6e0700 100%);
+  box-shadow: inset 0 0 0 .2vh rgba(255, 240, 200, .6), 0 1.2vh 2.6vh rgba(90, 10, 0, .42);
+}
+.hero.on, .hero.leave { display: block; }
+.hero.on { animation: heroIn .6s cubic-bezier(.2, .9, .3, 1) both; }
+.hero.leave { animation: heroOut .55s cubic-bezier(.6, 0, .8, .4) forwards; }
+@keyframes heroIn { from { transform: scale(1.08); } to { transform: none; } }
+@keyframes heroOut { to { opacity: 0; transform: scale(1.22); } }
+
+/* the right-hand column (logo and food reel) steps aside while a hero fills the screen */
+.side { transition: transform .6s cubic-bezier(.6, 0, .3, 1), opacity .5s; }
+#stage.hero-mode .side { transform: translateX(110%); opacity: 0; }
+
+/* sunburst rays turning slowly behind everything, like the big chains' boards */
+.rays {
+  position: absolute; left: 50%; top: 45%; width: 130vh; height: 130vh; margin: -65vh 0 0 -65vh; border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(255, 236, 140, .55), rgba(255, 210, 80, .12) 45%, rgba(255, 200, 60, 0) 100%),
+              repeating-conic-gradient(rgba(255, 214, 60, .2) 0 7deg, rgba(255, 214, 60, 0) 7deg 18deg);
+  will-change: transform; animation: rays 40s linear infinite;
+}
+@keyframes rays { from { transform: scale(1.7) rotate(0deg); } to { transform: scale(1.7) rotate(360deg); } }
+.hero-snow { z-index: 6; }
+
+/* ───── Big kinetic type: each letter smashes in from huge, then the word settles ───── */
+.hero .word { overflow: visible; letter-spacing: .03em; line-height: .9; padding: 0; }
+.hero .word::after { display: none; }
+.hero .word i { color: #fff3d6; transform: none; opacity: 0; text-shadow: 0 .5vh 0 #7a0800, 0 1vh 2vh rgba(60, 0, 0, .45); }
+.hero .word i.a { color: #ffc61a; }
+.hero.on .word.smash i { animation: smash .55s cubic-bezier(.2, 1.35, .4, 1) both; animation-delay: calc(.35s + var(--i) * .055s); }
+@keyframes smash {
+  0% { opacity: 0; transform: translateY(-25%) scale(3.4) rotate(-14deg); }
+  55% { opacity: 1; }
+  100% { opacity: 1; transform: none; }
+}
+.hero.on .word.smash { animation: thud .5s ease-out both; animation-delay: calc(.75s + var(--n, 8) * .055s); }
+@keyframes thud { 0%, 100% { transform: none; } 25% { transform: translate(.4vh, .5vh); } 50% { transform: translate(-.3vh, -.2vh); } 75% { transform: translate(.15vh, .2vh); } }
+.hero .meta2 { display: flex; align-items: baseline; gap: 3vh; opacity: 0; }
+.hero.on .meta2 { animation: metaIn .6s cubic-bezier(.2, 1.2, .3, 1) 1.3s both; }
+@keyframes metaIn { from { opacity: 0; transform: translateX(-12%); } to { opacity: 1; transform: none; } }
+.hero .sub { color: #ffe9b0; font-size: 7vh; letter-spacing: .08em; }
+.hero .fa { color: #fff3d6; font-size: 6.4vh; }
+.hero-type { position: absolute; z-index: 5; }
+
+/* ───────────── Sauces: bottles draw a zig-zag of each sauce, drips fall, the house sauce pours and swirls ───────────── */
+.hero-sauce .hero-head { position: absolute; z-index: 5; left: 0; right: 0; top: 2.2%; display: flex; justify-content: center; align-items: baseline; gap: 4vh; }
+.hero-sauce .hero-head .word { font-size: 12.5vh; }
+.hero-sauce .hero-head .fa { color: #fff3d6; font-size: 7vh; text-shadow: 0 .4vh 0 #7a0800; opacity: 0; }
+.hero-sauce.on .hero-head .fa { animation: metaIn .6s cubic-bezier(.2, 1.2, .3, 1) 1.2s both; }
+.sauce-grid { position: absolute; left: 2%; right: 2%; top: 17.5%; bottom: 2.6%; display: grid; z-index: 3;
+  grid-template-columns: repeat(4, 1fr); grid-template-rows: 1.12fr 1fr 1fr; gap: 1.8vh; }
+.sauce {
+  position: relative; overflow: hidden; border-radius: 1.6vh; border: .45vh solid var(--c2);
+  background: linear-gradient(160deg, #fffdf8 0%, #fff4e0 55%, #ffe3b8 100%);
+  box-shadow: inset 0 .4vh 0 rgba(255, 255, 255, .95), 0 .9vh 1.8vh rgba(70, 0, 0, .4);
+  opacity: 0;
+}
+.sauce.feature { grid-column: 1 / -1; }
+.hero-sauce.on .sauce { animation: cardIn .55s cubic-bezier(.2, 1.3, .4, 1) both, spot .7s ease-in-out both;
+  animation-delay: calc(.5s + var(--k) * .09s), calc(3.4s + var(--k) * .8s); }
+@keyframes cardIn { from { opacity: 0; transform: translateY(30%) scale(.7) rotate(calc((var(--k) - 4) * 1.4deg)); } to { opacity: 1; transform: none; } }
+@keyframes spot { 0% { opacity: 1; transform: none; } 45% { opacity: 1; transform: scale(1.045) rotate(-.6deg); } 100% { opacity: 1; transform: none; } }
+
+/* the zig-zag line of sauce, revealed left to right (outer moves in, inner moves back: transforms only) */
+.zig { position: absolute; left: 5%; right: 5%; top: 9%; height: 26%; overflow: hidden; transform: translateX(-101%); }
+.zig-in { position: absolute; inset: 0; transform: translateX(101%); }
+.zig svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.zig path { fill: none; stroke: var(--c); stroke-width: 1.5vh; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.zig path.hi { stroke: rgba(255, 255, 255, .6); stroke-width: .35vh; transform: translateY(-2.5px); }
+.sauce .zig path:first-child { filter: drop-shadow(0 .3vh 0 var(--c2)); }
+.hero-sauce.on .zig, .hero-sauce.on .zig-in, .hero-sauce.on .squeezer { animation: draw 1.15s cubic-bezier(.5, .1, .5, .9) both; animation-delay: calc(1s + var(--k) * .2s); }
+.hero-sauce.on .zig-in { animation-name: drawBack; }
+@keyframes draw { from { transform: translateX(-101%); } to { transform: none; } }
+@keyframes drawBack { from { transform: translateX(101%); } to { transform: none; } }
+.squeezer { position: absolute; left: 5%; right: 5%; top: 9%; height: 26%; transform: translateX(-101%); }
+.squeezer .bottle { position: absolute; right: -1.5vh; top: -8.5vh; transform: rotate(-150deg); transform-origin: 50% 0; }
+.hero-sauce.on .squeezer .bottle { animation: tip 1.15s ease-out both, away .45s ease-in both; animation-delay: calc(1s + var(--k) * .2s), calc(2.15s + var(--k) * .2s); }
+@keyframes tip { from { transform: rotate(-120deg) translateY(-30%); } 15% { transform: rotate(-150deg); } to { transform: rotate(-150deg); } }
+@keyframes away { from { transform: rotate(-150deg); opacity: 1; } to { transform: rotate(-110deg) translate(-40%, 80%); opacity: 0; } }
+
+/* a squeeze bottle in the sauce's colour: cap, body with a shine, a cream label band */
+.bottle { position: absolute; width: 5vh; height: 12vh; }
+.bottle .body { position: absolute; left: 0; right: 0; top: 22%; bottom: 0; border-radius: 1.6vh 1.6vh 1.1vh 1.1vh;
+  background: linear-gradient(90deg, var(--c2) 0%, var(--c) 28%, rgba(255, 255, 255, .75) 40%, var(--c) 52%, var(--c2) 100%);
+  box-shadow: inset 0 0 0 .2vh rgba(0, 0, 0, .15); }
+.bottle .label { position: absolute; left: 0; right: 0; top: 48%; height: 26%;
+  background: linear-gradient(180deg, #fff6e2, #f3e2bd); border-top: .4vh solid #d6150a; border-bottom: .4vh solid #d6150a; }
+.bottle .cap { position: absolute; left: 22%; right: 22%; top: 0; height: 24%; background: linear-gradient(90deg, #a8a29a, #fffaf0 45%, #c9c2b6);
+  clip-path: polygon(38% 0, 62% 0, 100% 70%, 100% 100%, 0 100%, 0 70%); }
+
+/* drops fall from the line once it is drawn */
+.dripdot { position: absolute; left: var(--x); top: 30%; width: 1.3vh; height: 1.7vh; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, .7), var(--c) 40%, var(--c2)); opacity: 0; }
+.hero-sauce.on .dripdot { animation: dripfall 2.6s cubic-bezier(.5, 0, .9, .6) infinite; animation-delay: calc(2.4s + var(--k) * .2s + var(--x) * .02s); }
+@keyframes dripfall { 0% { opacity: 0; transform: translateY(0) scaleY(.4); } 12% { opacity: 1; transform: translateY(0) scaleY(1); }
+  55% { opacity: 1; transform: translateY(5vh) scaleY(1.3); } 70%, 100% { opacity: 0; transform: translateY(7vh) scaleY(.6); } }
+.sauce.feature .dripdot { display: none; }
+
+.names { position: absolute; left: 4%; right: 4%; bottom: 7%; display: flex; flex-direction: column; align-items: center; gap: .8vh; }
+.names img { display: block; height: 5.6vh; width: auto; opacity: 0; }
+.hero-sauce.on .names img { animation: nameIn .5s cubic-bezier(.2, 1.4, .4, 1) both; animation-delay: calc(.85s + var(--k) * .09s); }
+.hero-sauce.on .names img.fa-img { animation-name: nameInFa; animation-delay: calc(1.05s + var(--k) * .09s); }
+@keyframes nameIn { from { opacity: 0; transform: scale(1.6); } to { opacity: 1; transform: none; } }
+@keyframes nameInFa { from { opacity: 0; transform: translateY(40%); } to { opacity: 1; transform: none; } }
+
+/* the house sauce: a big bottle upside down, squeezing a stream into a turning swirl */
+.sauce.feature .names { left: 24%; right: 3%; top: 0; bottom: 0; justify-content: center; gap: 1.2vh; }
+.sauce.feature .zig { left: 24%; right: 3%; top: auto; bottom: 5%; height: 14%; }
+.sauce.feature .squeezer { display: none; }
+.pour { position: absolute; left: 0; top: 0; bottom: 0; width: 22%; }
+.pour .bottle.up { left: 50%; top: -2vh; width: 8vh; height: 17vh; margin-left: -4vh; transform: rotate(180deg); transform-origin: 50% 50%; }
+.hero-sauce.on .pour .bottle.up { animation: dropIn .6s cubic-bezier(.3, 1.4, .5, 1) .6s both, squeeze 1.6s ease-in-out 1.4s infinite; }
+@keyframes dropIn { from { transform: rotate(180deg) translateY(120%); } to { transform: rotate(180deg); } }
+@keyframes squeeze { 0%, 100% { transform: rotate(180deg); } 40% { transform: rotate(180deg) scaleX(.86) scaleY(1.03); } }
+.pour .stream { position: absolute; left: 50%; top: 14.6vh; width: 1.5vh; margin-left: -.75vh; height: 7vh; border-radius: .8vh;
+  background: linear-gradient(90deg, var(--c2), var(--c) 35%, rgba(255, 255, 255, .7) 50%, var(--c) 65%, var(--c2)); transform: scaleY(0); transform-origin: 50% 0; }
+.hero-sauce.on .pour .stream { animation: stream .5s ease-in 1.25s both, streamWob .4s ease-in-out 1.75s infinite alternate; }
+@keyframes stream { to { transform: scaleY(1); } }
+@keyframes streamWob { from { transform: scaleX(.85); } to { transform: scaleX(1.15); } }
+.pour .swirl { position: absolute; left: 50%; bottom: 3%; width: 20vh; height: 20vh; margin-left: -10vh; transform: scaleY(.3) scale(0); transform-origin: 50% 100%; }
+.hero-sauce.on .pour .swirl { animation: puddle .9s cubic-bezier(.2, 1.2, .4, 1) 1.5s both; }
+@keyframes puddle { to { transform: translateY(35%) scaleY(.3); } }
+.pour .swirl i { position: absolute; inset: 0; border-radius: 50%; will-change: transform;
+  background: radial-gradient(closest-side, rgba(255, 255, 255, .5) 0 8%, transparent 9%),
+              repeating-conic-gradient(from 0deg, var(--c) 0 30deg, var(--c2) 30deg 45deg, #ffb08a 45deg 60deg);
+  box-shadow: 0 0 0 1vh rgba(120, 20, 0, .25); animation: spin 3s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ───────────── Sandwiches: Ken Burns push-in, back subs drifting (parallax), the front sub slides in,
+   is sliced in two, halves part with steam, crumbs and sauce, close again, a shine runs over the bread ───────────── */
+.hero-sandwich .kb { position: absolute; inset: 0; z-index: 3; }
+.hero-sandwich.on .kb { animation: kb 10s linear both; }
+@keyframes kb { from { transform: scale(1); } to { transform: scale(1.08); } }
+.hero-sandwich .back { position: absolute; width: 40%; height: auto; opacity: 0; }
+.hero-sandwich .b1 { left: -3%; top: 3%; }
+.hero-sandwich .b2 { right: -3%; top: 5%; }
+.hero-sandwich.on .b1 { animation: backIn .9s ease-out .2s both, driftL 10s linear both; }
+.hero-sandwich.on .b2 { animation: backIn .9s ease-out .35s both, driftR 10s linear both; }
+@keyframes backIn { from { opacity: 0; } to { opacity: .55; } }
+@keyframes driftL { from { transform: translateX(0) rotate(-7deg) scale(.95); } to { transform: translateX(-5vw) rotate(-9deg) scale(.95); } }
+@keyframes driftR { from { transform: translateX(0) rotate(7deg) scale(.95); } to { transform: translateX(5vw) rotate(9deg) scale(.95); } }
+.cutsub { position: absolute; left: 50%; top: 25%; width: 66%; margin-left: -33%; }
+.cutsub .enter { position: relative; width: 100%; aspect-ratio: 1500 / 505; transform: translateX(130%); }
+.hero-sandwich.on .cutsub .enter { animation: subIn .8s cubic-bezier(.2, 1.15, .35, 1) .25s both, subBob 3.4s ease-in-out 9.5s infinite; }
+@keyframes subIn { 0% { transform: translateX(130%) rotate(6deg); } 70% { transform: translateX(-2%) rotate(-1deg); } 100% { transform: none; } }
+@keyframes subBob { 50% { transform: translateY(-1vh); } }
+.half { position: absolute; top: 0; height: 100%; width: 50%; overflow: hidden; }
+.half img { position: absolute; top: 0; width: 200%; height: 100%; }
+.half.l { left: 0; transform-origin: 100% 100%; } .half.r { left: 50%; transform-origin: 0 100%; }
+.half.r img { left: -100%; }
+.hero-sandwich.on .half.l { animation: partL 10s cubic-bezier(.3, 1.2, .4, 1) both; }
+.hero-sandwich.on .half.r { animation: partR 10s cubic-bezier(.3, 1.2, .4, 1) both; }
+@keyframes partL { 0%, 14% { transform: none; } 19%, 74% { transform: translateX(-7%) rotate(-3deg); } 79% { transform: translateX(.6%); } 82%, 100% { transform: none; } }
+@keyframes partR { 0%, 14% { transform: none; } 19%, 74% { transform: translateX(7%) rotate(3deg); } 79% { transform: translateX(-.6%); } 82%, 100% { transform: none; } }
+.slash { position: absolute; left: 50%; top: -14%; height: 128%; width: .8vh; margin-left: -.4vh; z-index: 2; border-radius: .4vh;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0), #fff 30%, #fffbe6 70%, rgba(255, 255, 255, 0)); transform: scaleY(0); opacity: 0; }
+.hero-sandwich.on .slash { animation: slash .45s ease-out 1.05s both; }
+@keyframes slash { 0% { opacity: 1; transform: scaleY(0); transform-origin: 50% 0; } 60% { opacity: 1; transform: scaleY(1); } 100% { opacity: 0; transform: scaleY(1) scaleX(3); } }
+.shine { position: absolute; inset: 0; z-index: 2; pointer-events: none; overflow: hidden;
+  -webkit-mask: url(/monitor-2/photo-salami-sub.webp) center / 100% 100% no-repeat; mask: url(/monitor-2/photo-salami-sub.webp) center / 100% 100% no-repeat; }
+.shine i { position: absolute; top: 0; bottom: 0; left: 0; width: 22%; opacity: 0;
+  background: linear-gradient(100deg, rgba(255, 255, 255, 0), rgba(255, 252, 235, .7) 50%, rgba(255, 255, 255, 0)); transform: translateX(-120%) skewX(-16deg); }
+.hero-sandwich.on .shine i { animation: shineRun 10s ease-in-out both; }
+@keyframes shineRun { 0%, 7% { opacity: 1; transform: translateX(-120%) skewX(-16deg); } 13% { opacity: 1; transform: translateX(480%) skewX(-16deg); }
+  13.1%, 83% { opacity: 0; transform: translateX(-120%) skewX(-16deg); } 83.1% { opacity: 1; } 92% { opacity: 1; transform: translateX(480%) skewX(-16deg); } 92.1%, 100% { opacity: 0; } }
+.steam { position: absolute; left: 50%; top: -6%; width: 7vh; height: 16vh; margin-left: -3.5vh; border-radius: 50%; opacity: 0;
+  background: radial-gradient(closest-side, rgba(255, 250, 240, .55), rgba(255, 250, 240, 0)); }
+.hero-sandwich.on .steam { animation: steamUp 2.6s ease-out infinite; }
+.hero-sandwich.on .steam.s1 { animation-delay: 1.7s; } .hero-sandwich.on .steam.s2 { animation-delay: 2.5s; } .hero-sandwich.on .steam.s3 { animation-delay: 3.3s; }
+@keyframes steamUp { 0% { opacity: 0; transform: translateY(4vh) scale(.6, .7); } 30% { opacity: .9; } 100% { opacity: 0; transform: translateY(-14vh) scale(1.4, 1.2) rotate(8deg); } }
+.crumb { position: absolute; left: var(--x); top: 70%; width: 1vh; height: .8vh; border-radius: 40%; background: #e2b067; opacity: 0; box-shadow: inset -.2vh -.2vh 0 #b77b2e; }
+.hero-sandwich.on .crumb { animation: crumbFall 1.2s cubic-bezier(.4, 0, .9, .5) both; animation-delay: calc(1.4s + var(--k) * .07s); }
+@keyframes crumbFall { 0% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translate(var(--dx), 26vh) rotate(260deg); } }
+.sdrip { position: absolute; left: var(--x); top: 66%; width: 1.4vh; height: 2vh; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  background: radial-gradient(circle at 35% 35%, #ffd0a0, #ff6a2b 45%, #c2380e); opacity: 0; }
+.hero-sandwich.on .sdrip { animation: dripfall 2.2s cubic-bezier(.5, 0, .9, .6) infinite; animation-delay: calc(1.9s + var(--k) * .7s); }
+.hero-sandwich .hero-type { left: 0; right: 0; bottom: 5%; display: flex; flex-direction: column; align-items: center; gap: 1vh; }
+.hero-sandwich .word { font-size: 23vh; }
+
+/* ───────────── Burgers: the front sub slams down (squash and settle), sparks and a shock ring; behind it a
+   second one turns on a glowing turntable ───────────── */
+.hero-burger .hero-type { left: 4%; top: 6%; display: flex; flex-direction: column; gap: 1.4vh; }
+.hero-burger .word { font-size: 25vh; }
+.plate { position: absolute; z-index: 2; left: 46%; top: 6%; width: 50%; aspect-ratio: 1; transform: scaleY(.24); transform-origin: 50% 100%; }
+.plate .ring { position: absolute; inset: 0; border-radius: 50%; will-change: transform;
+  background: radial-gradient(closest-side, rgba(255, 236, 160, .55), rgba(255, 180, 40, .25) 62%, rgba(255, 220, 120, 0) 64%, rgba(255, 220, 120, 0) 74%, rgba(255, 230, 150, .9) 76%, rgba(255, 230, 150, .9) 80%, rgba(255, 220, 120, 0) 82%),
+              repeating-conic-gradient(rgba(255, 246, 210, .0) 0 6deg, rgba(255, 246, 210, .5) 6deg 9deg);
+  animation: spin 9s linear infinite; }
+.turn { position: absolute; z-index: 3; left: 49%; top: 14%; width: 44%; transform-style: preserve-3d; opacity: 0; }
+.turn img { display: block; width: 100%; height: auto; }
+.hero-burger.on .turn { animation: turnIn .7s ease-out .3s both, turntable 6s ease-in-out 1s infinite; }
+@keyframes turnIn { from { opacity: 0; transform: perspective(160vh) rotateY(-70deg) translateY(-10%); } to { opacity: 1; transform: perspective(160vh) rotateY(-24deg); } }
+@keyframes turntable { 0%, 100% { opacity: 1; transform: perspective(160vh) rotateY(-24deg) translateY(0); } 50% { opacity: 1; transform: perspective(160vh) rotateY(24deg) translateY(-1.2vh); } }
+.slam { position: absolute; z-index: 4; left: 26%; top: 47%; width: 60%; transform: translateY(-160%); }
+.slam .squash { position: relative; transform-origin: 50% 100%; }
+.slam img { display: block; width: 100%; height: auto; }
+.hero-burger.on .slam { animation: slamDown .42s cubic-bezier(.55, 0, 1, .45) .55s both, slamBob 3.2s ease-in-out 2.2s infinite; }
+@keyframes slamDown { from { transform: translateY(-160%) rotate(-6deg); } to { transform: none; } }
+@keyframes slamBob { 0%, 100% { transform: none; } 50% { transform: translateY(-.9vh) rotate(-.6deg); } }
+.hero-burger.on .slam .squash { animation: squash .7s ease-out .97s both; }
+@keyframes squash { 0% { transform: none; } 18% { transform: scale(1.09, .78); } 42% { transform: scale(.96, 1.07); } 65% { transform: scale(1.02, .97); } 100% { transform: none; } }
+.slam .shine { -webkit-mask-image: url(/monitor-2/photo-beef-patty-sub.webp); mask-image: url(/monitor-2/photo-beef-patty-sub.webp); }
+.hero-burger.on .slam .shine i { animation: shineRun2 4.5s ease-in-out 2s infinite; }
+@keyframes shineRun2 { 0% { opacity: 1; transform: translateX(-120%) skewX(-16deg); } 30% { opacity: 1; transform: translateX(480%) skewX(-16deg); } 30.1%, 100% { opacity: 0; transform: translateX(480%) skewX(-16deg); } }
+.shock { position: absolute; z-index: 3; left: 56%; top: 88%; width: 60vh; height: 13vh; margin: -6.5vh 0 0 -30vh; border-radius: 50%;
+  border: .8vh solid #fff1c2; opacity: 0; transform: scale(.1); }
+.hero-burger.on .shock { animation: shock .7s ease-out .97s both; }
+@keyframes shock { 0% { opacity: 1; transform: scale(.1); } 100% { opacity: 0; transform: scale(1.8); } }
+.sparks { position: absolute; z-index: 5; left: 56%; top: 86%; width: 0; height: 0; }
+.sparks i { position: absolute; left: 0; top: 0; width: 2.6vh; height: .55vh; margin-top: -.27vh; border-radius: .3vh; opacity: 0;
+  background: linear-gradient(90deg, rgba(255, 200, 40, 0), #ffd84a 40%, #fffbe6); transform-origin: 0 50%; transform: rotate(var(--a)); }
+.hero-burger.on .sparks i { animation: sparkFly 3.4s cubic-bezier(.1, .7, .3, 1) infinite; animation-delay: calc(.97s + var(--k) * .015s); }
+@keyframes sparkFly { 0% { opacity: 1; transform: rotate(var(--a)) translateX(0) scaleX(.4); } 22% { opacity: 1; }
+  32% { opacity: 0; transform: rotate(var(--a)) translateX(var(--r)) scaleX(1); } 100% { opacity: 0; transform: rotate(var(--a)) translateX(var(--r)); } }
+
+/* ───────────── Ajdar Zapata at Christmas: the logo zooms in, three subs orbit it, sparkles, snow ───────────── */
+.hero-brand { background: radial-gradient(110% 95% at 50% 40%, #ff7a12 0%, #e02a00 40%, #8f0a00 85%, #5e0600 100%); }
+.big-logo { position: absolute; z-index: 2; left: 50%; top: 9%; width: 50%; margin-left: -25%; height: auto; opacity: 0; }
+.hero-brand.on .big-logo { animation: logoIn .8s cubic-bezier(.2, 1.3, .4, 1) .3s both, logoBreathe 4s ease-in-out 1.2s infinite; }
+@keyframes logoIn { from { opacity: 0; transform: scale(.15) rotate(-12deg); } to { opacity: 1; transform: none; } }
+@keyframes logoBreathe { 0%, 100% { opacity: 1; transform: none; } 50% { opacity: 1; transform: scale(1.035); } }
+.orbit { position: absolute; left: 50%; top: 40%; width: 0; height: 0; }
+.orbit .ox { position: absolute; left: 0; top: 0; z-index: 1; opacity: 0; }
+.orbit .oy img { display: block; width: 52vh; height: auto; margin: -9vh 0 0 -26vh; }
+.hero-brand.on .orbit .ox { animation: fadeUp .6s ease-out .9s both, ox 6s ease-in-out infinite alternate, oz 12s steps(1, end) infinite;
+  animation-delay: .9s, var(--ph), var(--ph); }
+.hero-brand.on .orbit .oy { animation: oy 6s ease-in-out infinite alternate; animation-delay: calc(var(--ph) - 3s); }
+@keyframes fadeUp { from { opacity: 0; } to { opacity: 1; } }
+@keyframes ox { from { transform: translateX(40vh); } to { transform: translateX(-40vh); } }
+@keyframes oy { from { transform: translateY(-11vh) scale(.62); } to { transform: translateY(17vh) scale(1.05); } }
+@keyframes oz { 0% { z-index: 3; } 50% { z-index: 1; } }
+.hero-brand .hero-type { left: 0; right: 0; bottom: 4%; display: flex; justify-content: center; }
+.hero-brand .word { font-size: 17vh; }
+.hero-brand .stars i { position: absolute; left: var(--x); top: var(--y); width: 5vh; height: 5vh; margin: -2.5vh 0 0 -2.5vh; z-index: 4; opacity: 0;
+  background: radial-gradient(circle, #fffef4 0 18%, #ffd84a 38%, #ff9a00 70%);
+  clip-path: polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%); }
+.hero-brand.on .stars i { animation: twinkle 2.8s ease-in-out infinite; animation-delay: calc(1s + var(--k) * .37s); }
+
+/* ───────────── Special offers (only once Ryan has written them into /show.js) ───────────── */
+.hero-offers .hero-head { position: absolute; z-index: 5; left: 0; right: 0; top: 4%; display: flex; justify-content: center; }
+.hero-offers .hero-head .word { font-size: 15vh; }
+.offer-list { position: absolute; z-index: 3; left: 5%; right: 5%; top: 24%; bottom: 5%; display: flex; flex-direction: column; justify-content: center; gap: 2.4vh; }
+.offer { display: flex; align-items: center; justify-content: space-between; gap: 3vh; padding: 1.6vh 3vh; border-radius: 1.6vh; opacity: 0;
+  background: linear-gradient(160deg, #fffdf8, #fff1d6 60%, #ffdca6); border: .45vh solid #ffc61a; box-shadow: 0 .9vh 1.8vh rgba(70, 0, 0, .4); }
+.offer .en { font-family: var(--display); font-size: 8vh; line-height: 1; letter-spacing: .03em; color: #7a0800; }
+.offer .fa { font-family: var(--fa); font-weight: 700; font-size: 5.4vh; color: #96280a; direction: rtl; }
+.hero-offers.on .offer { animation: offerIn .6s cubic-bezier(.2, 1.3, .4, 1) both; animation-delay: calc(1s + var(--k) * .25s); }
+@keyframes offerIn { from { opacity: 0; transform: translateX(-30%) rotate(-3deg) scale(.9); } to { opacity: 1; transform: none; } }
+
+/* ───────────── Transitions ───────────── */
+/* into a hero: three slanted slabs (red, orange, yellow) sweep across; the hero switches on beneath them */
+.slabs { position: absolute; inset: 0; z-index: 7; pointer-events: none; overflow: hidden; }
+.slabs i { position: absolute; top: -15%; bottom: -15%; left: -20%; width: 140%; transform: translateX(-120%) skewX(-16deg); }
+.slabs i:nth-child(1) { background: #b80f00; } .slabs i:nth-child(2) { background: #ff6a00; } .slabs i:nth-child(3) { background: #ffc61a; }
+.slabs.go i { animation: slab .95s cubic-bezier(.7, 0, .3, 1) both; }
+.slabs.go i:nth-child(2) { animation-delay: .07s; } .slabs.go i:nth-child(3) { animation-delay: .14s; }
+@keyframes slab { 0% { transform: translateX(-120%) skewX(-16deg); } 45%, 55% { transform: translateX(0) skewX(-16deg); } 100% { transform: translateX(120%) skewX(-16deg); } }
+/* out of a hero: the hero punches outwards and a golden ring bursts from the middle */
+.burst { position: absolute; z-index: 7; left: 50%; top: 46%; width: 40vh; height: 40vh; margin: -20vh 0 0 -20vh; border-radius: 50%;
+  border: 2.2vh solid #ffc61a; box-shadow: 0 0 0 1.2vh rgba(255, 106, 0, .6); opacity: 0; pointer-events: none; }
+.burst.go { animation: burst .7s cubic-bezier(.2, .7, .3, 1) both; }
+@keyframes burst { 0% { opacity: 1; transform: scale(.1); } 100% { opacity: 0; transform: scale(4.5); } }
+
+@media (prefers-reduced-motion: reduce) { .hero *, .hero { animation-duration: 0s !important; } }
