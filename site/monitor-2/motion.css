@@ -83,7 +83,7 @@
 .meta { display: flex; justify-content: space-between; align-items: baseline; gap: 1vw; opacity: 0; }
 .sub  { font-family: var(--display); color: var(--ink); font-size: calc(3.3vh * var(--fit, 1)); letter-spacing: .1em; white-space: nowrap; }
 .sub small { font-size: .7em; letter-spacing: .14em; opacity: .75; }
-.fa   { font-family: var(--fa); color: var(--ink); font-size: calc(2.5vh * var(--fit, 1)); direction: rtl; white-space: nowrap; }
+.fa   { font-family: var(--fa); font-weight: 700; color: var(--ink); font-size: calc(2.5vh * var(--fit, 1)); direction: rtl; white-space: nowrap; }
 .scene.on .meta { animation: rise .5s .65s cubic-bezier(.2,.9,.3,1) forwards; }
 @keyframes rise { from { opacity: 0; transform: translateY(45%); } to { opacity: 1; transform: none; } }
 
@@ -288,5 +288,9 @@
 }
 .hl.on { animation: hl 1.7s cubic-bezier(.4,0,.3,1) 2; }
 @keyframes hl { 0% { opacity: 0; background-position: -30% 0; } 15% { opacity: 1; } 85% { opacity: 1; } 100% { opacity: 0; background-position: 130% 0; } }
+
+/* The allergy notice on the orange boards: same dark type as the boards' own small print. */
+.allergy { background: var(--orange); color: #4d0000; }
+.allergy b { color: var(--ink); }
 
 @media (prefers-reduced-motion: reduce) { .sweep, .halo, .ember, .seam::after, .lick, .floor, .warm { animation: none; } }
