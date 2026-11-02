@@ -22,6 +22,34 @@ def cutout(img):
     rgba = img.convert('RGB').copy(); rgba.putalpha(alpha)
     return rgba.crop(rgba.getbbox())
 
+def cutout_bg(img, tol=38, grow=2):
+    """Cut a photo off a plain coloured background (any colour): the background colour is the median of
+    the border, and everything close to it that touches the edges is removed. Soft edge."""
+    a = np.asarray(img.convert('RGB'), float)
+    border = np.concatenate([a[0], a[-1], a[:, 0], a[:, -1]])
+    bg = np.median(border, axis=0)
+    near = np.abs(a - bg).max(axis=2) < tol
+    out = np.zeros_like(near); out[0, :] = out[-1, :] = out[:, 0] = out[:, -1] = True; out &= near
+    while True:
+        g = out.copy(); g[1:] |= out[:-1]; g[:-1] |= out[1:]; g[:, 1:] |= out[:, :-1]; g[:, :-1] |= out[:, 1:]; g &= near
+        if (g == out).all(): break
+        out = g
+    keep = ~out
+    # keep only the main dish: the connected piece containing the point of the mask nearest its centre
+    ys, xs = np.nonzero(keep)
+    cy, cx = ys.mean(), xs.mean()
+    k = np.argmin((ys - cy) ** 2 + (xs - cx) ** 2)
+    piece = np.zeros_like(keep); piece[ys[k], xs[k]] = True
+    while True:
+        g = piece.copy(); g[1:] |= piece[:-1]; g[:-1] |= piece[1:]; g[:, 1:] |= piece[:, :-1]; g[:, :-1] |= piece[:, 1:]; g &= keep
+        if (g == piece).all(): break
+        piece = g
+    alpha = Image.fromarray((piece * 255).astype(np.uint8))
+    for _ in range(grow): alpha = alpha.filter(ImageFilter.MinFilter(3))
+    alpha = alpha.filter(ImageFilter.GaussianBlur(1.2))
+    rgba = img.convert('RGB').copy(); rgba.putalpha(alpha)
+    return rgba.crop(rgba.getbbox())
+
 def save(im, name, width=900):
     if im.width > width: im = im.resize((width, round(im.height * width / im.width)), Image.LANCZOS)
     im.save(f'site/monitor-2/photo-{name}.webp', quality=86, method=6)
@@ -47,10 +75,10 @@ for (y0, y1), name in zip(bands, ['chicken-fillet-sub', 'beef-patty-sub', 'salam
 
 # Ryan's second batch (2 Nov): the doner platter on white (cut out), and the wraps on a blue table
 # (busy background: kept whole, shown with rounded corners).
-save(Image.open('menu/photos/doner-fries-platter.jpg').convert('RGB'), 'doner-platter', width=700)  # grey background: framed, not cut out
+save(cutout_bg(Image.open('menu/photos/doner-fries-platter.jpg'), tol=48), 'doner-platter', width=700)
 wraps = Image.open('menu/photos/doner-wraps-tray.jpg').convert('RGB')
 w, h = wraps.size
-save(wraps.crop((0, int(h * 0.45), w, h)), 'shawarma-wraps', width=700)
+save(cutout_bg(wraps.crop((0, int(h * 0.45), w, h)), tol=60), 'shawarma-wraps', width=700)
 
 # Ryan's sauce pots (2 Nov): spicy chilli, cheddar, garlic & dill, on white -> cut out.
 for n in ('spicy-chilli', 'cheddar', 'garlic-dill'):
