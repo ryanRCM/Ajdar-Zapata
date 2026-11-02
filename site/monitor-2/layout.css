@@ -1,18 +1,17 @@
-/* Made by tools/build-walls.py: do not edit by hand. Scale 0.7019, columns 768px of 1920. */
-.sec-doner { left: 2.195%; top: 2.500%; width: 39.992%; height: 22.421%; }
-.hl[data-for="doner"] { left: 2.451%; width: 39.481%; top: 6.822%; }
-.sec-platters { left: 2.195%; top: 27.521%; width: 39.992%; height: 17.872%; }
-.hl[data-for="platters"] { left: 2.451%; width: 39.481%; top: 31.777%; }
-.sec-drinks { left: 2.195%; top: 47.992%; width: 39.992%; height: 20.796%; }
-.hl[data-for="drinks"] { left: 2.451%; width: 39.481%; top: 52.411%; }
-/* column 1 ends at 743px of 1080 */
-.col1-free { left: 2.195%; width: 39.992%; top: 70.789%; height: 18.211%; }
-.sec-shawarma { left: 57.812%; top: 2.500%; width: 39.992%; height: 17.872%; }
-.hl[data-for="shawarma"] { left: 58.068%; width: 39.481%; top: 6.757%; }
-.sec-hotdogs { left: 57.812%; top: 22.971%; width: 39.992%; height: 26.970%; }
-.hl[data-for="hotdogs"] { left: 58.068%; width: 39.481%; top: 27.261%; }
-/* column 2 ends at 539px of 1080 */
-.col2-free { left: 57.812%; width: 39.992%; top: 51.942%; height: 37.058%; }
-.logo { left: 42.969%; top: 2.500%; width: 14.062%; height: 11.783%; }
-.halo { left: 41.281%; top: 1.086%; width: 17.438%; height: 14.611%; }
-.centre-free { left: 43.229%; width: 13.542%; top: 16.283%; height: 72.717%; }
+/* Made by tools/build-walls.py: do not edit by hand. Text scale 0.786. */
+.sec-shawarma { left: 50.469%; top: 1.481%; width: 48.385%; height: 21.956%; }
+.hl[data-for="shawarma"] { left: 51.302%; width: 46.719%; top: 7.620%; }
+.sec-hotdogs { left: 50.469%; top: 25.104%; width: 48.385%; height: 30.470%; }
+.hl[data-for="hotdogs"] { left: 51.302%; width: 46.719%; top: 30.734%; }
+.outer-free { left: 50.469%; width: 48.385%; top: 57.241%; height: 34.981%; }
+.sec-doner { left: 1.146%; top: 1.481%; width: 48.385%; height: 26.468%; }
+.hl[data-for="doner"] { left: 1.979%; width: 46.719%; top: 7.693%; }
+.sec-platters { left: 1.146%; top: 29.616%; width: 48.385%; height: 21.883%; }
+.hl[data-for="platters"] { left: 1.979%; width: 46.719%; top: 35.755%; }
+.sec-drinks { left: 1.146%; top: 53.166%; width: 48.385%; height: 24.212%; }
+.hl[data-for="drinks"] { left: 1.979%; width: 46.719%; top: 59.451%; }
+.inner-free { left: 1.146%; width: 48.385%; top: 79.045%; height: 4.331%; }
+.logo { left: -8.594%; top: 85.042%; width: 17.188%; height: 14.402%; }
+.halo { left: -10.312%; top: 83.314%; width: 20.625%; height: 17.858%; }
+.address { top: 93.333%; height: 5.556%; }
+.address .frame { right: 1.146%; left: 9.531%; }

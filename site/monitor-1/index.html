@@ -6,23 +6,24 @@
 <title>Ajdar Zapata · Monitor 1</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@800&family=Barlow+Semi+Condensed:wght@400;600&family=Vazirmatn:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@800&display=swap">
 <link rel="stylesheet" href="/screen.css">
 <link rel="stylesheet" href="/monitor-1/theme.css">
 <link rel="stylesheet" href="/monitor-1/layout.css">
 </head>
 <body data-monitor="1">
-<!-- Left wall, yellow (Ryan, 2 Nov 2026). The menu is split across the two TVs so the words are bigger:
-     this wall has starters, sauces, sandwiches and burgers; the right wall has doner, platters,
-     shawarma, hot dogs and drinks. Sections are cut from the boards by tools/build-walls.py. -->
+<!-- The left TV (yellow glass). The menu is split across the two TVs so the words are big: this one has
+     sandwiches, burgers, starters and sauces; the right one has doner, platters, drinks, shawarma and
+     hot dogs. Every section is lifted straight off the boards by tools/build-walls.py (nothing retyped). -->
 <div id="stage">
-  <img class="sec-starters" src="/monitor-1/sec-starters.png" alt="Starters and sides, 1 to 10">
-  <img class="sec-sauces" src="/monitor-1/sec-sauces.png" alt="Sauce selection">
-  <img class="sec-sandwiches" src="/monitor-1/sec-sandwiches.png" alt="Sandwiches, 11 to 15">
-  <img class="sec-burgers" src="/monitor-1/sec-burgers.png" alt="Burgers, 16 to 20">
-  <img class="logo" src="/monitor-1/logo.png" alt="Ajdar Zapata Sandwich">
+  <div class="card sec-sandwiches"><img src="/monitor-1/sec-sandwiches.png" alt="Sandwiches, 11 to 15"></div>
+  <div class="card sec-burgers"><img src="/monitor-1/sec-burgers.png" alt="Burgers, 16 to 20"></div>
+  <div class="card sec-starters"><img src="/monitor-1/sec-starters.png" alt="Starters and sides, 1 to 10"></div>
+  <div class="card sec-sauces"><img src="/monitor-1/sec-sauces.png" alt="Sauce selection"></div>
   <div class="address left" aria-label="864 High Road, London N12 9RH"><div class="frame">864 High Road,</div></div>
+  <img class="logo" src="/monitor-1/logo.png" alt="Ajdar Zapata Sandwich">
 </div>
+<div class="sweep"></div>
 <script src="/screen.js"></script>
 </body>
 </html>

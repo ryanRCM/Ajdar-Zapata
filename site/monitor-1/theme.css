@@ -1,6 +1,3 @@
-/* Monitor 1 = left wall, yellow (Ryan, 2 Nov 2026: "The left wall is yellow, the right wall is orange.
-   Mainly yellow."). The boards are the yellow copies made by tools/yellow-boards.py. */
-:root { --bg: #ffc61a; --ink: #121110; color-scheme: light; }
-.address .frame { border-color: var(--ink); color: var(--ink); }
-.allergy { color: #3b2a00; }
-.allergy b { color: var(--ink); }
+/* Monitor 1 = the left TV: yellow glass (Ryan, 2 Nov 2026). The wall glows hottest at its right edge,
+   where it meets the right TV, so the pair reads as one scene. */
+:root { --hot-x: 100%; }

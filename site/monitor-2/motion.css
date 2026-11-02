@@ -11,18 +11,23 @@
   --pitta: #e9c88a; --silver: #cfd2d6; --ember: #ffb347;
   --display: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
   --fa: "Vazirmatn", Tahoma, sans-serif;
-  --bg: #f07c1a; /* the right wall is orange: the page behind the menu sections */
+  /* The right TV: orange glass on the shared reddish-orange wall, hottest at its left edge where it meets
+     the left TV. */
+  --hot-x: 0%;
+  --glass-top: rgba(255, 214, 160, .97); --glass-mid: rgba(255, 156, 52, .94); --glass-low: rgba(255, 122, 24, .96);
+  --glass-shade: rgba(120, 20, 0, .32); --type: #6e0800;
   --ink: #121110; /* type and badges on the orange boards */
   --yellow: #ffc61a; /* the left wall's yellow, used for accents here so the pair reads mainly yellow */
   --hold: 6.4s; /* default scene length; scenes override with data-hold */
 }
 
 /* ───────────────────────── The reel ───────────────────────── */
-/* It sits in the free space under the hot dogs (.reelbox, placed by layout.css), scaled up by --z from
-   its original 13.2vh-tall strip so it fills the box's width. */
-.reelbox { position: absolute; pointer-events: none; --z: 1.35; }
+/* Under the hot dogs (.extras, placed by layout.css): the reel on its own glass panel, scaled up by --z
+   from its original 13.2vh-tall strip, and the coming-soon panel below it. */
+.extras { position: absolute; display: flex; flex-direction: column; gap: 1.67vh; pointer-events: none; }
+.reelcard { position: relative; flex: none; height: 19.5vh; --z: 1.25; }
 .reel {
-  position: absolute; left: 0; top: 50%; width: calc(100% / var(--z)); height: 13.2vh;
+  position: absolute; left: var(--pad); top: 50%; width: calc((100% - 2 * var(--pad)) / var(--z)); height: 13.2vh;
   transform: translateY(-50%) scale(var(--z)); transform-origin: 0 50%;
   overflow: hidden; pointer-events: none;
 }
@@ -230,27 +235,16 @@
 @keyframes twinkle { 0%, 100% { opacity: 0; transform: scale(.3); } 50% { opacity: 1; transform: scale(1); } }
 
 /* ───────────────────────── Ambient life ───────────────────────── */
-/* A slow warm light sweep across the screen: one band that moves, so nothing is repainted. */
-.sweep {
-  position: fixed; top: 0; bottom: 0; left: 0; width: 34%; pointer-events: none;
-  background: linear-gradient(105deg, transparent, rgba(255,236,200,.07) 40%, rgba(255,244,220,.16) 50%, rgba(255,236,200,.07) 60%, transparent);
-  transform: translateX(-110%); will-change: transform;
-  animation: sweep 18s ease-in-out infinite;
-}
-@keyframes sweep { 0%, 72% { transform: translateX(-110%); } 100% { transform: translateX(310%); } }
-
 /* A halo breathing around each logo (the artwork itself is left alone: the centre is clear). */
 .halo {
-  position: absolute; pointer-events: none; /* placed round the logo by layout.css */
+  position: absolute; pointer-events: none; z-index: 3; /* placed round the logo by layout.css */
   background: radial-gradient(closest-side, transparent 60%, rgba(255,214,60,.6) 74%, rgba(255,214,60,.16) 88%, transparent 100%);
   opacity: .7; animation: halo 4s ease-in-out infinite; animation-delay: var(--ph, 0s);
 }
 @keyframes halo { 50% { opacity: .25; transform: scale(1.06); } }
 
 /* Embers drift up the centre column under the logo, and flames lick in the free space under the drinks. */
-.embers-col { position: absolute; pointer-events: none; overflow: hidden; }
-.hearth { position: absolute; pointer-events: none; overflow: hidden; }
-.hearth .warm { position: absolute; inset: 0; background: linear-gradient(to top, rgba(163,32,12,.28), rgba(163,32,12,.06) 55%, transparent); animation: warm 3.2s ease-in-out infinite; }
+.embers-bg { position: absolute; inset: 0; pointer-events: none; overflow: hidden; } /* behind the glass */
 @keyframes warm { 50% { opacity: .45; } }
 .lick { /* one flame tongue: a plain element, so the TV's graphics chip moves it */
   position: absolute; bottom: 0; border-radius: 50% 50% 12% 12% / 100% 100% 8% 8%;
@@ -292,10 +286,21 @@ body:not(.ready) *, body:not(.ready) *::before, body:not(.ready) *::after { anim
 #stage { transition: opacity .6s ease-out; }
 body:not(.ready) #stage { opacity: 0; }
 
-/* The allergy notice on the orange boards: same dark type as the boards' own small print. */
-.address { background: var(--orange); }
-.address .frame { border-color: var(--ink); color: var(--ink); }
-.allergy { background: var(--orange); color: #4d0000; }
-.allergy b { color: var(--ink); }
+/* Coming soon: big polished words now; a real food photo (background cut out) joins them later. */
+.soon { position: relative; flex: 1; display: flex; align-items: center; justify-content: center; gap: 3vh; }
+.soon-photo { position: relative; height: 100%; width: auto; max-width: 50%; object-fit: contain;
+  filter: drop-shadow(0 .8vh 1.2vh rgba(90, 8, 0, .45)); animation: float 4s ease-in-out infinite; }
+@keyframes float { 50% { transform: translateY(-.8vh) rotate(-1.5deg); } }
+.soon-photo[hidden] { display: none; }
+.soon-words { position: relative; display: flex; align-items: baseline; gap: 2.4vh; white-space: nowrap; }
+.soon-en { font-family: var(--display); font-size: 7.4vh; line-height: 1; letter-spacing: .07em; color: var(--type);
+  text-shadow: 0 .16vh 0 rgba(255, 255, 255, .6); }
+.soon-fa { font-family: var(--fa); font-weight: 700; font-size: 4.6vh; color: var(--ink); direction: rtl; }
+.soon::after { /* a glint across the words now and then */
+  content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 18%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .55) 50%, transparent);
+  transform: translateX(-130%) skewX(-18deg); animation: soonglint 6s 2s ease-in-out infinite;
+}
+@keyframes soonglint { 0% { transform: translateX(-130%) skewX(-18deg); } 30%, 100% { transform: translateX(650%) skewX(-18deg); } }
 
 @media (prefers-reduced-motion: reduce) { .sweep, .halo, .ember, .lick, .floor, .warm { animation: none; } }

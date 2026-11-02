@@ -1,6 +1,6 @@
 // Serves site/ locally and checks both TVs at TV sizes before every push:
-// every menu section and logo loads and sits fully on screen, sections never overlap each other,
-// nothing that moves (reel, flames, embers) covers a section, no side scroll, no errors,
+// every menu panel and picture loads, panels sit fully on screen and never overlap, nothing else
+// (reel, coming soon, address, logo) covers a panel, no side scroll, no errors,
 // and on monitor 2 the food reel plays. Also checks the phone menu page loads.
 // Run: node tools/check.cjs [--shots]   (needs Playwright + Chromium)
 const { chromium } = require('playwright');
@@ -31,17 +31,18 @@ const server = http.createServer((req, res) => {
     const r = await p.evaluate(() => {
       const box = el => el.getBoundingClientRect();
       const meets = (a, c) => a.left < c.right - 1 && c.left < a.right - 1 && a.top < c.bottom - 1 && c.top < a.bottom - 1;
-      const imgs = [...document.querySelectorAll('#stage > img')];
-      const secs = imgs.filter(i => /^sec-/.test(i.className));
+      const secs = [...document.querySelectorAll('.card[class*="sec-"]')];
+      const imgs = [...document.querySelectorAll('#stage img:not([src=""])')];
       const bad = [];
-      imgs.forEach(i => {
-        const r = box(i);
-        if (!(i.naturalWidth > 0)) bad.push(i.className + ' not loaded');
-        if (r.left < 0 || r.top < 0 || r.right > innerWidth + 1 || r.bottom > innerHeight + 1 || r.width < 50) bad.push(i.className + ' off screen');
-      });
-      imgs.forEach((a, i) => imgs.slice(i + 1).forEach(c => { if (meets(box(a), box(c))) bad.push(a.className + ' overlaps ' + c.className); }));
-      document.querySelectorAll('.reelbox, .hearth, .embers-col, .address, .allergy').forEach(m =>
-        secs.forEach(s => { if (meets(box(m), box(s))) bad.push(m.className + ' covers ' + s.className); }));
+      imgs.forEach(i => { if (!(i.naturalWidth > 0)) bad.push((i.className || i.parentNode.className) + ' not loaded'); });
+      secs.forEach(c => { const r = box(c); if (r.left < 0 || r.top < 0 || r.right > innerWidth + 1 || r.bottom > innerHeight + 1) bad.push(c.className + ' off screen'); });
+      // panels never overlap each other; nothing that moves or the address/logo covers a menu panel
+      const others = [...document.querySelectorAll('.extras, .address .frame, .logo')];
+      secs.forEach((a, i) => secs.slice(i + 1).forEach(c => { if (meets(box(a), box(c))) bad.push(a.className + ' overlaps ' + c.className); }));
+      others.forEach(o => secs.forEach(c => { if (meets(box(o), box(c))) bad.push((o.className || 'frame') + ' covers ' + c.className); }));
+      // the address frame stops short of the logo
+      const f = document.querySelector('.address .frame'), l = document.querySelector('.logo');
+      if (f && l && meets(box(f), box(l))) bad.push('address runs under the logo');
       return { n: secs.length, bad, wide: document.documentElement.scrollWidth > innerWidth, reel: document.querySelectorAll('.scene.on').length };
     });
     let reelOk = true;

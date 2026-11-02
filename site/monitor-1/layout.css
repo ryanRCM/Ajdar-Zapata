@@ -1,16 +1,15 @@
-/* Made by tools/build-walls.py: do not edit by hand. Scale 0.7019, columns 768px of 1920. */
-.sec-starters { left: 2.195%; top: 2.500%; width: 39.992%; height: 50.691%; }
-.hl[data-for="starters"] { left: 2.451%; width: 39.481%; top: 6.887%; }
-.sec-sauces { left: 2.195%; top: 55.791%; width: 39.992%; height: 20.341%; }
-.hl[data-for="sauces"] { left: 2.451%; width: 39.481%; top: 60.177%; }
-/* column 1 ends at 822px of 1080 */
-.col1-free { left: 2.195%; width: 39.992%; top: 78.132%; height: 10.868%; }
-.sec-sandwiches { left: 57.812%; top: 2.500%; width: 39.992%; height: 44.517%; }
-.hl[data-for="sandwiches"] { left: 58.068%; width: 39.481%; top: 7.212%; }
-.sec-burgers { left: 57.812%; top: 49.617%; width: 39.992%; height: 39.383%; }
-.hl[data-for="burgers"] { left: 58.068%; width: 39.481%; top: 54.329%; }
-/* column 2 ends at 961px of 1080 */
-.col2-free { left: 57.812%; width: 39.992%; top: 91.000%; height: -2.000%; }
-.logo { left: 42.969%; top: 2.500%; width: 14.062%; height: 11.783%; }
-.halo { left: 41.281%; top: 1.086%; width: 17.438%; height: 14.611%; }
-.centre-free { left: 43.229%; width: 13.542%; top: 16.283%; height: 72.717%; }
+/* Made by tools/build-walls.py: do not edit by hand. Text scale 0.786. */
+.sec-sandwiches { left: 1.146%; top: 1.481%; width: 48.385%; height: 47.281%; }
+.hl[data-for="sandwiches"] { left: 1.979%; width: 46.719%; top: 8.130%; }
+.sec-burgers { left: 1.146%; top: 50.429%; width: 48.385%; height: 41.604%; }
+.hl[data-for="burgers"] { left: 1.979%; width: 46.719%; top: 57.077%; }
+.outer-free { left: 1.146%; width: 48.385%; top: 93.700%; height: -1.477%; }
+.sec-starters { left: 50.469%; top: 1.481%; width: 48.385%; height: 54.630%; }
+.hl[data-for="starters"] { left: 51.302%; width: 46.719%; top: 7.766%; }
+.sec-sauces { left: 50.469%; top: 57.779%; width: 48.385%; height: 23.557%; }
+.hl[data-for="sauces"] { left: 51.302%; width: 46.719%; top: 64.063%; }
+.inner-free { left: 50.469%; width: 48.385%; top: 83.002%; height: 0.373%; }
+.logo { left: 91.406%; top: 85.042%; width: 17.188%; height: 14.402%; }
+.halo { left: 89.688%; top: 83.314%; width: 20.625%; height: 17.858%; }
+.address { top: 93.333%; height: 5.556%; }
+.address .frame { left: 1.146%; right: 9.531%; }

@@ -94,7 +94,7 @@
   // Download and prepare everything first (every picture decoded, fonts loaded), then start: smooth from frame one.
   // Never wait longer than 8 seconds, so a slow picture can't keep the screen blank.
   const ready = Promise.all([
-    ...[...document.querySelectorAll('#stage img')].map(img => (img.decode ? img.decode() : Promise.resolve()).catch(() => {})),
+    ...[...document.querySelectorAll('#stage img:not([src=""])')].map(img => (img.decode ? img.decode() : Promise.resolve()).catch(() => {})),
     document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve(),
   ]);
   Promise.race([ready, new Promise(r => setTimeout(r, 8000))]).then(() => {
