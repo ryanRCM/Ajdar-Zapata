@@ -11,3 +11,15 @@ body.hide-cursor, body.hide-cursor * { cursor: none; }
 
 /* Netlify adds a "Powered by Netlify" badge on free sites; keep it off the TVs. */
 #nl-badge-frame, #nl-hud-frame { display: none !important; }
+
+/* Full allergy notice (screen.js) over the short line printed at the foot of each board.
+   It covers only the blank band between the address box and the bottom bar (94.9%–98.9%). */
+.allergy {
+  position: absolute; left: 5%; right: 5%; top: 94.9%; height: 4%;
+  display: flex; flex-direction: column; justify-content: center; gap: .35vh; padding: 0 .5%;
+  background: var(--bg); color: #b5aea4; pointer-events: none; overflow: hidden;
+}
+.allergy p { margin: 0; white-space: nowrap; line-height: 1.15; }
+.allergy p[lang="en"] { font: 400 1.3vh "Barlow Semi Condensed", "Arial Narrow", Arial, sans-serif; }
+.allergy p[lang="fa"] { font: 400 1.3vh Vazirmatn, Tahoma, sans-serif; }
+.allergy b { font-weight: 600; color: var(--cream); }

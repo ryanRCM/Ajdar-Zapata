@@ -17,6 +17,15 @@
 - **Monitor 1 is still black and untouched.** If Ryan wants it orange too, it would be one line per board in `monitor-1/index.html`.
 - **When the menu changes:** re-run `python3 tools/orange-boards.py` after making new boards from a new PDF.
 
+## Allergy notice, full wording (Ryan, 2 Nov: "Allergy notes / Full legal phrase")
+- **Both monitors, all three boards** now show the FSA's standard allergen sign wording in the band under the address box, in place of the short "Allergies? Please tell our staff before ordering" line:
+  - English: **Food Allergies and Intolerances:** Before ordering please speak to our staff about your requirements.
+  - Persian: **حساسیت و عدم تحمل غذایی:** لطفاً پیش از سفارش، نیازهای خود را با کارکنان ما در میان بگذارید.
+- **It's live text, not part of the board images.** It is written once in `site/screen.js` and styled in `site/screen.css`, so changing the wording is one edit. It covers only the blank band between the address box and the bottom bar, and fits at both TV sizes.
+- **This touches Monitor 1** (screen.css, screen.js and a font link) because the notice belongs on both TVs. Monitor 1 looks the same apart from the notice.
+- **Ryan to check the Persian.** I translated it. "حساسیت" matches the boards' own word for allergy.
+- The PDF in `menu/` still has the short line, so the next PDF should carry the full wording too.
+
 ## What I built
 Monitor 2 keeps the three boards' content exactly as it is (now on orange, see above). All motion sits in the blank space around them. A pixel check against the PNGs found zero menu pixels under any motion box, at both screen sizes.
 
