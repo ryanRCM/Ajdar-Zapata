@@ -270,7 +270,7 @@
 .reel .ember { animation-timing-function: ease-out; }
 
 /* A light runs up the two seams between boards. */
-.seam { position: fixed; top: 15.5%; bottom: 1.5%; width: 2px; margin-left: -1px; pointer-events: none; overflow: hidden; opacity: .9; }
+.seam { position: fixed; top: 15.5%; bottom: 10.5%; width: 2px; margin-left: -1px; pointer-events: none; overflow: hidden; opacity: .9; }
 .seam.s1 { left: 33.333%; } .seam.s2 { left: 66.667%; }
 .seam::before { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, transparent, rgba(18,17,16,.3) 30%, rgba(18,17,16,.3) 70%, transparent); }
 .seam::after {
@@ -290,6 +290,8 @@
 @keyframes hl { 0% { opacity: 0; background-position: -30% 0; } 15% { opacity: 1; } 85% { opacity: 1; } 100% { opacity: 0; background-position: 130% 0; } }
 
 /* The allergy notice on the orange boards: same dark type as the boards' own small print. */
+.address { background: var(--orange); }
+.address .frame { border-color: var(--ink); color: var(--ink); }
 .allergy { background: var(--orange); color: #4d0000; }
 .allergy b { color: var(--ink); }
 
