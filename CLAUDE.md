@@ -6,7 +6,7 @@ Read this first, then `HANDOFF.md`. This repo is the TV menu website for **Ajdar
 - Two horizontal TVs in the shop open **https://ajdarzapata.co.uk** and show the menu full screen, nonstop. No login, nothing to click.
 - Both TVs show the same page: the three portrait menu boards side by side at full height.
 - **Hosting:** Netlify, linked to this repo (`netlify.toml` → serves `site/`). **Every push to `main` goes live** within about a minute, and the TVs reload every 10 minutes. So a push is a change in the shop: check before you push.
-- **Netlify site:** `domain-lock` (site ID `e967ee2e-ffa8-4a1b-8d1c-cf932865d775`, team `6ae4978cb2c0fa267d6801f5`), git-linked to `main`, dashboard https://app.netlify.com/projects/domain-lock. Claude reaches it through the **Netlify connector** in Ryan's Claude (read deploys and logs; settings changes only with Ryan's yes).
+- **Netlify site:** `ajdar-zapata` (site ID `e967ee2e-ffa8-4a1b-8d1c-cf932865d775`, team `6ae4978cb2c0fa267d6801f5`), git-linked to `main`, dashboard https://app.netlify.com/projects/ajdar-zapata. Claude reaches it through the **Netlify connector** in Ryan's Claude (read deploys and logs; settings changes only with Ryan's yes).
 - **Domain:** `ajdarzapata.co.uk`, bought 30 Oct 2026 through Netlify (Netlify DNS), renews 30 Oct 2027. Ryan owns the Netlify account and pays for the domain.
 
 ## Files

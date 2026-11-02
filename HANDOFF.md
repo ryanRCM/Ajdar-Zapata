@@ -5,7 +5,7 @@
 ## Where it is
 | What | Status |
 |---|---|
-| Website | `site/` on Netlify, auto-deploys from `main` ✅. Netlify connector connected 30 Oct: site `domain-lock`, git-linked to `main`, first deploy ready at 13:28 |
+| Website | `site/` on Netlify, auto-deploys from `main` ✅. Netlify connector connected 30 Oct: site `ajdar-zapata` (renamed from `domain-lock`), git-linked to `main`, first deploy ready at 13:28 |
 | Domain | **ajdarzapata.co.uk** bought 30 Oct 2026 via Netlify (Netlify DNS), renews 30 Oct 2027 ✅. **Live 30 Oct**: https and www both serve the menu, http redirects to https |
 | TVs | 2 horizontal TVs, both the same page: 3 portrait boards side by side |
 | Menu | `menu/Ajdar_Zapata_Boards.pdf` (current), rendered into `site/board-1..3.png` |
