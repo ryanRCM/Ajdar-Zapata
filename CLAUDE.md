@@ -4,7 +4,7 @@ Read this first, then `HANDOFF.md`. This repo is the TV menu website for **Ajdar
 
 ## What it is
 - Two horizontal TVs in the shop show the menu full screen, nonstop, no login: **ajdarzapata.co.uk/monitor-1** and **ajdarzapata.co.uk/monitor-2** (`/monitor1`, `/monitor2` redirect; the bare domain shows monitor 1).
-- Both show the three portrait boards side by side, each a third of the screen at full height (stretched ~5% wider, Ryan asked for wider, 2 Nov). Monitor 2 adds motion (Fable, 2 Nov; `site/monitor-2/motion.css` + `motion.js`): a 7-scene food reel in board two's empty strip (76.8–90.0% of its height), embers in the gutters, flame licks in boards one and three's blank strips (83.5% / 80.0% down), light runs on the heading rules and seams, logo rings. Nothing may cover menu text: re-check with a pixel diff against monitor 1 after any change.
+- Each TV shows half the menu in two big columns (see The two TVs). Monitor 2 adds motion (Fable, 2 Nov; `site/monitor-2/motion.css` + `motion.js`): a 7-scene food reel in board two's empty strip (76.8–90.0% of its height), embers in the gutters, flame licks in boards one and three's blank strips (83.5% / 80.0% down), light runs on the heading rules and seams, logo rings. Nothing may cover menu text: re-check with a pixel diff against monitor 1 after any change.
 - **One address across the pair, no phone number** (Ryan, 2 Nov): each TV covers its three address boxes with one strip; monitor 1 (left TV) reads "864 High Road,", monitor 2 (right TV) "London N12 9RH", frames open on the inner side (`.address` in `screen.css`). Assumes monitor 1 hangs on the left.
 - Every board shows the full FSA allergy notice (English + Persian) under the address box, drawn by `screen.js` over the short printed line (Ryan, 2 Nov).
 - Netlify's free-plan "Powered by Netlify" badge (`#nl-badge-frame`, injected script) is hidden by `screen.css`. Ryan wanted it gone.
@@ -15,6 +15,7 @@ Read this first, then `HANDOFF.md`. This repo is the TV menu website for **Ajdar
 ## The two TVs (Ryan, 2 Nov 2026: remember this)
 - **Locked in.** The two shop TVs are the only screens that show the monitors. `/api/screen` locks each TV's browser ID to its monitor once it has stayed on it 20 minutes. Every other device (phones, laptops) is sent to `/menu/`. A TV that loses its memory: open `ajdarzapata.co.uk/?screen=1` (or `=2`) on it to re-lock. To look at a monitor from a phone without being moved: add `?preview`.
 - **Left wall = Monitor 1 = yellow. Right wall = Monitor 2 = orange.** Mainly yellow: Monitor 2 uses yellow for its accents. The address reads across the pair: "864 High Road," on the left, "London N12 9RH" on the right. If the locked TVs are on the wrong walls, set `SWAP = true` in `netlify/functions/screen.mjs`.
+- **The menu is split across the two walls so the words are bigger** (Ryan chose this, 2 Nov): left = starters, sauces, sandwiches, burgers; right = doner, platters, drinks, shawarma, hot dogs + the food reel. Each section is cut straight from the boards by `tools/build-walls.py` (never retyped), 1.4x the old size, two columns per TV with the logo between. The phone page `/menu/` still shows the whole boards.
 - **People read these from across the shop.** Big, bold, high contrast beats small and clever. No phone number on the TVs.
 - They reload themselves within a minute of every deploy, so every push to `main` reaches the shop untouched.
 
@@ -32,7 +33,7 @@ Read this first, then `HANDOFF.md`. This repo is the TV menu website for **Ajdar
 | `HANDOFF.md` | Where it stopped and what's next |
 
 ## How to change the menu
-1. **New PDF from Ryan:** render each page at TV height and replace the boards:
+1. **New PDF from Ryan:** render each page at TV height and replace the boards, then re-run `python3 tools/yellow-boards.py`, `python3 tools/orange-boards.py` and `python3 tools/build-walls.py` (re-measure the section rows in it if the layout moved):
    `pdftoppm -png -r 108 menu/<new>.pdf site/board` (810×1440pt pages → 1215×2160). Other page sizes: pick `-r` so the height comes out at 2160.
 2. Run `node tools/check.cjs` (both monitors at 1920×1080 and 1366×768; `--shots` saves monitor 2 screenshots) and show ✅/❌. If a board's layout changes, re-measure the empty strip on board two and move `.reel` in `monitor-2/index.html` so the reel never covers menu text.
 3. Commit with what and why, push to `main`, then open https://ajdarzapata.co.uk to confirm it's live.

@@ -9,12 +9,18 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@800&family=Barlow+Semi+Condensed:wght@400;600&family=Vazirmatn:wght@400;600&display=swap">
 <link rel="stylesheet" href="/screen.css">
 <link rel="stylesheet" href="/monitor-1/theme.css">
+<link rel="stylesheet" href="/monitor-1/layout.css">
 </head>
 <body data-monitor="1">
+<!-- Left wall, yellow (Ryan, 2 Nov 2026). The menu is split across the two TVs so the words are bigger:
+     this wall has starters, sauces, sandwiches and burgers; the right wall has doner, platters,
+     shawarma, hot dogs and drinks. Sections are cut from the boards by tools/build-walls.py. -->
 <div id="stage">
-  <div class="board"><img src="/monitor-1/board-1.png" alt="Starters and sides, sauce selection and drinks"></div>
-  <div class="board"><img src="/monitor-1/board-2.png" alt="Sandwiches and burgers"></div>
-  <div class="board"><img src="/monitor-1/board-3.png" alt="Doner baguettes, doner platters, shawarma and hot dogs"></div>
+  <img class="sec-starters" src="/monitor-1/sec-starters.png" alt="Starters and sides, 1 to 10">
+  <img class="sec-sauces" src="/monitor-1/sec-sauces.png" alt="Sauce selection">
+  <img class="sec-sandwiches" src="/monitor-1/sec-sandwiches.png" alt="Sandwiches, 11 to 15">
+  <img class="sec-burgers" src="/monitor-1/sec-burgers.png" alt="Burgers, 16 to 20">
+  <img class="logo" src="/monitor-1/logo.png" alt="Ajdar Zapata Sandwich">
   <div class="address left" aria-label="864 High Road, London N12 9RH"><div class="frame">864 High Road,</div></div>
 </div>
 <script src="/screen.js"></script>

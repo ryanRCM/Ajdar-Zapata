@@ -37,7 +37,7 @@
     }
   });
 
-  // ── Flame licks along the bottom of the blank strips on boards one and three.
+  // ── Flame licks along the bottom of the free space under the drinks.
   const NS = 'http://www.w3.org/2000/svg';
   document.querySelectorAll('.hearth').forEach(h => {
     const svg = document.createElementNS(NS, 'svg');

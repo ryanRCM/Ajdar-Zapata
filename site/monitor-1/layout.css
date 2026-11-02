@@ -1,0 +1,16 @@
+/* Made by tools/build-walls.py: do not edit by hand. Scale 0.7019, columns 768px of 1920. */
+.sec-starters { left: 2.195%; top: 2.500%; width: 39.992%; height: 50.691%; }
+.hl[data-for="starters"] { left: 2.451%; width: 39.481%; top: 6.887%; }
+.sec-sauces { left: 2.195%; top: 55.791%; width: 39.992%; height: 20.341%; }
+.hl[data-for="sauces"] { left: 2.451%; width: 39.481%; top: 60.177%; }
+/* column 1 ends at 822px of 1080 */
+.col1-free { left: 2.195%; width: 39.992%; top: 78.132%; height: 10.868%; }
+.sec-sandwiches { left: 57.812%; top: 2.500%; width: 39.992%; height: 44.517%; }
+.hl[data-for="sandwiches"] { left: 58.068%; width: 39.481%; top: 7.212%; }
+.sec-burgers { left: 57.812%; top: 49.617%; width: 39.992%; height: 39.383%; }
+.hl[data-for="burgers"] { left: 58.068%; width: 39.481%; top: 54.329%; }
+/* column 2 ends at 961px of 1080 */
+.col2-free { left: 57.812%; width: 39.992%; top: 91.000%; height: -2.000%; }
+.logo { left: 42.969%; top: 2.500%; width: 14.062%; height: 11.783%; }
+.halo { left: 41.281%; top: 1.086%; width: 17.438%; height: 14.611%; }
+.centre-free { left: 43.229%; width: 13.542%; top: 16.283%; height: 72.717%; }

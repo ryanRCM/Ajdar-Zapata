@@ -4,24 +4,25 @@
 html, body { margin: 0; height: 100%; background: var(--bg); overflow: hidden; }
 body.hide-cursor, body.hide-cursor * { cursor: none; }
 
-/* Each board takes a third of the width, full height: a touch wider than the PDF. */
-#stage { position: fixed; inset: 0; display: grid; grid-template-columns: repeat(3, 1fr); background: var(--bg); }
-.board { position: relative; overflow: hidden; }
-.board > img { display: block; width: 100%; height: 100%; object-fit: fill; }
+/* The menu split across the two walls, bigger (Ryan, 2 Nov 2026): each section is cut from the boards and
+   placed by the monitor's layout.css (made by tools/build-walls.py), two columns with the logo between. */
+#stage { position: fixed; inset: 0; background: var(--bg); overflow: hidden; }
+#stage > img { position: absolute; display: block; }
+#stage::before, #stage::after { content: ""; position: absolute; left: 0; right: 0; height: .9%; background: var(--edge, #121110); z-index: 3; }
+#stage::before { top: 0; } #stage::after { bottom: 0; }
 
 /* Netlify adds a "Powered by Netlify" badge on free sites; keep it off the TVs. */
 #nl-badge-frame, #nl-hud-frame { display: none !important; }
 
-/* Full allergy notice (screen.js) over the short line printed at the foot of each board.
-   It covers only the blank band between the address box and the bottom bar (94.9%–98.9%). */
+/* Full allergy notice (screen.js), once per TV, across the foot of the screen under the address. */
 .allergy {
-  position: absolute; left: 5%; right: 5%; top: 94.9%; height: 4%;
-  display: flex; flex-direction: column; justify-content: center; gap: .35vh; padding: 0 .5%;
+  position: absolute; left: 2.2%; right: 2.2%; top: 95%; height: 4%;
+  display: flex; align-items: center; justify-content: space-between; gap: 2vw;
   background: var(--bg); color: #b5aea4; pointer-events: none; overflow: hidden;
 }
 .allergy p { margin: 0; white-space: nowrap; line-height: 1.15; }
-.allergy p[lang="en"] { font: 400 1.3vh "Barlow Semi Condensed", "Arial Narrow", Arial, sans-serif; }
-.allergy p[lang="fa"] { font: 400 1.3vh Vazirmatn, Tahoma, sans-serif; }
+.allergy p[lang="en"] { font: 400 1.8vh "Barlow Semi Condensed", "Arial Narrow", Arial, sans-serif; }
+.allergy p[lang="fa"] { font: 400 1.8vh Vazirmatn, Tahoma, sans-serif; }
 .allergy b { font-weight: 600; color: var(--cream); }
 
 /* One address across the pair of TVs (Ryan, 2 Nov 2026: no phone number, one address, the two
@@ -38,5 +39,5 @@ body.hide-cursor, body.hide-cursor * { cursor: none; }
   border: .3vh solid var(--orange); color: var(--orange);
   font: 800 3.5vh/1 "Barlow Condensed", "Arial Narrow", Impact, sans-serif; letter-spacing: .03em; white-space: nowrap;
 }
-.address.left  .frame { left: 1.84%; right: 0; border-right: 0; border-radius: .55vh 0 0 .55vh; }
-.address.right .frame { left: 0; right: 1.84%; border-left: 0; border-radius: 0 .55vh .55vh 0; }
+.address.left  .frame { left: 2.2%; right: 0; border-right: 0; border-radius: .55vh 0 0 .55vh; }
+.address.right .frame { left: 0; right: 2.2%; border-left: 0; border-radius: 0 .55vh .55vh 0; }

@@ -9,31 +9,30 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@800&family=Barlow+Semi+Condensed:wght@400;600&family=Vazirmatn:wght@400;600;700&display=swap">
 <link rel="stylesheet" href="/screen.css">
 <link rel="stylesheet" href="/monitor-2/motion.css">
+<link rel="stylesheet" href="/monitor-2/layout.css">
 </head>
 <body data-monitor="2">
-<!-- Monitor 2 = monitor 1 + motion, on orange (Ryan, 2 Nov: "Background ORANGE not black").
-     The boards are the same menu with black and orange swapped (tools/orange-boards.py); every moving thing sits in
-     their blank strips, side gutters, seams, or as a see-through light. Names and numbers in the
-     reel are copied from the boards (menu/Ajdar_Zapata_Boards.pdf). -->
+<!-- Monitor 2 = the right wall: orange, with motion. Names and numbers in the reel are copied from the
+     boards (menu/Ajdar_Zapata_Boards.pdf). -->
+<!-- Right wall, orange (Ryan, 2 Nov 2026). The menu is split across the two TVs so the words are bigger:
+     this wall has doner, platters, drinks, shawarma and hot dogs, plus the food reel; the left wall has
+     starters, sauces, sandwiches and burgers. Sections are cut from the boards by tools/build-walls.py;
+     every moving thing sits in the free space layout.css names (col1-free, col2-free, centre-free). -->
 <div id="stage">
-
-  <div class="board b1">
-    <img src="/monitor-2/board-1.png" alt="Starters and sides, sauce selection and drinks">
-    <div class="halo" style="--ph:-1.3s"></div>
-    <div class="gutter l" data-embers="5" data-rise="84vh"></div>
-    <div class="gutter r" data-embers="5" data-rise="84vh"></div>
-    <div class="hl" data-for="starters" style="--y:17.18%"></div>
-    <div class="hearth"><div class="warm"></div><div class="sparks" data-embers="6" data-rise="7vh" style="position:absolute;inset:0"></div></div>
-  </div>
-
-  <div class="board b2">
-    <img src="/monitor-2/board-2.png" alt="Sandwiches and burgers">
-    <div class="halo"></div>
-    <div class="gutter l" data-embers="5" data-rise="84vh"></div>
-    <div class="gutter r" data-embers="5" data-rise="84vh"></div>
-    <div class="hl" data-for="sandwiches" style="--y:17.48%"></div>
-    <div class="hl" data-for="burgers" style="--y:51.23%"></div>
-
+  <img class="sec-doner" src="/monitor-2/sec-doner.png" alt="Doner baguettes, 21 to 24">
+  <img class="sec-platters" src="/monitor-2/sec-platters.png" alt="Doner platters, 25 to 27">
+  <img class="sec-drinks" src="/monitor-2/sec-drinks.png" alt="Drinks">
+  <img class="sec-shawarma" src="/monitor-2/sec-shawarma.png" alt="Shawarma, 28 to 30">
+  <img class="sec-hotdogs" src="/monitor-2/sec-hotdogs.png" alt="Hot dogs, 31 to 35">
+  <div class="halo"></div>
+  <img class="logo" src="/monitor-2/logo.png" alt="Ajdar Zapata Sandwich">
+  <div class="hl" data-for="doner"></div>
+  <div class="hl" data-for="platters"></div>
+  <div class="hl" data-for="shawarma"></div>
+  <div class="hl" data-for="hotdogs"></div>
+  <div class="embers-col centre-free" data-embers="12" data-rise="74vh"></div>
+  <div class="hearth col1-free"><div class="warm"></div><div class="sparks" data-embers="8" data-rise="18vh" style="position:absolute;inset:0"></div></div>
+  <div class="reelbox col2-free">
     <div class="reel" aria-hidden="true">
       <div class="floor"></div>
 
@@ -225,22 +224,8 @@
       <div class="wipe"></div>
     </div>
   </div>
-
-  <div class="board b3">
-    <img src="/monitor-2/board-3.png" alt="Doner baguettes, doner platters, shawarma and hot dogs">
-    <div class="halo" style="--ph:-2.6s"></div>
-    <div class="gutter l" data-embers="5" data-rise="84vh"></div>
-    <div class="gutter r" data-embers="5" data-rise="84vh"></div>
-    <div class="hl" data-for="doner" style="--y:17.01%"></div>
-    <div class="hl" data-for="platters" style="--y:34.65%"></div>
-    <div class="hl" data-for="shawarma" style="--y:49.14%"></div>
-    <div class="hl" data-for="hotdogs" style="--y:63.56%"></div>
-    <div class="hearth"><div class="warm"></div><div class="sparks" data-embers="7" data-rise="10vh" style="position:absolute;inset:0"></div></div>
-  </div>
   <div class="address right" aria-label="864 High Road, London N12 9RH"><div class="frame">London N12 9RH</div></div>
 </div>
-<div class="seam s1"></div>
-<div class="seam s2" style="--ph:-3.5s"></div>
 <div class="sweep"></div>
 
 <script src="/monitor-2/motion.js"></script>

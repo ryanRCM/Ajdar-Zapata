@@ -16,16 +16,17 @@
   function wake() { document.body.classList.remove('hide-cursor'); clearTimeout(cursorTimer); cursorTimer = setTimeout(() => document.body.classList.add('hide-cursor'), 3000); }
   document.addEventListener('mousemove', wake); wake();
 
-  // Allergy notice: the full FSA wording (Ryan, 2 Nov 2026), drawn over the short line baked into the boards.
-  document.querySelectorAll('.board').forEach(board => {
+  // Allergy notice: the full FSA wording (Ryan, 2 Nov 2026), once per TV, under the address.
+  const stage = document.getElementById('stage');
+  if (stage) {
     const note = document.createElement('div');
     note.className = 'allergy';
     note.innerHTML = '<p lang="en"><b>Food Allergies and Intolerances:</b> Before ordering please speak to our staff about your requirements.</p>'
       + '<p lang="fa" dir="rtl"><b>حساسیت و عدم تحمل غذایی:</b> لطفاً پیش از سفارش، نیازهای خود را با کارکنان ما در میان بگذارید.</p>';
-    board.appendChild(note);
-  });
+    stage.appendChild(note);
+  }
 
-  document.querySelectorAll('.board > img').forEach(b => b.addEventListener('error', () => setTimeout(() => { b.src = b.src.split('?')[0] + '?r=' + Date.now(); }, 60000)));
+  document.querySelectorAll('#stage img').forEach(b => b.addEventListener('error', () => setTimeout(() => { b.src = b.src.split('?')[0] + '?r=' + Date.now(); }, 60000)));
 
   // Check in with Netlify about once a minute (netlify/functions/screen.mjs). Each TV keeps an ID in its
   // browser; Netlify says which monitor that TV should show, and which deploy is live. If the TV is on
