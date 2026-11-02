@@ -11,13 +11,16 @@ const KEY = "devices";
 const ACTIVE_MS = 15 * 60 * 1000;      // a TV seen in the last 15 minutes holds its monitor
 const TOUCH_MS = 4 * 60 * 1000;        // refresh a TV's "last seen" at most every 4 minutes, to keep writes low
 const LOCK_AFTER_MS = 20 * 60 * 1000;  // a device on its monitor for 20+ minutes is a TV, not a passing phone
+// Paused 2 Nov: Ryan's photo showed the TVs on an older version while two other devices were checking in.
+// Locking resumes when this is false, once ?status shows the two devices are the shop TVs.
+const LOCK_PAUSED = true;
 const MAX_DEVICES = 20;
 // The two shop TVs are locked in (Ryan, 2 Nov 2026). Monitor 1 = left wall (yellow), monitor 2 = right
 // wall (orange). If the locked TVs turn out to be on the wrong walls, set SWAP to true and push.
 const SWAP = false;
 
 // state: { devices: { id: { m, first, seen } }, locked: { 1: id, 2: id } }. Older state was the devices map itself.
-export function assign(state, id, want, now) {
+export function assign(state, id, want, now, kind = '') {
   const legacy = state && !state.devices && !state.locked;
   const devices = { ...(legacy ? state : state?.devices || {}) };
   let locked = state?.locked ? { ...state.locked } : null;
@@ -48,6 +51,7 @@ export function assign(state, id, want, now) {
       d = { ...d, seen: now };
       changed = true;
     }
+    if (kind && d.kind !== kind) { d = { ...d, kind }; changed = true; }
     devices[id] = d;
     m = d.m;
     // Lock once each monitor has a device that has stayed on it for 20+ minutes and is still checking in.
@@ -55,7 +59,7 @@ export function assign(state, id, want, now) {
       .filter(([, v]) => v.m === n && now - v.seen < ACTIVE_MS && (v.seen - (v.first || v.seen)) >= LOCK_AFTER_MS)
       .sort((a, b) => b[1].seen - a[1].seen)[0]?.[0];
     const one = pick(1), two = pick(2);
-    if (one && two) { locked = { 1: one, 2: two }; changed = true; }
+    if (one && two && !LOCK_PAUSED) { locked = { 1: one, 2: two }; changed = true; }
   }
 
   const ids = Object.keys(devices);
@@ -67,6 +71,14 @@ export function assign(state, id, want, now) {
   }
   if (SWAP && m) m = 3 - m;
   return { state: locked ? { devices, locked } : { devices }, monitor: m, changed };
+}
+
+// A short, non-identifying description of the device from its browser: enough to tell a TV from a phone.
+function kindOf(ua) {
+  const tv = /Tizen|Web0S|webOS|SMART-TV|SmartTV|HbbTV|BRAVIA|AFT|Android TV|GoogleTV|CrKey|Roku|VIDAA|NetCast|Philips|Hisense|TCL|Vestel/i.exec(ua);
+  const os = /iPhone|iPad|Android|Windows|Mac OS X|CrOS|Linux/i.exec(ua);
+  const br = /Edg|SamsungBrowser|Firefox|Chrome|Safari/i.exec(ua);
+  return [tv ? 'TV:' + tv[0] : '', os ? os[0] : '', br ? br[0] : ''].filter(Boolean).join(' ').slice(0, 40);
 }
 
 const reply = body => new Response(JSON.stringify(body), {
@@ -82,7 +94,7 @@ export default async (req, context) => {
     const devices = cur?.devices || (cur && !cur.locked ? cur : {}) || {};
     const now = Date.now();
     const active = Object.values(devices).filter(d => now - d.seen < ACTIVE_MS)
-      .map(d => ({ monitor: d.m, last_seen_min: Math.round((now - d.seen) / 60000), on_it_min: Math.round((d.seen - (d.first || d.seen)) / 60000) }));
+      .map(d => ({ monitor: d.m, device: d.kind || '?', last_seen_min: Math.round((now - d.seen) / 60000), on_it_min: Math.round((d.seen - (d.first || d.seen)) / 60000) }));
     return reply({ version, locked: !!cur?.locked, locked_monitors: Object.keys(cur?.locked || {}), active });
   }
   const id = url.searchParams.get("id") || "";
@@ -92,7 +104,7 @@ export default async (req, context) => {
   const store = getStore({ name: "screens", consistency: "strong" });
   for (let tries = 0; tries < 4; tries++) {
     const cur = await store.getWithMetadata(KEY, { type: "json" });
-    const r = assign(cur?.data || {}, id, want, Date.now());
+    const r = assign(cur?.data || {}, id, want, Date.now(), kindOf(req.headers.get("user-agent") || ""));
     if (!r.changed) return reply({ monitor: r.monitor, version });
     // Only write if nobody else wrote in between, so two TVs starting together can't both get monitor 1.
     const res = await store.setJSON(KEY, r.state, cur ? { onlyIfMatch: cur.etag } : { onlyIfNew: true });
