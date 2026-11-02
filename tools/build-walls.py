@@ -175,6 +175,23 @@ def sauce_list():
             row[(h - fa.shape[0]) // 2:(h - fa.shape[0]) // 2 + fa.shape[0], mid + gap:mid + gap + fa.shape[1]] = fa
             lines += [row, np.tile(B, (22, width, 1))]
     out = np.vstack(lines + [np.tile(B, (10, width, 1))])
+    # trim to the list's own width (title row included), so the column it sits in isn't forced wide
+    body = np.abs(out[100:] - B).max(axis=2) > 30
+    xs = np.where(body.any(axis=0))[0]
+    x0, x1 = max(0, xs.min() - 12), min(width, xs.max() + 13)
+    head_w = x1 - x0
+    t = head
+    tink = np.abs(t - B).max(axis=2) > 30
+    title_x = np.where(tink[:60].any(axis=0))[0]
+    en_end = title_x[title_x < width // 2].max() + 1 if (title_x < width // 2).any() else 0
+    fa_start = title_x[title_x > width // 2].min() if (title_x > width // 2).any() else width
+    newhead = np.tile(B, (t.shape[0], head_w, 1))
+    newhead[:, :min(en_end, head_w)] = t[:, :min(en_end, head_w)]
+    fa_w = width - fa_start
+    if fa_w < head_w: newhead[:, head_w - fa_w:] = t[:, fa_start:]
+    rule = np.abs(t - np.array([240, 124, 26])).max(axis=2) < 60
+    newhead[rule.mean(axis=1) > 0.8] = t[rule.mean(axis=1) > 0.8][:, :head_w]
+    out = np.vstack([newhead, out[t.shape[0]:, x0:x1]])
     return out, tight['sauces'][1]
 
 tight['sauces'] = sauce_list()
