@@ -26,6 +26,7 @@ Read this first, then `HANDOFF.md`. This repo is the TV menu website for **Ajdar
 
 ## Seasons (Ryan, 2 Nov 2026: "Christmas versions, Halloween versions that automatically update")
 - `site/season.js` sets `<html data-season>` by date: **christmas 1 Nov - 6 Jan**, **halloween in October** (nothing built yet), otherwise none. `site/season.css` hides snow and `[data-season-only="christmas"]` outside the season. Preview any season with `?season=christmas`.
+- **Santa's Robbery** (Ryan's own poster, 15 Nov: "the main feature, stay longer"): `hero-robbery` in `site/monitor-2/index.html`, first in the loop and held 22 s, Christmas season only (added in `site/show.js`). Source in `menu/photos/santas-robbery-poster.png`.
 - The Christmas update (PR #4, merged 2 Nov) added full-screen hero slides on the cycling TV (sauces, sandwiches, burgers, brand), its running order in `site/show.js`, and the snow and sparkles in `site/xmas.js`.
 
 ## Files
