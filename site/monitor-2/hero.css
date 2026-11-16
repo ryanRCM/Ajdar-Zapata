@@ -1,11 +1,11 @@
 /* Monitor 2's full-screen hero slides (Christmas update, 2 Nov 2026: "really go all out ... McDonald's-like
-   visuals moving around live"). Each hero fills the whole right TV, with its own
+   visuals moving around live"). Each hero fills the right TV above the allergy notice, with its own
    choreography on the real food photos. Only transform and opacity animate (plus z-index flips in the
    orbit), so it stays smooth on the TVs; a hero that is not on screen is display:none and costs nothing.
    Timing: a hero switches on while the slabs (below) cover the screen; every delay counts from then. */
 
 .hero {
-  position: absolute; z-index: 2; left: 1.042%; right: 1.042%; top: 1.296%; height: 97.408%;
+  position: absolute; z-index: 2; left: 1.042%; right: 1.042%; top: 1.296%; height: 89.815%;
   display: none; overflow: hidden; border-radius: 1.8vh; border: .4vh solid #ffc61a;
   background: radial-gradient(120% 95% at 50% 38%, #ff6a12 0%, #e02a00 42%, #9a0c00 82%, #6e0700 100%);
   box-shadow: inset 0 0 0 .2vh rgba(255, 240, 200, .6), 0 1.2vh 2.6vh rgba(90, 10, 0, .42);

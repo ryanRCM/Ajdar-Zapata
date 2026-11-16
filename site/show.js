@@ -9,13 +9,12 @@ window.AZShow = (() => {
   const OFFERS = [];
 
   // [slide id, seconds on screen]. Menu sections (ids as on the boards), then a full-screen hero every
-  // two or three menu slides. The menu is the main part of the loop: heroes and the poster together stay
-  // well under half its time (tools/check.cjs holds them under 40%), menu holds stay 11-14 s.
+  // two or three menu slides.
   const SLIDES = [   // menu holds as on main (Ryan, 2 Nov 2026: slower, 11-14 s)
-    ['starters', 14], ['sauces', 12], ['hero-sauce', 12],
-    ['sandwiches', 14], ['burgers', 13], ['hero-sandwich', 10],
-    ['doner', 12], ['platters', 11], ['hero-burger', 10],
-    ['shawarma', 11], ['hero-lineup', 9], ['hotdogs', 13], ['drinks', 11], ['hero-brand', 10],
+    ['starters', 14], ['sauces', 12], ['hero-sauce', 14],
+    ['sandwiches', 14], ['burgers', 13], ['hero-sandwich', 11],
+    ['doner', 12], ['platters', 11], ['hero-burger', 11],
+    ['shawarma', 11], ['hero-lineup', 13], ['hotdogs', 13], ['drinks', 11], ['hero-brand', 11],
   ];
   if (OFFERS.length) SLIDES.push(['hero-offers', 6 + 3 * OFFERS.length]);
   // Santa's Robbery, Ryan's poster: the main feature in the Christmas season, first in the loop and held longest.

@@ -1,7 +1,6 @@
 // Shared by both monitors: keep the screen on, full screen on tap, hide the pointer,
-// draw the flames, retry a failed image, reload by itself when a new version goes live,
-// make sure each TV shows its own monitor, and keep running unattended: an offline copy (/sw.js),
-// an hourly reload and a reload if the page throws (window.AZReload, also used by monitor 2's watchdog).
+// draw the allergy bar and the flames, retry a failed image, reload by itself when a new version goes live,
+// and make sure each TV shows its own monitor.
 (() => {
   let lock = null, cursorTimer = null;
   async function keepAwake() {
@@ -9,7 +8,6 @@
   }
   document.addEventListener('visibilitychange', () => { if (!document.hidden) keepAwake(); });
   keepAwake();
-  setInterval(keepAwake, 60 * 1000);   // the browser can drop the lock by itself: ask again (does nothing while it is held)
 
   document.addEventListener('click', () => {
     try { if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {}); } catch (e) {}
@@ -18,8 +16,15 @@
   function wake() { document.body.classList.remove('hide-cursor'); clearTimeout(cursorTimer); cursorTimer = setTimeout(() => document.body.classList.add('hide-cursor'), 3000); }
   document.addEventListener('mousemove', wake); wake();
 
-  // The flames behind the glass (flame.js).
+  // The bottom bar: only the allergy notice (Ryan, 2 Nov 2026), and the flames behind the glass (flame.js).
   const stage = document.getElementById('stage');
+  if (stage && document.body.dataset.monitor === '2') { // the allergy notice: right TV only (Ryan: "only in one section")
+    const bar = document.createElement('div');
+    bar.className = 'allergy-bar';
+    bar.innerHTML = '<p lang="en"><b>Food Allergies and Intolerances:</b> Before ordering please speak to our staff about your requirements.</p>'
+      + '<p lang="fa" dir="rtl"><b>حساسیت و عدم تحمل غذایی:</b> لطفاً پیش از سفارش، نیازهای خود را با کارکنان ما در میان بگذارید.</p>';
+    stage.appendChild(bar);
+  }
   if (stage) {
     if (window.Flames) {
       const c = document.createElement('canvas');
@@ -74,29 +79,6 @@
   setTimeout(checkIn, 1000 + Math.random() * 3000); // a little apart, so two TVs starting together don't collide
   setInterval(checkIn, 60 * 1000);
 
-  // Offline copy: /sw.js keeps the last good pages and pictures, used only when the network fails.
-  try { if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {}); } catch (e) {}
-
-  // The safety nets' reload. Never more often than every `gap` minutes (no reload loops), and only when the
-  // page can come back: it is fetched first (from Netlify, or from the offline copy if the Wi-Fi is down), so
-  // a TV never swaps a working menu for the browser's error page.
-  let busy = false;
-  async function safeReload(gap) {
-    if (busy) return;
-    busy = true;
-    try {
-      const lastAt = Number(sessionStorage.getItem('az-reloaded')) || 0;
-      if (Date.now() - lastAt > (gap || 5) * 60 * 1000 && (await fetch(location.pathname, { cache: 'no-store' })).ok) {
-        sessionStorage.setItem('az-reloaded', Date.now());
-        return freshReload();
-      }
-    } catch (e) {}
-    busy = false;
-  }
-  window.AZReload = safeReload;
-  // A full reload every hour anyway (clears any memory build-up, retries anything that failed); if the page
-  // can't be fetched just then, it tries again each minute.
-  setInterval(() => { if (Date.now() - loadedAt > 60 * 60 * 1000) safeReload(); }, 60 * 1000);
-  // One of our own scripts threw: start clean (at most once every half hour).
-  addEventListener('error', e => { if (e.filename && e.filename.indexOf(location.origin) === 0) setTimeout(() => safeReload(30), 5000); });
+  // Safety net: a full reload every hour anyway (clears any memory build-up, retries anything that failed).
+  setTimeout(() => freshReload(), 60 * 60 * 1000);
 })();
