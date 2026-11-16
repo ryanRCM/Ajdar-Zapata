@@ -9,8 +9,8 @@ Every section is lifted straight off the original boards (site/board-N.png): not
   2. The lettering is lifted off the black background as see-through ink and recoloured by which ink it
      was (orange headings/prices/tags, yellow Persian names, cream/grey English), per wall palette.
 The left TV shows every section at once on glass panels in three columns; the right TV cycles through the
-sections one at a time, each as big as fits, beside its food animation. The bottom bar has only the allergy notice;
-the one logo sits at the top of the right TV's food column.
+sections one at a time, each as big as fits, beside its food animation. No bottom bar (the allergy notice
+is on the phone menu and in the shop, not on the TVs: Ryan, Nov 2026); the one logo sits at the top of the right TV's food column.
 Output per monitor: sec-*.png, logo.png (left or right half is shown by CSS), layout.css.
     python3 tools/build-walls.py        (re-measure SECTIONS below if a new PDF moves things)
 """
@@ -209,14 +209,12 @@ tight['sauces'] = sauce_list()
 W, H = 1920.0, 1080.0
 M, GAP, PAD = 14.0, 12.0, 10.0          # outer margin, between panels, inside a panel
 TOP = 12.0
-BOTTOM1 = H - 12.0                      # left TV: no bottom bar (allergy notice only on the right TV)
-BOTTOM2 = H - 96.0                      # right TV: the allergy bar sits below this
+BOTTOM1 = H - 12.0                      # no bottom bar on either TV (Ryan, Nov 2026: the allergy notice lives elsewhere)
+BOTTOM2 = H - 12.0                      # right TV: sections and the food column use the full height
 pct = lambda v, ref: f'{v / ref * 100:.3f}%'
 size = {n: (t[0].shape[1], t[0].shape[0]) for n, t in tight.items()}   # (width, height) in board pixels
 
 def common(mon, css):
-    if mon == 2:  # the allergy notice, on the right TV only (Ryan, 2 Nov 2026: "only in one section")
-        css.append(f'.allergy-bar {{ left: {pct(M, W)}; right: {pct(M, W)}; top: {pct(BOTTOM2 + 10, H)}; height: {pct(H - BOTTOM2 - 20, H)}; }}')
     logo().save(f'site/monitor-{mon}/logo.png', optimize=True)
     if mon == 2: logo_big()
 
@@ -237,11 +235,20 @@ extra_w = (W - fixed_w - s1 * sum(col_w_board(c) for c in STATIC)) / len(STATIC)
 x = M
 for names in STATIC:
     cw = col_w_board(names) * s1 + 2 * PAD + extra_w
-    used = sum(size[n][1] * s1 + 2 * PAD for n in names) + GAP * (len(names) - 1)
-    grow = (BOTTOM1 - TOP - used) / len(names)          # panels share the leftover height: fill to the bottom
+    # Share the column's height so every panel's text is the same size, up to the size at which a section
+    # fills the panel's width (then headings and prices line up down the column); spare height is shared out.
+    full = {n: size[n][1] * (cw - 2 * PAD) / size[n][0] + 2 * PAD for n in names}
+    avail = BOTTOM1 - TOP - GAP * (len(names) - 1)
+    lo, hi = 0.0, 10.0
+    for _ in range(50):
+        mid = (lo + hi) / 2
+        if sum(min(full[n], size[n][1] * mid + 2 * PAD) for n in names) > avail: hi = mid
+        else: lo = mid
+    hs = {n: min(full[n], size[n][1] * lo + 2 * PAD) for n in names}
+    grow = (avail - sum(hs.values())) / len(names)
     y = TOP
     for n in names:
-        h = size[n][1] * s1 + 2 * PAD + grow
+        h = hs[n] + grow
         css.append(f'.sec-{n} {{ left: {pct(x, W)}; top: {pct(y, H)}; width: {pct(cw, W)}; height: {pct(h, H)}; }}')
         y += h + GAP
     x += cw + GAP

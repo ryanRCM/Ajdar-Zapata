@@ -186,4 +186,13 @@
     });
   });
   // (A hidden tab: /show.js calls go() with reset when the tab is shown again, so the slide starts cleanly.)
+
+  // Watchdog: the longest hold is 22 s, so if the same slide (or none) has been up for 90 s the show is stuck:
+  // reload (/screen.js: only when the page can come back, never in a loop).
+  let seen = null, since = Date.now();
+  setInterval(() => {
+    const on = document.querySelector('#stage [data-id].on'), id = on ? on.dataset.id : '';
+    if (id !== seen || document.hidden) { seen = id; since = Date.now(); }
+    else if (Date.now() - since > 90000 && window.AZReload) window.AZReload();
+  }, 15000);
 })();
