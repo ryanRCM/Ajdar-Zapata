@@ -20,8 +20,18 @@
 ## Waiting on Ryan
 - [x] **Unblock Netlify builds.** Ryan made the GitHub repo public (2 Nov), which removes Netlify's private-repo block on commits from an "unrecognized Git contributor" (Claude's commits). The repo holds no secrets: keep it that way.
 - [ ] Put /monitor-1 and /monitor-2 on the TVs; say hit or miss on the monitor 2 animation.
-- [ ] Persian allergy line (Fable's translation, reviewed 2 Nov, reads correctly): Ryan to confirm with the shop.
+- [ ] Persian allergy line (Fable's translation, reviewed 2 Nov, reads correctly): Ryan to confirm with the shop. It is off the TVs since the Nov polish; it still shows on the phone menu (`/menu/`).
+- [ ] **Tell Claude the TVs' make and model** (the label on the back, or Settings → About). The browser only reports "Linux Chrome 97", so the exact menu names below are a guess until then.
 - [ ] Hang **monitor 1 on the left**, monitor 2 on the right: the address reads across the pair.
 - [ ] Any more specs.
+
+## Keep the TVs on (Ryan, once per TV, in the TV's own settings)
+The pages now recover by themselves from Wi-Fi drops, a stuck show and errors. They can't recover from the TV switching itself off, so:
+- [ ] Turn **off** auto power-off, no-signal power-off and every eco / sleep timer.
+- [ ] Set **power-on after a power cut** (often called "power on behaviour" or "last state").
+- [ ] Set the browser's **start page** to the monitor address: `ajdarzapata.co.uk/monitor-1` on the left TV, `ajdarzapata.co.uk/monitor-2` on the right.
+- [ ] Plug the TVs **into the wall**, not a switched or timed strip.
+- [ ] Open each monitor once while the Wi-Fi is on and leave it an hour: after its first hourly reload the TV holds an offline copy.
+- Check from anywhere: `ajdarzapata.co.uk/api/screen?status` lists each TV that is on, with `page_open_min`.
 
 **Paste-in:** "Read CLAUDE.md and HANDOFF.md in ryanRCM/Ajdar-Zapata, then do Next 1."
