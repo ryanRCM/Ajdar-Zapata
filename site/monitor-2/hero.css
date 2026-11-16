@@ -277,14 +277,48 @@
    a puff of dust, the food lands on each with a bounce and a shine, the labels swing in. In the Christmas
    season the crate tops carry a little snow. Entrances hold their first frame only while waiting
    ('backwards'), so once landed nothing keeps costing the TV. ───────────── */
-.hero-lineup { background: radial-gradient(120% 100% at 40% 30%, #ffe066 0%, #ffcc1a 45%, #ffad00 100%); border-color: #b30f00; }
-.hero-lineup .rays { left: 30%; top: 30%; background: repeating-conic-gradient(rgba(255, 150, 0, .16) 0 7deg, rgba(255, 150, 0, 0) 7deg 18deg); }
-.lu-head { position: absolute; z-index: 5; left: 2.4%; top: 3.5%; }
+/* the wall: warm amber glowing out of deep orange, like Ryan's Santa's Robbery poster (Nov 2026) */
+.hero-lineup { border-color: #ffb000;
+  background: radial-gradient(78% 80% at 46% 38%, #ffc444 0%, #f7901c 30%, #d9600c 56%, #a43a06 78%, #6a1f03 94%, #451402 100%); }
+.hero-lineup .rays { left: 32%; top: 34%; background: repeating-conic-gradient(rgba(255, 220, 140, .09) 0 6deg, rgba(255, 220, 140, 0) 6deg 16deg); }
+.lu-glow { position: absolute; inset: 0; pointer-events: none;   /* soft light behind the headline and over the crates */
+  background: radial-gradient(42% 46% at 24% 22%, rgba(255, 236, 150, .75), rgba(255, 210, 90, 0) 70%),
+              radial-gradient(55% 40% at 62% 62%, rgba(255, 196, 80, .45), rgba(255, 170, 40, 0) 70%); }
+.lu-bokeh { position: absolute; inset: 0; pointer-events: none; opacity: .85;   /* still: a full-screen shimmer cost the TVs frames */
+  background:
+    radial-gradient(circle at 52% 14%, rgba(255, 244, 200, .55) 0 2.2vh, rgba(255, 244, 200, 0) 3.4vh),
+    radial-gradient(circle at 63% 9%,  rgba(255, 214, 120, .45) 0 3.4vh, rgba(255, 214, 120, 0) 5vh),
+    radial-gradient(circle at 74% 20%, rgba(255, 250, 220, .5) 0 1.6vh, rgba(255, 250, 220, 0) 2.6vh),
+    radial-gradient(circle at 86% 11%, rgba(255, 200, 100, .4) 0 4.2vh, rgba(255, 200, 100, 0) 6vh),
+    radial-gradient(circle at 94% 30%, rgba(255, 240, 190, .45) 0 2vh, rgba(255, 240, 190, 0) 3.2vh),
+    radial-gradient(circle at 57% 30%, rgba(255, 226, 150, .35) 0 2.8vh, rgba(255, 226, 150, 0) 4.2vh),
+    radial-gradient(circle at 46% 40%, rgba(255, 250, 220, .4) 0 1.3vh, rgba(255, 250, 220, 0) 2.2vh),
+    radial-gradient(circle at 70% 38%, rgba(255, 210, 110, .3) 0 3.6vh, rgba(255, 210, 110, 0) 5.4vh),
+    radial-gradient(circle at 81% 46%, rgba(255, 246, 210, .38) 0 1.8vh, rgba(255, 246, 210, 0) 2.9vh),
+    radial-gradient(circle at 5% 70%,  rgba(255, 220, 140, .3) 0 3vh, rgba(255, 220, 140, 0) 4.6vh),
+    radial-gradient(circle at 40% 58%, rgba(255, 244, 200, .3) 0 1.5vh, rgba(255, 244, 200, 0) 2.5vh),
+    radial-gradient(circle at 97% 62%, rgba(255, 214, 120, .35) 0 2.6vh, rgba(255, 214, 120, 0) 4vh); }
+/* a dark wooden stage the crates stand on, with a warm lit front edge */
+.lu-floor { position: absolute; left: 0; right: 0; bottom: 0; height: 7%; pointer-events: none;
+  background: linear-gradient(180deg, #ffcf70 0, #b8611c .5vh, #6e3210 1.2vh, #4a1f08 60%, #2e1204 100%),
+              repeating-linear-gradient(90deg, rgba(0, 0, 0, 0) 0 15vh, rgba(30, 10, 0, .35) 15vh 15.3vh); background-blend-mode: normal; }
+.lu-floor::before { content: ""; position: absolute; left: 0; right: 0; top: -5vh; height: 5vh;   /* the glow where the crates meet the stage */
+  background: linear-gradient(180deg, rgba(255, 200, 90, 0), rgba(255, 200, 90, .35)); }
+/* fairy lights strung across the top (Christmas season only) */
+.lu-lights { position: absolute; left: 0; right: 0; top: 0; height: 12%; z-index: 4; pointer-events: none; }
+.lu-lights svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.lu-lights polyline { fill: none; stroke: #3a1a08; stroke-width: .35vh; vector-effect: non-scaling-stroke; }
+.lu-lights i { position: absolute; width: 1.5vh; height: 2.1vh; margin-left: -.75vh; margin-top: -.2vh; border-radius: 50% 50% 45% 45%;
+  background: radial-gradient(circle at 40% 35%, #fff, var(--c) 45%, rgba(0, 0, 0, .15) 100%);
+  box-shadow: 0 0 1.4vh .5vh var(--c); }
+.lu-lights i:nth-of-type(3n) { animation: bulb 2.6s ease-in-out infinite; animation-delay: calc(var(--k) * -.37s); }   /* a few twinkle */
+@keyframes bulb { 50% { opacity: .45; } }
+.lu-head { position: absolute; z-index: 5; left: 2.4%; top: 7%; }
 .hero-lineup .word { display: block; }
 .hero-lineup .word.l1 { font-size: 11.5vh; }
 .hero-lineup .word.l2 { font-size: 19vh; margin-top: -.5vh; }
-.hero-lineup .word i { color: #4a1200; text-shadow: .7vh .7vh 0 #ff7a00; }
-.hero-lineup .word.l2 i { color: #c40d00; text-shadow: .9vh .9vh 0 #5a0600; }
+.hero-lineup .word i { color: #2a0a00; text-shadow: .5vh .5vh 0 #ffd34d; }
+.hero-lineup .word.l2 i { color: #fff3d6; text-shadow: .9vh .9vh 0 #8a0c00, 0 0 3vh rgba(120, 20, 0, .45); }
 
 .lu-col { position: absolute; z-index: 3; bottom: 2.5%; width: 18.6%; display: flex; flex-direction: column; align-items: center; }
 .lu-crate { position: relative; width: 100%; }
