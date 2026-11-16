@@ -1,5 +1,5 @@
 // Shared by both monitors: keep the screen on, full screen on tap, hide the pointer,
-// draw the allergy bar and the flames, retry a failed image, reload by itself when a new version goes live,
+// draw the flames, retry a failed image, reload by itself when a new version goes live,
 // and make sure each TV shows its own monitor.
 (() => {
   let lock = null, cursorTimer = null;
@@ -16,15 +16,9 @@
   function wake() { document.body.classList.remove('hide-cursor'); clearTimeout(cursorTimer); cursorTimer = setTimeout(() => document.body.classList.add('hide-cursor'), 3000); }
   document.addEventListener('mousemove', wake); wake();
 
-  // The bottom bar: only the allergy notice (Ryan, 2 Nov 2026), and the flames behind the glass (flame.js).
+  // The flames behind the glass (flame.js). No bottom bar: the allergy notice is off the TVs (Ryan, Nov 2026:
+  // "we're going to have it in other places"; it stays on the phone menu).
   const stage = document.getElementById('stage');
-  if (stage && document.body.dataset.monitor === '2') { // the allergy notice: right TV only (Ryan: "only in one section")
-    const bar = document.createElement('div');
-    bar.className = 'allergy-bar';
-    bar.innerHTML = '<p lang="en"><b>Food Allergies and Intolerances:</b> Before ordering please speak to our staff about your requirements.</p>'
-      + '<p lang="fa" dir="rtl"><b>حساسیت و عدم تحمل غذایی:</b> لطفاً پیش از سفارش، نیازهای خود را با کارکنان ما در میان بگذارید.</p>';
-    stage.appendChild(bar);
-  }
   if (stage) {
     if (window.Flames) {
       const c = document.createElement('canvas');
