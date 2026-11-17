@@ -19,7 +19,7 @@
   // The flames behind the glass (flame.js). No bottom bar: the allergy notice is off the TVs (Ryan, Nov 2026:
   // "we're going to have it in other places"; it stays on the phone menu).
   const stage = document.getElementById('stage');
-  if (stage) {
+  if (stage && !window.AZ_LITE) {   // lite mode (/lite.js): no flames
     if (window.Flames) {
       const c = document.createElement('canvas');
       c.className = 'flames'; c.width = 384; c.height = 216; // the whole screen, drawn small and scaled up: light on the TVs

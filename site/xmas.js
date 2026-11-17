@@ -4,6 +4,7 @@
 // Everything is drawn on small canvases, about 16 frames a second, scaled up by the browser (like the flames in
 // /flame.js): dozens of separately moving dots made the TVs composite every panel, which was slow.
 (() => {
+  if (window.AZ_LITE) return;   // lite mode (/lite.js): no snow or sparkles
   const TAU = Math.PI * 2, rnd = (a, b) => a + Math.random() * (b - a);
   const SCALE = 0.25;   // canvas pixels per screen pixel: soft dots don't need more, and it keeps drawing light
 

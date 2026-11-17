@@ -19,6 +19,8 @@ window.AZShow = (() => {
   if (OFFERS.length) SLIDES.push(['hero-offers', 6 + 3 * OFFERS.length]);
   // Santa's Robbery, Ryan's poster: the main feature in the Christmas season, first in the loop and held longest.
   if (document.documentElement.dataset.season === 'christmas') SLIDES.unshift(['hero-robbery', 22]);
+  // Lite mode (/lite.js): menu sections only, no hero slides.
+  if (window.AZ_LITE) for (let k = SLIDES.length - 1; k >= 0; k--) if (SLIDES[k][0].startsWith('hero')) SLIDES.splice(k, 1);
 
   const total = SLIDES.reduce((s, x) => s + x[1], 0) * 1000;
   const starts = []; SLIDES.reduce((t, x) => (starts.push(t), t + x[1] * 1000), 0);
