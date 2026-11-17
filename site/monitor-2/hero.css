@@ -1,11 +1,11 @@
 /* Monitor 2's full-screen hero slides (Christmas update, 2 Nov 2026: "really go all out ... McDonald's-like
-   visuals moving around live"). Each hero fills the right TV above the allergy notice, with its own
+   visuals moving around live"). Each hero fills the right TV, with its own
    choreography on the real food photos. Only transform and opacity animate (plus z-index flips in the
    orbit), so it stays smooth on the TVs; a hero that is not on screen is display:none and costs nothing.
    Timing: a hero switches on while the slabs (below) cover the screen; every delay counts from then. */
 
 .hero {
-  position: absolute; z-index: 2; left: 1.042%; right: 1.042%; top: 1.296%; height: 89.815%;
+  position: absolute; z-index: 2; left: 1.042%; right: 1.042%; top: 1.296%; height: 97.408%;
   display: none; overflow: hidden; border-radius: 1.8vh; border: .4vh solid #ffc61a;
   background: radial-gradient(120% 95% at 50% 38%, #ff6a12 0%, #e02a00 42%, #9a0c00 82%, #6e0700 100%);
   box-shadow: inset 0 0 0 .2vh rgba(255, 240, 200, .6), 0 1.2vh 2.6vh rgba(90, 10, 0, .42);
@@ -58,7 +58,7 @@
 .hero-sauce .hero-head .fa { color: #fff3d6; font-size: 7vh; text-shadow: 0 .4vh 0 #7a0800; opacity: 0; }
 .hero-sauce.on .hero-head .fa { animation: metaIn .6s cubic-bezier(.2, 1.2, .3, 1) 1.2s both; }
 .sauce-grid { position: absolute; left: 2%; right: 2%; top: 17.5%; bottom: 2.6%; display: grid; z-index: 3;
-  grid-template-columns: repeat(4, 1fr); grid-template-rows: 1.12fr 1fr 1fr; gap: 1.8vh; }
+  grid-template-columns: repeat(3, 1fr); grid-template-rows: 1.12fr 1fr 1fr; gap: 1.8vh; }   /* the house sauce, then six */
 .sauce {
   position: relative; overflow: hidden; border-radius: 1.6vh; border: .45vh solid var(--c2);
   background: linear-gradient(160deg, #fffdf8 0%, #fff4e0 55%, #ffe3b8 100%);
@@ -272,6 +272,106 @@
 
 @media (prefers-reduced-motion: reduce) { .hero *, .hero { animation-duration: 0s !important; } }
 
+/* ───────────── The line-up (Nov 2026): real food standing on wooden crates at different heights, a small
+   label beside each, a giant headline top left, on bright yellow. Crates drop in one by one with a thud and
+   a puff of dust, the food lands on each with a bounce and a shine, the labels swing in. In the Christmas
+   season the crate tops carry a little snow. Entrances hold their first frame only while waiting
+   ('backwards'), so once landed nothing keeps costing the TV. ───────────── */
+/* the wall: warm amber glowing out of deep orange, like Ryan's Santa's Robbery poster (Nov 2026) */
+.hero-lineup { border-color: #ffb000;
+  background: radial-gradient(78% 80% at 46% 38%, #ffc444 0%, #f7901c 30%, #d9600c 56%, #a43a06 78%, #6a1f03 94%, #451402 100%); }
+.hero-lineup .rays { left: 32%; top: 34%; background: repeating-conic-gradient(rgba(255, 220, 140, .09) 0 6deg, rgba(255, 220, 140, 0) 6deg 16deg); }
+.lu-glow { position: absolute; inset: 0; pointer-events: none;   /* soft light behind the headline and over the crates */
+  background: radial-gradient(42% 46% at 24% 22%, rgba(255, 236, 150, .75), rgba(255, 210, 90, 0) 70%),
+              radial-gradient(55% 40% at 62% 62%, rgba(255, 196, 80, .45), rgba(255, 170, 40, 0) 70%); }
+.lu-bokeh { position: absolute; inset: 0; pointer-events: none; opacity: .85;   /* still: a full-screen shimmer cost the TVs frames */
+  background:
+    radial-gradient(circle at 52% 14%, rgba(255, 244, 200, .55) 0 2.2vh, rgba(255, 244, 200, 0) 3.4vh),
+    radial-gradient(circle at 63% 9%,  rgba(255, 214, 120, .45) 0 3.4vh, rgba(255, 214, 120, 0) 5vh),
+    radial-gradient(circle at 74% 20%, rgba(255, 250, 220, .5) 0 1.6vh, rgba(255, 250, 220, 0) 2.6vh),
+    radial-gradient(circle at 86% 11%, rgba(255, 200, 100, .4) 0 4.2vh, rgba(255, 200, 100, 0) 6vh),
+    radial-gradient(circle at 94% 30%, rgba(255, 240, 190, .45) 0 2vh, rgba(255, 240, 190, 0) 3.2vh),
+    radial-gradient(circle at 57% 30%, rgba(255, 226, 150, .35) 0 2.8vh, rgba(255, 226, 150, 0) 4.2vh),
+    radial-gradient(circle at 46% 40%, rgba(255, 250, 220, .4) 0 1.3vh, rgba(255, 250, 220, 0) 2.2vh),
+    radial-gradient(circle at 70% 38%, rgba(255, 210, 110, .3) 0 3.6vh, rgba(255, 210, 110, 0) 5.4vh),
+    radial-gradient(circle at 81% 46%, rgba(255, 246, 210, .38) 0 1.8vh, rgba(255, 246, 210, 0) 2.9vh),
+    radial-gradient(circle at 5% 70%,  rgba(255, 220, 140, .3) 0 3vh, rgba(255, 220, 140, 0) 4.6vh),
+    radial-gradient(circle at 40% 58%, rgba(255, 244, 200, .3) 0 1.5vh, rgba(255, 244, 200, 0) 2.5vh),
+    radial-gradient(circle at 97% 62%, rgba(255, 214, 120, .35) 0 2.6vh, rgba(255, 214, 120, 0) 4vh); }
+/* a dark wooden stage the crates stand on, with a warm lit front edge */
+.lu-floor { position: absolute; left: 0; right: 0; bottom: 0; height: 7%; pointer-events: none;
+  background: linear-gradient(180deg, #ffcf70 0, #b8611c .5vh, #6e3210 1.2vh, #4a1f08 60%, #2e1204 100%),
+              repeating-linear-gradient(90deg, rgba(0, 0, 0, 0) 0 15vh, rgba(30, 10, 0, .35) 15vh 15.3vh); background-blend-mode: normal; }
+.lu-floor::before { content: ""; position: absolute; left: 0; right: 0; top: -5vh; height: 5vh;   /* the glow where the crates meet the stage */
+  background: linear-gradient(180deg, rgba(255, 200, 90, 0), rgba(255, 200, 90, .35)); }
+/* fairy lights strung across the top (Christmas season only) */
+.lu-lights { position: absolute; left: 0; right: 0; top: 0; height: 12%; z-index: 4; pointer-events: none; }
+.lu-lights svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.lu-lights polyline { fill: none; stroke: #3a1a08; stroke-width: .35vh; vector-effect: non-scaling-stroke; }
+.lu-lights i { position: absolute; width: 1.5vh; height: 2.1vh; margin-left: -.75vh; margin-top: -.2vh; border-radius: 50% 50% 45% 45%;
+  background: radial-gradient(circle at 40% 35%, #fff, var(--c) 45%, rgba(0, 0, 0, .15) 100%);
+  box-shadow: 0 0 1.4vh .5vh var(--c); }
+.lu-lights i:nth-of-type(3n) { animation: bulb 2.6s ease-in-out infinite; animation-delay: calc(var(--k) * -.37s); }   /* a few twinkle */
+@keyframes bulb { 50% { opacity: .45; } }
+.lu-head { position: absolute; z-index: 5; left: 2.4%; top: 7%; }
+.hero-lineup .word { display: block; }
+.hero-lineup .word.l1 { font-size: 11.5vh; }
+.hero-lineup .word.l2 { font-size: 19vh; margin-top: -.5vh; }
+.hero-lineup .word i { color: #2a0a00; text-shadow: .5vh .5vh 0 #ffd34d; }
+.hero-lineup .word.l2 i { color: #fff3d6; text-shadow: .9vh .9vh 0 #8a0c00, 0 0 3vh rgba(120, 20, 0, .45); }
+
+.lu-col { position: absolute; z-index: 3; bottom: 2.5%; width: 18.6%; display: flex; flex-direction: column; align-items: center; }
+.lu-crate { position: relative; width: 100%; }
+.lu-crate > img { display: block; width: 100%; height: auto; filter: drop-shadow(0 1vh 1vh rgba(90, 30, 0, .35)); }
+.lu-crate + .lu-crate { margin-top: -.4vh; }
+.lu-food { position: relative; z-index: 2; width: 100%; margin-bottom: -2vh; display: flex; justify-content: center; }
+.lu-food > img { display: block; width: 100%; height: auto; }
+.platter .lu-food > img { width: 86%; }
+.shawarma .lu-food > img { width: 78%; }
+.pots { display: flex; flex-wrap: wrap-reverse; justify-content: center; width: 100%; }   /* two pots below, one on top */
+.pots img { width: 46%; height: auto; display: block; }
+.pots .p3 { margin-bottom: -4.5vh; }
+.lu-food .pots + .lu-shine { display: none; }
+
+/* the label: a little card swinging from the top crate's front, never over the food */
+.lu-tag { position: absolute; z-index: 3; left: 50%; top: 24%; width: 82%; margin-left: -41%; padding: .9vh 1vh 1vh;
+  background: linear-gradient(170deg, #fffdf6, #fff1d0); border: .35vh solid #b30f00; border-radius: 1vh;
+  box-shadow: 0 .6vh 1.2vh rgba(70, 20, 0, .4); display: flex; flex-direction: column; align-items: center; gap: .2vh;
+  transform-origin: 50% 0; transform: rotate(-2deg); }
+.lu-col:nth-of-type(even) .lu-tag { transform: rotate(2deg); }
+.lu-tag b { font-family: var(--display); font-weight: 400; font-size: 4.6vh; max-width: 100%; line-height: 1; letter-spacing: .04em; color: #b30f00; white-space: nowrap; }
+.lu-tag .sub { font-size: 2.9vh; color: #4a1200; letter-spacing: .08em; }
+.lu-tag .fa { font-size: 2.8vh; color: #7a2000; }
+
+/* snow on the crate top (Christmas season only) */
+.lu-snow { position: absolute; z-index: 1; left: 2%; right: 2%; top: -1.2vh; height: 2vh;   /* a scalloped drift along the top edge */
+  background: radial-gradient(ellipse at 50% 100%, #ffffff 0 58%, rgba(255, 255, 255, 0) 61%) 0 100% / 9% 100% repeat-x,
+              linear-gradient(#ffffff, #e9eef8) 0 100% / 100% 50% no-repeat; }
+
+/* timing: each column lands in turn (bottom crate first), then its food, then its label */
+.hero-lineup.on .lu-crate { animation: crateDrop .55s cubic-bezier(.55, 0, 1, .45) backwards; animation-delay: calc(.6s + var(--k) * .42s); }
+.hero-lineup.on .lu-crate:first-of-type { animation-delay: calc(.78s + var(--k) * .42s); }
+.hero-lineup.on .lu-crate:last-of-type { animation-delay: calc(.6s + var(--k) * .42s); }
+@keyframes crateDrop { from { transform: translateY(-120vh) rotate(-3deg); } }
+.hero-lineup.on .lu-crate > img { animation: crateSquash .4s ease-out backwards; animation-delay: calc(1.15s + var(--k) * .42s); }
+@keyframes crateSquash { 0% { transform: scale(1.06, .86); } 45% { transform: scale(.98, 1.03); } 100% { transform: none; } }
+.lu-col::after { /* a puff of dust where the crate lands */
+  content: ""; position: absolute; left: -10%; right: -10%; bottom: -1.5vh; height: 4vh; border-radius: 50%; opacity: 0; pointer-events: none;
+  background: radial-gradient(closest-side, rgba(255, 245, 210, .9), rgba(255, 230, 160, 0)); }
+.hero-lineup.on .lu-col::after { animation: dust .7s ease-out both; animation-delay: calc(1.1s + var(--k) * .42s); }
+@keyframes dust { 0% { opacity: .95; transform: scale(.4, .6); } 100% { opacity: 0; transform: scale(1.3, 1.2); } }
+.hero-lineup.on .lu-food { animation: foodLand .7s cubic-bezier(.3, 1.6, .5, 1) backwards; animation-delay: calc(1.45s + var(--k) * .42s); }
+@keyframes foodLand { 0% { opacity: 0; transform: translateY(-40vh) scale(.9); } 40% { opacity: 1; } 70% { transform: translateY(0) scale(1.06, .92); } }
+.hero-lineup.on .lu-tag { animation: tagSwing .8s cubic-bezier(.3, 1.5, .5, 1) backwards; animation-delay: calc(1.9s + var(--k) * .42s); }
+@keyframes tagSwing { 0% { opacity: 0; transform: rotate(-40deg) scale(.6); } }
+.hero-lineup.on .lu-snow { animation: fadeUp .5s ease-out backwards; animation-delay: calc(1.3s + var(--k) * .42s); }
+.lu-shine { position: absolute; inset: 0; pointer-events: none; overflow: hidden; -webkit-mask-size: 100% 100%; -webkit-mask-repeat: no-repeat; }
+.platter .lu-shine { left: 7%; right: 7%; } .shawarma .lu-shine { left: 11%; right: 11%; }
+.lu-shine i { position: absolute; top: 0; bottom: 0; left: 0; width: 24%; opacity: 0;
+  background: linear-gradient(100deg, rgba(255, 255, 255, 0), rgba(255, 252, 235, .55) 50%, rgba(255, 255, 255, 0)); transform: translateX(-120%) skewX(-16deg); }
+.hero-lineup.on .lu-shine i { animation: luShine 1s ease-in-out both; animation-delay: calc(2.3s + var(--k) * .42s); }
+@keyframes luShine { 0% { opacity: 1; transform: translateX(-120%) skewX(-16deg); } 99% { opacity: 1; } 100% { opacity: 0; transform: translateX(480%) skewX(-16deg); } }
+.platter .lu-tag b { font-size: 3.7vh; }
 /* ───────────── Santa's Robbery: Ryan's poster fills the frame, a slow push-in, snow over it ───────────── */
 .hero-robbery { background: #e36a12; }
 .hero-robbery .poster { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 0; transform-origin: 18% 8%; } /* keep the poster's title in view */

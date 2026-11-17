@@ -1,6 +1,6 @@
 /* Shared by both TVs (Ryan, 2 Nov 2026): one bright, screaming reddish-orange wall across the pair, the
    menu on glass panels (yellow glass on the left TV, orange glass on the right), text as big as fits,
-   flames rising behind the glass, and at the bottom only the allergy notice.
+   flames rising behind the glass. No bottom bar (the allergy notice is on the phone menu, not the TVs).
    Panel positions come from each monitor's layout.css (made by tools/build-walls.py). */
 :root {
   --wall: #ff4314; --wall-hot: #ff7a12; --ink: #140c08; --orange: #f07c1a; --cream: #f6efe4;
@@ -49,17 +49,6 @@ body.hide-cursor, body.hide-cursor * { cursor: none; }
 .flames { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; } /* fire, sparks and fireworks, behind the glass */
 .card { z-index: 1; }
 
-/* The bottom bar: only the allergy notice (Ryan, 2 Nov 2026), English and Persian, big and clear. */
-.allergy-bar {
-  position: absolute; z-index: 3; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .3vh;
-  border-radius: 1.4vh; border: .36vh solid var(--rim); color: var(--ink);
-  background: linear-gradient(160deg, var(--glass-top), var(--glass-mid) 45%, var(--glass-low));
-  box-shadow: inset 0 .3vh 0 rgba(255, 255, 255, .95), 0 .9vh 2vh rgba(110, 10, 0, .38);
-}
-.allergy-bar p { margin: 0; white-space: nowrap; line-height: 1.1; }
-.allergy-bar [lang="en"] { font: 600 2.55vh "Barlow Semi Condensed", "Arial Narrow", Arial, sans-serif; letter-spacing: .01em; }
-.allergy-bar [lang="fa"] { font: 600 2.4vh Vazirmatn, Tahoma, sans-serif; }
-.allergy-bar b { color: var(--type); font-weight: 800; }
 
 /* A slow shine slides across the glass now and then: one moving band, so it stays smooth on TVs. */
 .sweep {

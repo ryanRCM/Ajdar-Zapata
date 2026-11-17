@@ -42,10 +42,9 @@ const server = http.createServer((req, res) => {
       imgs.forEach(i => { if (!(i.naturalWidth > 0)) bad.push((i.className || i.parentNode.className) + ' not loaded'); });
       secs.forEach(c => { const r = box(c); if (r.left < 0 || r.top < 0 || r.right > innerWidth + 1 || r.bottom > innerHeight + 1) bad.push(c.className + ' off screen'); });
       // panels never overlap each other; nothing that moves or the address/logo covers a menu panel
-      const others = [...document.querySelectorAll('.side, .allergy-bar')];
-      // full-screen hero slides never run into the allergy notice
-      const bar = document.querySelector('.allergy-bar');
-      document.querySelectorAll('.hero').forEach(h => { const r = rest(h); if (bar && meets(box(bar), r)) bad.push(h.className + ' covers the allergy notice'); });
+      const others = [...document.querySelectorAll('.side')];
+      // the allergy notice stays off the TVs (Ryan, Nov 2026: it's on the phone menu)
+      if (document.querySelector('.allergy-bar')) bad.push('allergy bar is back on the TV');
       slides.forEach(c => { const r = rest(c); if (r.left < -1 || r.top < -1 || r.right > innerWidth + 1 || r.bottom > innerHeight + 1) bad.push(c.className + ' off screen'); });
       others.forEach(o => slides.forEach(c => { if (meets(box(o), rest(c))) bad.push((o.className || 'frame') + ' covers ' + c.className); }));
       secs.forEach((a, i) => secs.slice(i + 1).forEach(c => { if (meets(box(a), box(c))) bad.push(a.className + ' overlaps ' + c.className); }));
@@ -73,7 +72,7 @@ const server = http.createServer((req, res) => {
   // --shots: a screenshot of every slide on the right TV (tools/shot-m2-<slide>.png), taken a few seconds in,
   // and the left TV while each section is live (tools/shot-m1-live.png).
   if (process.argv.includes('--shots')) {
-    const ids = ['starters', 'sauces', 'hero-sauce', 'sandwiches', 'burgers', 'hero-sandwich', 'doner', 'platters', 'hero-burger', 'shawarma', 'hotdogs', 'drinks', 'hero-brand'];
+    const ids = ['starters', 'sauces', 'hero-sauce', 'sandwiches', 'burgers', 'hero-sandwich', 'doner', 'platters', 'hero-burger', 'shawarma', 'hero-lineup', 'hotdogs', 'drinks', 'hero-brand', 'hero-robbery'];
     for (const id of ids) {
       const p = await b.newPage({ viewport: { width: 1920, height: 1080 } }); const errs = [];
       p.on('pageerror', e => errs.push(e.message));

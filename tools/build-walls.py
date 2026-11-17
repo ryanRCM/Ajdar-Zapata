@@ -9,7 +9,7 @@ Every section is lifted straight off the original boards (site/board-N.png): not
   2. The lettering is lifted off the black background as see-through ink and recoloured by which ink it
      was (orange headings/prices/tags, yellow Persian names, cream/grey English), per wall palette.
 The left TV shows every section at once on glass panels in three columns; the right TV cycles through the
-sections one at a time, each as big as fits, beside its food animation. The bottom bar has only the allergy notice;
+sections one at a time, each as big as fits, beside its food animation. There is no bottom bar (the allergy notice is on the phone menu);
 the one logo sits at the top of the right TV's food column.
 Output per monitor: sec-*.png, logo.png (left or right half is shown by CSS), layout.css.
     python3 tools/build-walls.py        (re-measure SECTIONS below if a new PDF moves things)
@@ -175,6 +175,8 @@ def sauce_list():
     lines = [head, np.tile(B, (18, width, 1))]
     for (ey, fy) in rows_y:
         for x in cells_x:
+            if not (np.abs(src[ey[0]:ey[1], x[0]:x[1]] - B).max(axis=2) > 30).any():
+                continue   # a sauce taken off the board (Cheddar, Green: Mama, Nov 2026)
             en, fa = up(cut(ey, x)), up(cut(fy, x))
             h = max(en.shape[0], fa.shape[0])
             row = np.tile(B, (h, width, 1))
@@ -209,14 +211,12 @@ tight['sauces'] = sauce_list()
 W, H = 1920.0, 1080.0
 M, GAP, PAD = 14.0, 12.0, 10.0          # outer margin, between panels, inside a panel
 TOP = 12.0
-BOTTOM1 = H - 12.0                      # left TV: no bottom bar (allergy notice only on the right TV)
-BOTTOM2 = H - 96.0                      # right TV: the allergy bar sits below this
+BOTTOM1 = H - 12.0                      # left TV: no bottom bar
+BOTTOM2 = H - 12.0                      # right TV: no bottom bar either (allergy notice off the TVs, Nov 2026)
 pct = lambda v, ref: f'{v / ref * 100:.3f}%'
 size = {n: (t[0].shape[1], t[0].shape[0]) for n, t in tight.items()}   # (width, height) in board pixels
 
 def common(mon, css):
-    if mon == 2:  # the allergy notice, on the right TV only (Ryan, 2 Nov 2026: "only in one section")
-        css.append(f'.allergy-bar {{ left: {pct(M, W)}; right: {pct(M, W)}; top: {pct(BOTTOM2 + 10, H)}; height: {pct(H - BOTTOM2 - 20, H)}; }}')
     logo().save(f'site/monitor-{mon}/logo.png', optimize=True)
     if mon == 2: logo_big()
 
