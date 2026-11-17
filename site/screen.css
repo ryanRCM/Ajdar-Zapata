@@ -61,3 +61,8 @@ body.hide-cursor, body.hide-cursor * { cursor: none; }
 
 /* Netlify adds a "Powered by Netlify" badge on free sites; keep it off the TVs. */
 #nl-badge-frame, #nl-hud-frame { display: none !important; }
+
+/* Lite mode (site/lite.js): nothing moves, no hero slides, no effects layers. */
+.lite *, .lite *::before, .lite *::after { transition: none !important;   /* every animation jumps straight to its end, once */
+  animation-duration: 0s !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; }
+.lite .hero, .lite canvas, .lite .ember, .lite .wipe, .lite .bigwipe, .lite .slabs, .lite .burst { display: none !important; }

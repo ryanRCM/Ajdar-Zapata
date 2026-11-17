@@ -1,6 +1,8 @@
 // Monitor 2 motion: plays the food reel and seeds the ambient embers.
 // Everything is built once at load (no DOM growth); one timer chain drives the reel.
 (() => {
+  // Lite mode (/lite.js): take the hero slides out of the page altogether, so their big pictures are never loaded.
+  if (window.AZ_LITE) document.querySelectorAll('#stage .hero').forEach(h => h.remove());
   // ── Kinetic type: split each category name into letters, keeping the accent word orange.
   document.querySelectorAll('.word').forEach(w => {
     const text = w.dataset.text, accent = w.dataset.accent || '';
@@ -20,7 +22,7 @@
 
   // ── Embers: a fixed set per container, each with its own random path baked into custom properties.
   const rnd = (a, b) => a + Math.random() * (b - a);
-  document.querySelectorAll('[data-embers]').forEach(box => {
+  if (!window.AZ_LITE) document.querySelectorAll('[data-embers]').forEach(box => {
     const n = +box.dataset.embers, rise = box.dataset.rise || '40vh';
     for (let i = 0; i < n; i++) {
       const e = document.createElement('i');
@@ -38,7 +40,7 @@
   });
 
   // ── Flame licks along the bottom of the free space under the drinks: plain elements, so they stay smooth.
-  document.querySelectorAll('.hearth').forEach(h => {
+  if (!window.AZ_LITE) document.querySelectorAll('.hearth').forEach(h => {
     for (let k = 0; k < 14; k++) {
       const f = document.createElement('i');
       f.className = 'lick';
@@ -52,8 +54,9 @@
   // redrawn 20 times a second, only in the scene that is on screen.
   if (window.Flames) {
     const shape = { x: 0, y: 0, h: 60, w: 36, tilt: 0.04, amp: 0.13, k: 0.9, f: 1.1, ph: 0 };
+    if (window.AZ_LITE) document.querySelectorAll('.mflame').forEach(el => el.setAttribute('d', window.Flames.path(shape, 0, Number(el.dataset.layer))));   // lite: drawn once, still
     let last = 0;
-    (function tick(now) {
+    if (!window.AZ_LITE) (function tick(now) {
       requestAnimationFrame(tick);
       if (now - last < 50 || document.hidden || document.getElementById('stage').classList.contains('hero-mode')) return;
       last = now;
