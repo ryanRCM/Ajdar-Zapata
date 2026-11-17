@@ -55,9 +55,12 @@
   setCookie('az_id', id);
   // az_tv=1 or 2 marks a locked shop TV: the edge function (netlify/edge-functions/tv-lock.js) then shows
   // it its monitor on every address of the domain. Cleared again if the TV is no longer locked.
+  let lastErr = '';
+  addEventListener('error', e => { lastErr = String((e && e.message) || 'error').slice(0, 120) + ' @' + String((e && e.filename) || '').split('/').pop() + ':' + ((e && e.lineno) || 0); });
   async function checkIn() {
     try {
-      const q = new URLSearchParams({ id, up: Math.round((Date.now() - loadedAt) / 60000) });
+      const q = new URLSearchParams({ id, up: Math.round((Date.now() - loadedAt) / 60000), s: Math.round((Date.now() - loadedAt) / 1000) });
+      if (lastErr) { q.set('err', lastErr); lastErr = ''; }
       if (want === '1' || want === '2') q.set('want', want);
       const r = await fetch('/api/screen?' + q, { cache: 'no-store' });
       if (!r.ok) return;
@@ -71,6 +74,9 @@
     } catch (e) {}
   }
   setTimeout(checkIn, 1000 + Math.random() * 3000); // a little apart, so two TVs starting together don't collide
+  // Diagnostic (Ryan, 17 Nov 2026: "it keeps kicking it out"): two extra check-ins early on, so the logs show how long
+  // the page survives on the TV (s = seconds since it opened), and the page's last error, if any.
+  setTimeout(checkIn, 15 * 1000); setTimeout(checkIn, 35 * 1000);
   setInterval(checkIn, 60 * 1000);
 
   // Safety net: a full reload every hour anyway (clears any memory build-up, retries anything that failed).
