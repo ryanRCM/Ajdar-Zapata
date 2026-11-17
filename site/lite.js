@@ -3,7 +3,7 @@
 // animations. Monitor 1 is the still menu; monitor 2 still steps through the menu sections, swapped instantly.
 // Everything else is untouched. To bring the full show back: set LITE to false. ?full previews the full show.
 (() => {
-  const LITE = true;
+  const LITE = false;   // 17 Nov: off again. The TVs dropped off just the same with it on, so it was never the animations.
   window.AZ_LITE = LITE && !new URLSearchParams(location.search).has('full');
   if (window.AZ_LITE) document.documentElement.classList.add('lite');
 })();
