@@ -41,7 +41,8 @@ Read this first, then `HANDOFF.md`. This repo is the TV menu website for **Ajdar
 | `site/monitor-1/board-*.png`, `site/monitor-2/board-*.png` | The yellow and orange copies of the boards, made by `tools/yellow-boards.py` and `tools/orange-boards.py`. Re-run both after a new PDF |
 | `site/menu/` | The menu for everyone who isn't a shop TV: the yellow boards stacked for phones |
 | `site/board-1..3.png` | The boards: `menu/Ajdar_Zapata_Boards.pdf` pages 1–3 at 1215×2160. 1 = starters, sauces, drinks · 2 = sandwiches, burgers · 3 = doner, platters, shawarma, hot dogs |
-| `menu/Ajdar_Zapata_Boards.pdf` | **The current menu design** (Ryan, 30 Oct 2026). The other PDFs in `menu/` are older versions, kept for reference |
+| `menu/Ajdar_Zapata_Boards.pdf` | **The current menu design** the TVs are built from: Ryan's 30 Oct design (`menu/Ajdar_Zapata_Boards_original.pdf`) with Mama's corrections of 16-17 Nov applied by `tools/update-boards.py` (no Cheesy Corn Balls, no Cheddar or Green Sauce, no Pepsi; soft drinks £1.50, Sparkling Water £2.00). For another change, add it to that script and re-run it, then rebuild (How to change the menu) |
+| `menu/Ajdar_Zapata_Menu.pdf` | **The printed A4 menu** with ingredients (for customers and Mama), made by `tools/update-menu.py` from `menu/Full_Menu_A4.pdf` with the same corrections. Keep it in step with the boards. The other PDFs in `menu/` are older versions, kept for reference |
 | `tools/check.cjs` | The check before every push |
 | `HANDOFF.md` | Where it stopped and what's next |
 

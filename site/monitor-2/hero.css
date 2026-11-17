@@ -58,7 +58,7 @@
 .hero-sauce .hero-head .fa { color: #fff3d6; font-size: 7vh; text-shadow: 0 .4vh 0 #7a0800; opacity: 0; }
 .hero-sauce.on .hero-head .fa { animation: metaIn .6s cubic-bezier(.2, 1.2, .3, 1) 1.2s both; }
 .sauce-grid { position: absolute; left: 2%; right: 2%; top: 17.5%; bottom: 2.6%; display: grid; z-index: 3;
-  grid-template-columns: repeat(4, 1fr); grid-template-rows: 1.12fr 1fr 1fr; gap: 1.8vh; }
+  grid-template-columns: repeat(3, 1fr); grid-template-rows: 1.12fr 1fr 1fr; gap: 1.8vh; }   /* the house sauce, then six */
 .sauce {
   position: relative; overflow: hidden; border-radius: 1.6vh; border: .45vh solid var(--c2);
   background: linear-gradient(160deg, #fffdf8 0%, #fff4e0 55%, #ffe3b8 100%);

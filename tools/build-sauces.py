@@ -2,8 +2,8 @@
 Each name is lifted straight off the board (menu/Ajdar_Zapata_Boards.pdf, page 1, Sauce selection), English and
 Persian separately, never retyped: the PDF is rendered at 3x the board size so the names stay crisp when big.
 Output: site/monitor-2/sauces/sauce-<n>-en.png and -fa.png, n = 1..9 in board order (left to right, top
-to bottom): Zapata Special Sauce, Garlic, Garlic & Dill, Spicy Chilli, Mushroom, Ketchup, Mayo, Cheddar
-Sauce, Green Sauce.
+to bottom): Zapata Special Sauce, Garlic, Garlic & Dill, Spicy Chilli, Mushroom, Ketchup, Mayo (Cheddar and Green
+Sauce were taken off in Nov 2026).
     python3 tools/build-sauces.py
 """
 import os, subprocess, tempfile
@@ -48,6 +48,8 @@ n = 0
 for r0, r1 in rows:
     for c0, c1 in cols:
         n += 1
+        if not neutral[r0:r1, c0:c1].any():
+            continue   # a sauce taken off the board (Cheddar, Green: Mama, Nov 2026)
         for part, m, col in (('en', neutral, EN), ('fa', yellow, FA)):
             cell = m[r0:r1, c0:c1]
             ys, xs = np.nonzero(cell)

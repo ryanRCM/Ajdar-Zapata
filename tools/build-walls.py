@@ -175,6 +175,8 @@ def sauce_list():
     lines = [head, np.tile(B, (18, width, 1))]
     for (ey, fy) in rows_y:
         for x in cells_x:
+            if not (np.abs(src[ey[0]:ey[1], x[0]:x[1]] - B).max(axis=2) > 30).any():
+                continue   # a sauce taken off the board (Cheddar, Green: Mama, Nov 2026)
             en, fa = up(cut(ey, x)), up(cut(fy, x))
             h = max(en.shape[0], fa.shape[0])
             row = np.tile(B, (h, width, 1))
