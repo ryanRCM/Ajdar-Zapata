@@ -6,6 +6,9 @@ and written to menu/Ajdar_Zapata_Menu.pdf. Every other word and price on the men
   Sauces    · Cheddar Sauce and Green Sauce removed.
   Drinks    · Pepsi removed. Coca-Cola, Diet Coke, Fanta, 7UP, Still Water £1.50; Ayran and Sparkling Water £2.00.
   Contact   · phone and website as on the current boards (menu/Ajdar_Zapata_Boards.pdf).
+  Sandwiches (Mama, 18 Nov 2026) · No. 14 Royal Zapata: 1 beef steak, 1 chicken steak, 2 slices beef salami, mushroom &
+            cheese in a baguette with pickle sauce. · No. 15 Giant Ajdar Zapata: no tomato, pickles or Zapata special
+            sauce; pickle sauce instead. Prices unchanged.
 
 Coordinates are PDF points measured from the TOP of the page (as pdftotext -bbox reports them).
     python3 tools/update-menu.py
@@ -33,6 +36,31 @@ pdfmetrics.registerFont(TTFont('DVB', '/usr/share/fonts/truetype/dejavu/DejaVuSa
 # reports it; the baseline is top + 0.759 * size (measured on the original's prices). Sizes match the original's.
 LOADED_EN = 'Chips, cheese, olives & beef salami.'
 LOADED_FA = 'چیپس، پنیر، زیتون و کالباس گوشت.'
+R14_EN = '1 beef steak, 1 chicken steak, 2 slices beef salami, mushroom & cheese in a baguette with pickle sauce.'
+R14_FA = '۱ استیک گوشت، ۱ استیک مرغ، ۲ ورق کالباس گوشت، قارچ و پنیر در نان باگت با سس خیارشور.'
+R15_EN = '1 beef steak, 1 chicken steak, 2 slices salami, 1 hot dog, 1 beef patty, mushroom & cheese in a baguette with pickle sauce.'
+R15_FA = '۱ استیک گوشت، ۱ استیک مرغ، ۲ ورق کالباس، ۱ عدد هات‌داگ، ۱ برگر گوشت، قارچ و پنیر در نان باگت با سس خیارشور.'
+
+
+def _lines(text, font, size, width=235.3):
+    out, cur = [], ''
+    for w in text.split(' '):
+        t = (cur + ' ' + w).strip()
+        if pdfmetrics.stringWidth(get_display(arabic_reshaper.reshape(t)) if not t.isascii() else t, font, size) > width and cur:
+            out.append(cur); cur = w
+        else:
+            cur = t
+    return out + [cur]
+
+
+def WRAP(top, en, fa, fa_top=None):
+    """An item's English ingredient lines (8.2 pt, 11.3 pt apart, from x 59.5) and Persian ones (7.6 pt, 10.5 apart, right
+    edge 294.8), as on the original. The Persian starts where it did (fa_top) or just under the item's Persian name."""
+    t = [('DV', 8.2, BROWN, 59.5, top + 11.3 * k, l, 'left', False) for k, l in enumerate(_lines(en, 'DV', 8.2))]
+    fa_top = fa_top or top + 49.9
+    return t + [('DV', 7.6, BROWN, 294.8, fa_top + 10.5 * k, l, 'right', True) for k, l in enumerate(_lines(fa, 'DV', 7.6))]
+
+
 EDITS = {
     0: {  # page 1: starters and sauces
         'remove': [(30, 401, 300, 480),            # Loaded Fries' old ingredient lines (redrawn below)
@@ -43,6 +71,12 @@ EDITS = {
         'text': [('DV', 8.2, BROWN, 59.5, 425.1, LOADED_EN, 'left', False),
                  ('DVB', 8.8, INK, 294.8, 438.7, 'چیپس ویژه زاپاتا', 'right', True),
                  ('DV', 7.6, BROWN, 294.8, 452.4, LOADED_FA, 'right', True)],
+    },
+    1: {  # page 2: sandwiches 14 and 15 get new ingredient lines (Mama, 18 Nov 2026)
+        'remove': [(55, 469, 300, 503), (55, 519, 300, 541),      # 14: English and Persian ingredients
+                   (55, 585, 300, 619), (55, 635, 300, 656)],     # 15: English and Persian ingredients
+        'move': [], 'keep': [],
+        'text': WRAP(470.8, R14_EN, R14_FA) + WRAP(586.3, R15_EN, R15_FA, fa_top=636.3),
     },
     3: {  # page 4: drinks, contact box
         'remove': [(310, 270, 580, 533.5)],                         # Pepsi .. Sparkling
