@@ -1,7 +1,13 @@
-# Ajdar Zapata · handoff · 2 Nov 2026
+# Ajdar Zapata · handoff · 15 Nov 2026
 
 *Start with `CLAUDE.md`. Separate from LAIFE.*
 
+## 15 Nov 2026 · read this first
+- **Live on `main` (638415c):** the Christmas update (full-screen hero slides, the sauce showcase, snow and sparkles; switches on from 1 Nov to 6 Jan by date), the TV lock, the swapped monitors and the marble/glass boards. `node tools/check.cjs --shots`: all ✅ on 15 Nov.
+- **Next: `prompts/fable-roadmap.md`**, the plan for the next level, phase by phase (menu as data checked against the PDF, an Apple-grade design system, TVs drawn from the data, a real phone menu, a staff page once Ryan says yes, seasons as a system). Every phase is a draft PR; nothing merges to `main` without Ryan.
+- **Paste-in for Fable:** "Read CLAUDE.md, HANDOFF.md and prompts/fable-roadmap.md in ryanRCM/Ajdar-Zapata, then do Phase 0 and Phase 1 only."
+
+## Earlier (2 Nov)
 ## Where it is
 | What | Status |
 |---|---|
