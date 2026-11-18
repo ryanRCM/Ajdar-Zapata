@@ -1,7 +1,8 @@
 """The printed A4 menu, built from the list below (Mama's corrections up to 18 Nov 2026), in the look of
 menu/Full_Menu_A4.pdf. Replaces tools/update-menu.py, which patched that PDF and can't renumber or add items.
 18 Nov (Mama): 14 and 15 new ingredients; burgers run to 21 (18 Chicken Fillet, 19 Zapata Chicken Burger NEW,
-20 Royal, 21 Giant), so everything after moves up one. Anything with pickle sauce has no Zapata special sauce (14, 15, 21, 33-35).
+20 Royal, 21 Giant), so everything after moves up one. Prices from Mama's notebook (photos, 18 Nov; written with the old numbers, mapped here).
+Anything with pickle sauce has no Zapata special sauce (14, 15, 21, 33-35).
 Later on 18 Nov (Mama gave the old numbers; here +1): Giant Zapata Doner without cheese; platters just 'with salad',
 in medium and large (prices to come); shawarma with red cabbage, jalapeños and garlic or chilli sauce, no Zapata sauce. A price shown as "£ ?" is still to come from Mama.
     python3 tools/make-menu.py && node tools/menu-pdf.cjs   ->  menu/Ajdar_Zapata_Menu.pdf
@@ -30,27 +31,27 @@ PAGES = [
  ]),
  ('Sandwiches & Burgers', 'ساندویچ و برگر', [
    ('SANDWICHES', 'ساندویچ', [
-     it(11, 'Beef Salami Sandwich', 'ساندویچ کالباس گوشت', '£7.50', den='Beef salami, pickles, lettuce & tomato in a baguette ' + ZS, dfa='کالباس گوشت، خیارشور، کاهو و گوجه در نان باگت ' + ZSF),
-     it(12, 'Chicken Salami Sandwich', 'ساندویچ کالباس مرغ', '£7.50', den='Chicken salami, pickles, lettuce & tomato in a baguette ' + ZS, dfa='کالباس مرغ، خیارشور، کاهو و گوجه در نان باگت ' + ZSF),
-     it(13, 'Mixed Salami Sandwich', 'ساندویچ کالباس میکس', '£9.99', den='Chicken & beef salami, pickles, lettuce & tomato in a baguette ' + ZS, dfa='کالباس مرغ و گوشت، خیارشور، کاهو و گوجه در نان باگت ' + ZSF),
-     it(14, 'Royal Zapata Sandwich', 'ساندویچ رویال زاپاتا', '£18.99', den='1 beef steak, 1 chicken steak, 2 slices beef salami, mushroom & cheese in a baguette with pickle sauce.', dfa='۱ استیک گوشت، ۱ استیک مرغ، ۲ ورق کالباس گوشت، قارچ و پنیر در نان باگت با سس خیارشور.'),
-     it(15, 'Giant Ajdar Zapata', 'غول اژدر زاپاتا', '£19.99', den='1 beef steak, 1 chicken steak, 2 slices salami, 1 hot dog, 1 beef patty, mushroom & cheese in a baguette with pickle sauce.', dfa='۱ استیک گوشت، ۱ استیک مرغ، ۲ ورق کالباس، ۱ عدد هات‌داگ، ۱ برگر گوشت، قارچ و پنیر در نان باگت با سس خیارشور.', badge='NEW'),
+     it(11, 'Beef Salami Sandwich', 'ساندویچ کالباس گوشت', '£13.00', den='Beef salami, pickles, lettuce & tomato in a baguette ' + ZS, dfa='کالباس گوشت، خیارشور، کاهو و گوجه در نان باگت ' + ZSF),
+     it(12, 'Chicken Salami Sandwich', 'ساندویچ کالباس مرغ', '£12.00', den='Chicken salami, pickles, lettuce & tomato in a baguette ' + ZS, dfa='کالباس مرغ، خیارشور، کاهو و گوجه در نان باگت ' + ZSF),
+     it(13, 'Mixed Salami Sandwich', 'ساندویچ کالباس میکس', '£12.50', den='Chicken & beef salami, pickles, lettuce & tomato in a baguette ' + ZS, dfa='کالباس مرغ و گوشت، خیارشور، کاهو و گوجه در نان باگت ' + ZSF),
+     it(14, 'Royal Zapata Sandwich', 'ساندویچ رویال زاپاتا', '£21.50', den='1 beef steak, 1 chicken steak, 2 slices beef salami, mushroom & cheese in a baguette with pickle sauce.', dfa='۱ استیک گوشت، ۱ استیک مرغ، ۲ ورق کالباس گوشت، قارچ و پنیر در نان باگت با سس خیارشور.'),
+     it(15, 'Giant Ajdar Zapata', 'غول اژدر زاپاتا', '£22.50', den='1 beef steak, 1 chicken steak, 2 slices salami, 1 hot dog, 1 beef patty, mushroom & cheese in a baguette with pickle sauce.', dfa='۱ استیک گوشت، ۱ استیک مرغ، ۲ ورق کالباس، ۱ عدد هات‌داگ، ۱ برگر گوشت، قارچ و پنیر در نان باگت با سس خیارشور.', badge='NEW'),
    ]),
    ('BURGERS', 'برگر', [
-     it(16, 'Classic Burger', 'برگر کلاسیک', '£9.99', den='Beef patty, pickles, tomato, lettuce & Zapata special sauce.', dfa='برگر گوشت، خیارشور، گوجه، کاهو و سس مخصوص زاپاتا.'),
-     it(17, 'Double Cheeseburger', 'دبل چیزبرگر', '£10.99', den='Two beef patties, cheese, pickles, tomato, lettuce & Zapata special sauce.', dfa='دو برگر گوشت، پنیر، خیارشور، گوجه، کاهو و سس مخصوص زاپاتا.'),
-     it(18, 'Chicken Fillet Burger', 'فیله برگر مرغ', '£9.49', den='1 chicken fillet, pickles, tomato, lettuce & Zapata special sauce.', dfa='۱ فیله مرغ، خیارشور، گوجه، کاهو و سس مخصوص زاپاتا.'),
+     it(16, 'Classic Burger', 'برگر کلاسیک', '£9.50', den='Beef patty, pickles, tomato, lettuce & Zapata special sauce.', dfa='برگر گوشت، خیارشور، گوجه، کاهو و سس مخصوص زاپاتا.'),
+     it(17, 'Double Cheeseburger', 'دبل چیزبرگر', '£11.50', den='Two beef patties, cheese, pickles, tomato, lettuce & Zapata special sauce.', dfa='دو برگر گوشت، پنیر، خیارشور، گوجه، کاهو و سس مخصوص زاپاتا.'),
+     it(18, 'Chicken Fillet Burger', 'فیله برگر مرغ', '£9.50', den='1 chicken fillet, pickles, tomato, lettuce & Zapata special sauce.', dfa='۱ فیله مرغ، خیارشور، گوجه، کاهو و سس مخصوص زاپاتا.'),
      it(19, 'Zapata Chicken Burger', 'برگر مرغ زاپاتا', '£ ?', den='Chicken fillet, cheese & mushroom, pickles, tomato, lettuce & Zapata special sauce.', dfa='فیله مرغ، پنیر و قارچ، خیارشور، گوجه، کاهو و سس مخصوص زاپاتا.', badge='NEW'),
-     it(20, 'Royal Zapata Burger', 'رویال برگر زاپاتا', '£13.99', den='Two beef patties, 2 slices salami, mushroom, cheese, pickles, tomato, lettuce & Zapata special sauce.', dfa='دو برگر گوشت، ۲ ورق کالباس، قارچ، پنیر، خیارشور، گوجه، کاهو و سس مخصوص زاپاتا.'),
-     it(21, 'Giant Zapata Burger', 'غول برگر زاپاتا', '£15.99', den='1 beef patty, 2 slices salami, 1 chicken fillet steak, mushroom, cheese, pickles & tomato with pickle sauce.', dfa='۱ برگر گوشت، ۲ ورق کالباس، ۱ فیله استیک مرغ، قارچ، پنیر، خیارشور و گوجه با سس خیارشور.'),
+     it(20, 'Royal Zapata Burger', 'رویال برگر زاپاتا', '£13.50', den='Two beef patties, 2 slices salami, mushroom, cheese, pickles, tomato, lettuce & Zapata special sauce.', dfa='دو برگر گوشت، ۲ ورق کالباس، قارچ، پنیر، خیارشور، گوجه، کاهو و سس مخصوص زاپاتا.'),
+     it(21, 'Giant Zapata Burger', 'غول برگر زاپاتا', '£18.50', den='1 beef patty, 2 slices salami, 1 chicken fillet steak, mushroom, cheese, pickles & tomato with pickle sauce.', dfa='۱ برگر گوشت، ۲ ورق کالباس، ۱ فیله استیک مرغ، قارچ، پنیر، خیارشور و گوجه با سس خیارشور.'),
    ]),
  ]),
  ('Doner & Shawarma', 'دونر و شاورما', [
    ('DONER BAGUETTES', 'دونر باگت', [
-     it(22, 'Meat Doner', 'دونر گوشت', '£9.50', den='Meat doner, pickles, tomato, onion & parsley in a baguette ' + ZS, dfa='دونر گوشت، خیارشور، گوجه، پیاز و جعفری در نان باگت ' + ZSF),
-     it(23, 'Chicken Doner', 'دونر مرغ', '£8.50', den='Chicken doner, pickles, tomato, onion & parsley in a baguette ' + ZS, dfa='دونر مرغ، خیارشور، گوجه، پیاز و جعفری در نان باگت ' + ZSF),
-     it(24, 'Mixed Doner', 'دونر میکس', '£12.99', den='Meat & chicken doner, pickles, tomato, onion & parsley in a baguette ' + ZS, dfa='دونر گوشت و مرغ، خیارشور، گوجه، پیاز و جعفری در نان باگت ' + ZSF),
-     it(25, 'Giant Zapata Doner', 'غول دونر زاپاتا', '£10.99', den='Meat & chicken doner, mushrooms, pickles, tomato, onion & parsley in a baguette ' + ZS, dfa='دونر گوشت و مرغ، قارچ، خیارشور، گوجه، پیاز و جعفری در نان باگت ' + ZSF, badge='HOUSE SIGNATURE'),
+     it(22, 'Meat Doner', 'دونر گوشت', '£11.50', den='Meat doner, pickles, tomato, onion & parsley in a baguette ' + ZS, dfa='دونر گوشت، خیارشور، گوجه، پیاز و جعفری در نان باگت ' + ZSF),
+     it(23, 'Chicken Doner', 'دونر مرغ', '£10.50', den='Chicken doner, pickles, tomato, onion & parsley in a baguette ' + ZS, dfa='دونر مرغ، خیارشور، گوجه، پیاز و جعفری در نان باگت ' + ZSF),
+     it(24, 'Mixed Doner', 'دونر میکس', '£17.50', den='Meat & chicken doner, pickles, tomato, onion & parsley in a baguette ' + ZS, dfa='دونر گوشت و مرغ، خیارشور، گوجه، پیاز و جعفری در نان باگت ' + ZSF),
+     it(25, 'Giant Zapata Doner', 'غول دونر زاپاتا', '£12.50', den='Meat & chicken doner, mushrooms, pickles, tomato, onion & parsley in a baguette ' + ZS, dfa='دونر گوشت و مرغ، قارچ، خیارشور، گوجه، پیاز و جعفری در نان باگت ' + ZSF, badge='HOUSE SIGNATURE'),
    ]),
    ('DONER PLATTERS', 'خوراک دونر', [
      it(26, 'Meat Doner Platter', 'خوراک دونر گوشت', 'M £ ? · L £ ?', den='Meat doner with salad. Medium or large.', dfa='دونر گوشت با سالاد. متوسط یا بزرگ.'),
@@ -65,11 +66,11 @@ PAGES = [
  ]),
  ('Hot Dogs & Drinks', 'هات‌داگ و نوشیدنی', [
    ('HOT DOGS', 'هات‌داگ', [
-     it(32, 'Hot Dog', 'هات‌داگ', '£7.99', den='Hot dog, pickles, tomato & lettuce in a baguette ' + ZS, dfa='هات‌داگ، خیارشور، گوجه و کاهو در نان باگت ' + ZSF),
-     it(33, 'Zapata Hot Dog', 'هات‌داگ زاپاتا', '£8.99', den='Hot dog, mushrooms, cheese, tomato & lettuce in a baguette with pickle sauce.', dfa='هات‌داگ، قارچ، پنیر، گوجه و کاهو در نان باگت با سس خیارشور.'),
-     it(34, 'Doner Hot Dog', 'هات‌داگ دونر', '£9.99', den='Hot dog, meat doner, mushrooms, cheese, tomato & lettuce in a baguette with pickle sauce.', dfa='هات‌داگ، دونر گوشت، قارچ، پنیر، گوجه و کاهو در نان باگت با سس خیارشور.'),
-     it(35, 'Ajdar Hot Dog', 'هات‌داگ اژدر', '£11.99', den='Hot dog, 2 slices beef salami, 1 chicken fillet steak, mushrooms & cheese in a baguette with pickle sauce.', dfa='هات‌داگ، ۲ ورق کالباس گوشت، ۱ فیله استیک مرغ، قارچ و پنیر در نان باگت با سس خیارشور.'),
-     it(36, 'Sosis Bandari', 'سوسیس بندری', '£8.99', den='Sausage with pickles, tomato, onion, parsley & spicy sauce, served in a baguette.', dfa='سوسیس با خیارشور، گوجه، پیاز و جعفری و سس تند، سرو در نان باگت.', badge='NEW'),
+     it(32, 'Hot Dog', 'هات‌داگ', '£8.50', den='Hot dog, pickles, tomato & lettuce in a baguette ' + ZS, dfa='هات‌داگ، خیارشور، گوجه و کاهو در نان باگت ' + ZSF),
+     it(33, 'Zapata Hot Dog', 'هات‌داگ زاپاتا', '£11.50', den='Hot dog, mushrooms, cheese, tomato & lettuce in a baguette with pickle sauce.', dfa='هات‌داگ، قارچ، پنیر، گوجه و کاهو در نان باگت با سس خیارشور.'),
+     it(34, 'Doner Hot Dog', 'هات‌داگ دونر', '£14.50', den='Hot dog, meat doner, mushrooms, cheese, tomato & lettuce in a baguette with pickle sauce.', dfa='هات‌داگ، دونر گوشت، قارچ، پنیر، گوجه و کاهو در نان باگت با سس خیارشور.'),
+     it(35, 'Ajdar Hot Dog', 'هات‌داگ اژدر', '£15.50', den='Hot dog, 2 slices beef salami, 1 chicken fillet steak, mushrooms & cheese in a baguette with pickle sauce.', dfa='هات‌داگ، ۲ ورق کالباس گوشت، ۱ فیله استیک مرغ، قارچ و پنیر در نان باگت با سس خیارشور.'),
+     it(36, 'Sosis Bandari', 'سوسیس بندری', '£9.50', den='Sausage with pickles, tomato, onion, parsley & spicy sauce, served in a baguette.', dfa='سوسیس با خیارشور، گوجه، پیاز و جعفری و سس تند، سرو در نان باگت.', badge='NEW'),
    ]),
    ('DRINKS', 'نوشیدنی‌ها', 'DRINKS'),
  ]),
