@@ -95,7 +95,7 @@ const server = http.createServer((req, res) => {
   m.on('pageerror', e => merrs.push(e.message));
   await m.goto(base + '/menu/'); await m.waitForTimeout(800);
   const mm = await m.evaluate(() => ({ imgs: [...document.images].filter(i => i.naturalWidth > 0 || i.loading === 'lazy').length, wide: document.documentElement.scrollWidth > innerWidth }));
-  const mpass = mm.imgs === 3 && !mm.wide && !merrs.length; ok = ok && mpass;
-  console.log(`${mpass ? '✅' : '❌'} /menu/ 390x844: boards ${mm.imgs}/3, side scroll ${mm.wide}, errors ${merrs.length}`);
+  const mpass = mm.imgs === 4 && !mm.wide && !merrs.length; ok = ok && mpass;
+  console.log(`${mpass ? '✅' : '❌'} /menu/ 390x844: pages ${mm.imgs}/4, side scroll ${mm.wide}, errors ${merrs.length}`);
   await b.close(); server.close(); process.exit(ok ? 0 : 1);
 })();

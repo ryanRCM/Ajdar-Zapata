@@ -1,11 +1,11 @@
-/* Made by tools/build-walls.py: do not edit by hand. Right TV, one section at a time, each as big as fits. */
-.tvslide.sec-starters { left: 4.498%; top: 1.111%; width: 63.295%; height: 97.778%; }
-.tvslide.sec-sauces { left: 2.162%; top: 1.111%; width: 67.967%; height: 97.778%; }
-.tvslide.sec-drinks { left: 0.729%; top: 32.516%; width: 70.833%; height: 34.969%; }
-.tvslide.sec-sandwiches { left: 0.729%; top: 14.540%; width: 70.833%; height: 70.921%; }
-.tvslide.sec-burgers { left: 0.729%; top: 18.963%; width: 70.833%; height: 62.074%; }
-.tvslide.sec-doner { left: 0.729%; top: 25.389%; width: 70.833%; height: 49.223%; }
-.tvslide.sec-platters { left: 0.729%; top: 27.710%; width: 70.833%; height: 44.579%; }
-.tvslide.sec-shawarma { left: 0.729%; top: 23.735%; width: 70.833%; height: 52.530%; }
-.tvslide.sec-hotdogs { left: 0.729%; top: 14.538%; width: 70.833%; height: 70.924%; }
+/* Made by tools/make-sections.py: do not edit by hand. Cycling TV, one section at a time, each as big as fits. */
+.tvslide.sec-starters { left: 4.687%; top: 1.111%; width: 62.918%; height: 97.778%; }
+.tvslide.sec-sauces { left: 0.729%; top: 8.889%; width: 70.833%; height: 82.222%; }
+.tvslide.sec-sandwiches { left: 0.729%; top: 12.442%; width: 70.833%; height: 75.117%; }
+.tvslide.sec-burgers { left: 0.729%; top: 11.648%; width: 70.833%; height: 76.705%; }
+.tvslide.sec-doner { left: 0.729%; top: 24.811%; width: 70.833%; height: 50.379%; }
+.tvslide.sec-platters { left: 0.729%; top: 29.567%; width: 70.833%; height: 40.866%; }
+.tvslide.sec-shawarma { left: 0.729%; top: 29.567%; width: 70.833%; height: 40.866%; }
+.tvslide.sec-hotdogs { left: 0.729%; top: 20.055%; width: 70.833%; height: 59.891%; }
+.tvslide.sec-drinks { left: 0.729%; top: 31.552%; width: 70.833%; height: 36.897%; }
 .side { left: 72.188%; top: 1.111%; width: 27.083%; height: 97.778%; }

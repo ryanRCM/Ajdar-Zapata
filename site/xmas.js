@@ -21,6 +21,13 @@
     return w && h;
   }
 
+  // ?usb (the USB videos only, recorded frame by frame so the TV's speed doesn't matter): snow over the whole wall too.
+  if (new URLSearchParams(location.search).has('usb') && document.documentElement.dataset.season === 'christmas') {
+    const wall = document.createElement('div');
+    wall.dataset.snow = '90';
+    wall.style.cssText = 'position:absolute;inset:0;pointer-events:none;z-index:0';
+    const st = document.getElementById('stage'); if (st) st.insertBefore(wall, st.firstChild);
+  }
   // ── Snow boxes: [data-snow] = how many flakes; a quarter as many sparkles.
   document.querySelectorAll('[data-snow]').forEach(box => {
     const n = +box.dataset.snow;

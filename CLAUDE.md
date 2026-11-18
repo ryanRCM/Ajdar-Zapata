@@ -30,6 +30,12 @@ Read this first, then `HANDOFF.md`. This repo is the TV menu website for **Ajdar
 - **Santa's Robbery** (Ryan's own poster, 15 Nov: "the main feature, stay longer"): `hero-robbery` in `site/monitor-2/index.html`, first in the loop and held 22 s, Christmas season only (added in `site/show.js`). Source in `menu/photos/santas-robbery-poster.png`.
 - The Christmas update (PR #4, merged 2 Nov) added full-screen hero slides on the cycling TV (sauces, sandwiches, burgers, brand), its running order in `site/show.js`, and the snow and sparkles in `site/xmas.js`.
 
+## The menu since 18 Nov 2026 (Mama's notebook)
+- **One list drives everything:** `tools/make-menu.py` (items, Persian, prices). From it: the printed menu (`node tools/menu-pdf.cjs` → `menu/Ajdar_Zapata_Menu.pdf`), the TV panels and both `layout.css` (`python3 tools/make-sections.py && node tools/sections.cjs && python3 tools/make-sections.py layout`), and the phone page (`pdftoppm -png -r 130 menu/Ajdar_Zapata_Menu.pdf site/menu/page`). The boards PDF, `update-boards.py`, `update-menu.py` and the lifting in `build-walls.py` are the old way: don't re-run them.
+- Burgers run 16-21 (new 19 Zapata Chicken Burger), so doner is 22-25, platters 26-28, shawarma 29-31, hot dogs 32-36. Update the "NO. x – y" lines in `site/monitor-2/index.html` if numbers move again.
+- **Placeholder prices Claude chose because Ryan said to ("u choose placeholder"), until Mama gives hers:** 19 at £11.50; platters M/L £12.50/£15.50, £11.50/£14.50, £13.50/£16.50. Every other price is Mama's.
+- **The TVs play USB videos** (the Neovo browser closes itself within a minute; cause not found). After any menu change, record new videos (frame-by-frame recorder, `?usb` adds wall snow) and send them to Ryan: the TVs do not update by themselves.
+
 ## Files
 | Path | What |
 |---|---|
@@ -42,7 +48,7 @@ Read this first, then `HANDOFF.md`. This repo is the TV menu website for **Ajdar
 | `site/menu/` | The menu for everyone who isn't a shop TV: the yellow boards stacked for phones |
 | `site/board-1..3.png` | The boards: `menu/Ajdar_Zapata_Boards.pdf` pages 1–3 at 1215×2160. 1 = starters, sauces, drinks · 2 = sandwiches, burgers · 3 = doner, platters, shawarma, hot dogs |
 | `menu/Ajdar_Zapata_Boards.pdf` | **The current menu design** the TVs are built from: Ryan's 30 Oct design (`menu/Ajdar_Zapata_Boards_original.pdf`) with Mama's corrections of 16-17 Nov applied by `tools/update-boards.py` (no Cheesy Corn Balls, no Cheddar or Green Sauce, no Pepsi; soft drinks £1.50, Sparkling Water £2.00). For another change, add it to that script and re-run it, then rebuild (How to change the menu) |
-| `menu/Ajdar_Zapata_Menu.pdf` | **The printed A4 menu** with ingredients (for customers and Mama), made by `tools/update-menu.py` from `menu/Full_Menu_A4.pdf` with the same corrections. Keep it in step with the boards. The other PDFs in `menu/` are older versions, kept for reference |
+| `menu/Ajdar_Zapata_Menu.pdf` | **The printed A4 menu** with ingredients (for customers and Mama), built by `tools/make-menu.py` (the full list, in the look of `menu/Full_Menu_A4.pdf`) and `node tools/menu-pdf.cjs`. Since 18 Nov burgers run to 21 (new 19 Zapata Chicken Burger) and everything after is one number higher than on the TV boards until they are rebuilt. Keep it in step with the boards. The other PDFs in `menu/` are older versions, kept for reference |
 | `tools/check.cjs` | The check before every push |
 | `HANDOFF.md` | Where it stopped and what's next |
 

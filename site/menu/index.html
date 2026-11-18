@@ -9,16 +9,14 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@800&family=Barlow+Semi+Condensed:wght@400;600&family=Vazirmatn:wght@400;600&display=swap">
 <style>
-  /* The menu for everyone who isn't one of the two shop TVs (phones, laptops): the yellow boards,
-     one under the other, readable at phone width. */
-  :root { --bg: #ffc61a; --ink: #121110; color-scheme: light; }
+  /* The menu for everyone who isn't one of the two shop TVs (phones, laptops): the printed menu's pages
+     (menu/Ajdar_Zapata_Menu.pdf, made by tools/make-menu.py), one under the other, readable at phone width. */
+  :root { --bg: #fa9817; --ink: #121110; color-scheme: light; }
   * { box-sizing: border-box; }
   html, body { margin: 0; background: var(--bg); color: var(--ink); }
   main { max-width: 640px; margin: 0 auto; }
   img { display: block; width: 100%; height: auto; }
   .board { position: relative; }
-  /* Cover each board's printed address-and-phone box and short allergy line; the full versions are below. */
-  .board::after { content: ""; position: absolute; left: 0; right: 0; top: 90.3%; bottom: 1%; background: var(--bg); }
   footer { padding: 20px 16px 32px; text-align: center; }
   .addr { font: 800 clamp(22px, 6vw, 34px)/1.1 "Barlow Condensed", "Arial Narrow", Impact, sans-serif; border: 3px solid var(--ink); border-radius: 8px; padding: 10px 12px; }
   .allergy { margin-top: 16px; font: 400 16px/1.4 "Barlow Semi Condensed", Arial, sans-serif; text-align: left; }
@@ -28,9 +26,10 @@
 </head>
 <body>
 <main>
-  <div class="board"><img src="/monitor-1/board-1.png" alt="Starters and sides, sauce selection and drinks" width="1215" height="2160"></div>
-  <div class="board"><img src="/monitor-1/board-2.png" alt="Sandwiches and burgers" width="1215" height="2160" loading="lazy"></div>
-  <div class="board"><img src="/monitor-1/board-3.png" alt="Doner baguettes, doner platters, shawarma and hot dogs" width="1215" height="2160" loading="lazy"></div>
+  <div class="board"><img src="/menu/page-1.png" alt="Starters and sides, sauce selection" width="1075" height="1520"></div>
+  <div class="board"><img src="/menu/page-2.png" alt="Sandwiches and burgers" width="1075" height="1520" loading="lazy"></div>
+  <div class="board"><img src="/menu/page-3.png" alt="Doner baguettes, doner platters and shawarma" width="1075" height="1520" loading="lazy"></div>
+  <div class="board"><img src="/menu/page-4.png" alt="Hot dogs and drinks" width="1075" height="1520" loading="lazy"></div>
   <footer>
     <div class="addr">864 High Road, London N12 9RH</div>
     <div class="allergy">
