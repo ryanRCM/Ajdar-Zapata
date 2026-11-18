@@ -1,4 +1,5 @@
-"""Mama's corrections to the printed menu (Ryan, 16 Nov 2026), applied to menu/Full_Menu_A4.pdf (left untouched)
+"""SUPERSEDED (18 Nov 2026) by tools/make-menu.py, which builds the whole menu: do not re-run this, it would undo the renumbering.
+Mama's corrections to the printed menu (Ryan, 16 Nov 2026), applied to menu/Full_Menu_A4.pdf (left untouched)
 and written to menu/Ajdar_Zapata_Menu.pdf. Every other word and price on the menu is kept exactly as it was.
 
   Starters  · No. 9 Cheesy Corn Balls removed (Coleslaw moves up; numbers kept).
