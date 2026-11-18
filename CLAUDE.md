@@ -30,6 +30,12 @@ Read this first, then `HANDOFF.md`. This repo is the TV menu website for **Ajdar
 - **Santa's Robbery** (Ryan's own poster, 15 Nov: "the main feature, stay longer"): `hero-robbery` in `site/monitor-2/index.html`, first in the loop and held 22 s, Christmas season only (added in `site/show.js`). Source in `menu/photos/santas-robbery-poster.png`.
 - The Christmas update (PR #4, merged 2 Nov) added full-screen hero slides on the cycling TV (sauces, sandwiches, burgers, brand), its running order in `site/show.js`, and the snow and sparkles in `site/xmas.js`.
 
+## The menu since 18 Nov 2026 (Mama's notebook)
+- **One list drives everything:** `tools/make-menu.py` (items, Persian, prices). From it: the printed menu (`node tools/menu-pdf.cjs` → `menu/Ajdar_Zapata_Menu.pdf`), the TV panels and both `layout.css` (`python3 tools/make-sections.py && node tools/sections.cjs && python3 tools/make-sections.py layout`), and the phone page (`pdftoppm -png -r 130 menu/Ajdar_Zapata_Menu.pdf site/menu/page`). The boards PDF, `update-boards.py`, `update-menu.py` and the lifting in `build-walls.py` are the old way: don't re-run them.
+- Burgers run 16-21 (new 19 Zapata Chicken Burger), so doner is 22-25, platters 26-28, shawarma 29-31, hot dogs 32-36. Update the "NO. x – y" lines in `site/monitor-2/index.html` if numbers move again.
+- **Placeholder prices Claude chose because Ryan said to ("u choose placeholder"), until Mama gives hers:** 19 at £11.50; platters M/L £12.50/£15.50, £11.50/£14.50, £13.50/£16.50. Every other price is Mama's.
+- **The TVs play USB videos** (the Neovo browser closes itself within a minute; cause not found). After any menu change, record new videos (frame-by-frame recorder, `?usb` adds wall snow) and send them to Ryan: the TVs do not update by themselves.
+
 ## Files
 | Path | What |
 |---|---|
