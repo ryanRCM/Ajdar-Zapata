@@ -101,7 +101,7 @@ const server = http.createServer((req, res) => {
     await p.close();
   }
   // The two halves of the menu (/monitor-1/?half=1, ?half=2; the TVs show pictures of them): each half's panels sit
-  // on screen, never overlap and load; half 2 uses the right TV's orange panels; together they are the whole menu, once.
+  // on screen, never overlap and load; both in the same yellow; together they are the whole menu, once.
   {
     const seen = {};
     for (const half of [1, 2]) {
@@ -119,7 +119,7 @@ const server = http.createServer((req, res) => {
         return { names: secs.map(c => (c.className.match(/sec-(\w+)/) || [])[1]), bad, orange: secs.every(c => /\/monitor-2\//.test(c.querySelector('img').src)) };
       });
       seen[half] = r.names;
-      const pass = r.names.length >= 4 && !r.bad.length && !errs.length && (half === 1 ? !r.orange : r.orange); ok = ok && pass;
+      const pass = r.names.length >= 4 && !r.bad.length && !errs.length && !r.orange; ok = ok && pass;
       console.log(`${pass ? '✅' : '❌'} half ${half} of the menu: ${r.names.join(', ')}${r.bad.length ? ' ' + r.bad.join('; ') : ''}${errs.length ? ' ' + errs.join('; ') : ''}`);
       await p.close();
     }
