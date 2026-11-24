@@ -6,7 +6,8 @@
 // (right) as "all". A guess: if the sides are wrong, swap LEFT and RIGHT below and push.
 // The current TV page sends p=<its version> and is never touched. Remove this file once no TV asks without p
 // (Netlify's log), i.e. once both TVs run the current page; Netlify is then just the host again.
-const LEFT = [12000, 18500], RIGHT = [18500, 26000];   // ms into the TV's 2-minute cycle
+// Swapped 24 Nov 2026 ("right becomes left"): the TV that asks at ~17.7 s is the RIGHT TV, the one at ~19.2 s the LEFT.
+const LEFT = [18500, 26000], RIGHT = [12000, 18500];   // ms into the TV's 2-minute cycle
 export default async (request, context) => {
   const url = new URL(request.url);
   if (url.searchParams.has('p')) return;

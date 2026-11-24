@@ -52,8 +52,6 @@ const server = http.createServer((req, res) => {
       secs.forEach(c => { const r = box(c); if (r.left < 0 || r.top < 0 || r.right > innerWidth + 1 || r.bottom > innerHeight + 1) bad.push(c.className + ' off screen'); });
       // panels never overlap each other; nothing that moves or the address/logo covers a menu panel
       const others = [...document.querySelectorAll('.side')];
-      // the allergy notice stays off the TVs (Ryan, Nov 2026: it's on the phone menu)
-      if (document.querySelector('.allergy-bar')) bad.push('allergy bar is back on the TV');
       slides.forEach(c => { const r = rest(c); if (r.left < -1 || r.top < -1 || r.right > innerWidth + 1 || r.bottom > innerHeight + 1) bad.push(c.className + ' off screen'); });
       others.forEach(o => slides.forEach(c => { if (meets(box(o), rest(c))) bad.push((o.className || 'frame') + ' covers ' + c.className); }));
       secs.forEach((a, i) => secs.slice(i + 1).forEach(c => { if (meets(box(a), box(c))) bad.push(a.className + ' overlaps ' + c.className); }));
@@ -123,7 +121,7 @@ const server = http.createServer((req, res) => {
       console.log(`${pass ? '✅' : '❌'} half ${half} of the menu: ${r.names.join(', ')}${r.bad.length ? ' ' + r.bad.join('; ') : ''}${errs.length ? ' ' + errs.join('; ') : ''}`);
       await p.close();
     }
-    const all = ['starters', 'sauces', 'sandwiches', 'burgers', 'doner', 'platters', 'shawarma', 'hotdogs', 'drinks'];
+    const all = ['starters', 'sauces', 'sandwiches', 'burgers', 'doner', 'platters', 'shawarma', 'hotdogs', 'drinks', 'allergy'];
     const both = seen[1].filter(n => seen[2].includes(n)), none = all.filter(n => !seen[1].includes(n) && !seen[2].includes(n));
     const pass = !both.length && !none.length; ok = ok && pass;
     console.log(`${pass ? '✅' : '❌'} the two halves are the whole menu, once${both.length ? ', on both: ' + both.join(' ') : ''}${none.length ? ', missing: ' + none.join(' ') : ''}`);
@@ -248,8 +246,8 @@ const server = http.createServer((req, res) => {
     const show = JSON.parse(fs.readFileSync(path.join(root, 'tv', 'show.json')));
     const ask = async q => { const r = await fn(new Request('https://x/tv/show.json?' + q), { next: async () => new Response(JSON.stringify(show)) }); return r ? (await r.json()).all : 'untouched'; };
     const a = await ask('t=1795538057731'), bb = await ask('t=1795538059239'), c = await ask('t=1795538059239&p=x'), d = await ask('t=1795538000000');
-    const pass = a === show.tv1 && bb === show.tv2 && c === 'untouched' && d === 'untouched'; ok = ok && pass;
-    console.log(`${pass ? '✅' : '❌'} bridge for the 16:16 page: first TV ${a}, second TV ${bb}, current page ${c}, other times ${d}`);
+    const pass = a === show.tv2 && bb === show.tv1 && c === 'untouched' && d === 'untouched'; ok = ok && pass;   // swapped 24 Nov: the 17.7 s TV is on the right
+    console.log(`${pass ? '✅' : '❌'} bridge for the 16:16 page: right TV (17.7 s) ${a}, left TV (19.2 s) ${bb}, current page ${c}, other times ${d}`);
   }
   const m = await b.newPage({ viewport: { width: 390, height: 844 } }); const merrs = [];
   m.on('pageerror', e => merrs.push(e.message));
