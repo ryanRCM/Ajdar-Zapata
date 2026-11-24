@@ -17,6 +17,9 @@
 2. **Netlify paid from the business owner's card.** Netlify → team ryanrcm → Usage & billing → Billing details → Payment information → Change payment method. The card owner types the card in themselves. Never put card details in a chat.
 3. **Later: Mama changes the menu from her phone.** Plan it with Ryan: the simplest safe way for a price change to reach `tools/make-menu.py`, be checked, and go live.
 
+## Telling each TV which it is (24 Nov 2026)
+The two TVs are identical to the site, so each is told once. Either press **1** on the left TV's remote and **2** on the right TV's remote while the menu is showing, or set the start pages to `ajdarzapata.co.uk/tv1` (left) and `/tv2` (right). Until told, a TV shows the whole menu. If a TV shows the whole menu again after being switched off and on, it forgets (its browser keeps no memory): then set the start pages, which never need memory.
+
 ## Keep the TVs on (Ryan, once per TV, in the TV's own settings)
 - [ ] Start page of the TV's browser: **ajdarzapata.co.uk/tv1** on the left TV, **ajdarzapata.co.uk/tv2** on the right TV.
 - [ ] The TV starts in that browser when it is switched on (start-up source / boot app).

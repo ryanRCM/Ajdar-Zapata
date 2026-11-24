@@ -40,10 +40,12 @@
   </footer>
 </main>
 <script>
-  // A shop TV that lands here goes back to its own page (it remembers which TV it is: site/tv/index.html).
+  // A shop TV that lands here goes back to its own page (it remembers which TV it is: site/tv/index.html; a shop TV
+  // not yet told which it is goes to the plain address, which shows it the whole menu).
   try {
     var m = localStorage.getItem('az-tv-m') || (document.cookie.match(/(?:^|; )az_tv=([12])/) || [])[1];
     if (m === '1' || m === '2') location.replace('/tv' + m);
+    else if (/t963_ak301/i.test(navigator.userAgent) || (/; wv\)/.test(navigator.userAgent) && !/Mobile/.test(navigator.userAgent))) location.replace('/');
   } catch (e) {}
 </script>
 </body>

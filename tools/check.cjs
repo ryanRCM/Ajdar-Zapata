@@ -124,10 +124,10 @@ const server = http.createServer((req, res) => {
     const pass = !both.length && !none.length; ok = ok && pass;
     console.log(`${pass ? '✅' : '❌'} the two halves are the whole menu, once${both.length ? ', on both: ' + both.join(' ') : ''}${none.length ? ', missing: ' + none.join(' ') : ''}`);
   }
-  // The shop TVs' page. (1) Its two pictures were made from the menu as it is now, and are both there.
+  // The shop TVs' page. (1) Its pictures (the two halves and the whole menu) were made from the menu as it is now.
   {
     const show = JSON.parse(fs.readFileSync(path.join(root, 'tv', 'show.json')));
-    const listed = [show.tv1, show.tv2];
+    const listed = [show.tv1, show.tv2, show.all];
     const missing = listed.filter(f => !fs.existsSync(path.join(root, 'tv', f)));
     const stray = fs.readdirSync(path.join(root, 'tv')).filter(f => /\.jpg$/.test(f) && !listed.includes(f));
     const fresh = show.inputs === tvInputs();
@@ -138,6 +138,8 @@ const server = http.createServer((req, res) => {
   // (2) Each TV on its own address, then the plain address on the same TV (it remembers), a phone and a laptop
   // on the plain address (the phone menu), a look with ?preview (not remembered), and ?screen=0 (forgets).
   const PHONE = 'Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Mobile Safari/537.36';
+  // the shop TVs' own browser, as Netlify's log saw it on 24 Nov 2026
+  const SHOP = 'Mozilla/5.0 (Linux; Android 9; t963_ak301 Build/PPR1.180610.011; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/97.0.4692.87 Safari/537.36';
   const visit = async (ctx, url, wait) => {
     const p = await ctx.newPage(); const errs = [], asked = []; let loads = 0;
     p.on('pageerror', e => errs.push(e.message)); p.on('console', m => { if (m.type() === 'error' && !/Content Security Policy|hud/.test(m.text())) errs.push(m.text()); });
@@ -150,7 +152,7 @@ const server = http.createServer((req, res) => {
   };
   const tvCase = async (label, ctx, url, want, wait = 6000, loads = 1) => {
     const r = await visit(ctx, url, wait);
-    const shows = /\/tv\/tv1\./.test(r.on || '') ? 1 : /\/tv\/tv2\./.test(r.on || '') ? 2 : 0;
+    const shows = /\/tv\/tv1\./.test(r.on || '') ? 1 : /\/tv\/tv2\./.test(r.on || '') ? 2 : /\/tv\/all\./.test(r.on || '') ? 'all' : 0;
     const bad = r.asked.filter(a => /^\/(api|\.netlify\/functions)\//.test(a));
     const pass = want === 'menu' ? r.path === '/menu/' && !r.errs.length
       : shows === want && r.loads === loads && r.video && !r.netlify && !r.errs.length && !bad.length;
@@ -182,7 +184,29 @@ const server = http.createServer((req, res) => {
     const phone = await b.newContext({ viewport: { width: 390, height: 844 }, userAgent: PHONE });
     await tvCase('a phone opening /tv2', phone, '/tv2', 2);
     await tvCase('the same phone, plain address (not remembered)', phone, '/', 'menu', 1500);
-    for (const c of [left, right, laptop, phone]) await c.close();
+    // a shop TV that doesn't know which it is yet: the whole menu on the plain address (never the phone menu),
+    // then 2 on its remote makes it the right TV, remembered
+    const shop = await b.newContext({ viewport: { width: 1920, height: 1080 }, userAgent: SHOP });
+    await tvCase('a shop TV not yet told which it is, plain address', shop, '/', 'all');
+    await tvCase('the same shop TV on the phone menu: back to the whole menu', shop, '/menu/', 'all', 6000, 2);
+    {
+      const p = await shop.newPage(); await p.goto(base + '/'); await p.waitForTimeout(3000);
+      await p.keyboard.press('2'); await p.waitForTimeout(3000);
+      const on = await p.evaluate(() => document.querySelector('img.on')?.getAttribute('src') || '');
+      const pass = /\/tv\/tv2\./.test(on); ok = ok && pass;
+      console.log(`${pass ? '✅' : '❌'} pressing 2 on the shop TV's remote: shows ${on}`);
+      await p.close();
+    }
+    await tvCase('the same shop TV after pressing 2, plain address', shop, '/', 2);
+    {
+      const p = await shop.newPage(); await p.goto(base + '/'); await p.waitForTimeout(2500);
+      await p.keyboard.press('1'); await p.waitForTimeout(3000);
+      const on = await p.evaluate(() => document.querySelector('img.on')?.getAttribute('src') || '');
+      const pass = /\/tv\/tv1\./.test(on); ok = ok && pass;
+      console.log(`${pass ? '✅' : '❌'} then pressing 1: shows ${on}`);
+      await p.close();
+    }
+    for (const c of [left, right, laptop, phone, shop]) await c.close();
   }
   const m = await b.newPage({ viewport: { width: 390, height: 844 } }); const merrs = [];
   m.on('pageerror', e => merrs.push(e.message));
