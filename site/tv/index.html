@@ -43,7 +43,7 @@
 <img id="a" alt=""><img id="b" alt="">
 <script>
 (function () {
-  var PAGE = '97edc46463';   // this page's version: stamped by tools/tv-page.cjs, also into show.json as "page"
+  var PAGE = '6dc527c20e';   // this page's version: stamped by tools/tv-page.cjs, also into show.json as "page"
   var params = new URLSearchParams(location.search), preview = params.has('preview');
   var ua = navigator.userAgent, phone = /iPhone|iPad|iPod|Android.*Mobile|Mobile Safari/i.test(ua);
   // The shop TVs' own browser (24 Nov 2026: Android 9 WebView, board t963_ak301, Chrome 97), or any Android
@@ -72,6 +72,15 @@
   function pin() { try { if (mon && !preview && location.pathname !== '/tv' + mon) history.replaceState(null, '', '/tv' + mon); } catch (e) {} }
   pin();
 
+  // This TV's own ID (kept in its memory; the old lock's ID if it still has one). It goes in the reports, and
+  // show.json's "screens" says which half each ID shows (set from Netlify's log, no remote needed).
+  function okId(x) { return /^[a-z0-9]{8,40}$/i.test(x || ''); }
+  var id = '';
+  try { id = localStorage.getItem('az-screen-id') || ''; } catch (e) {}
+  if (!okId(id)) id = (document.cookie.match(/(?:^|; )az_id=([a-z0-9]+)/i) || [])[1] || '';
+  if (!okId(id)) id = Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+  try { localStorage.setItem('az-screen-id', id); } catch (e) {}
+  document.cookie = 'az_id=' + id + '; Max-Age=' + 5 * 365 * 86400 + '; Path=/; SameSite=Lax; Secure';
   var opened = Date.now(), lastErr = '';
   window.addEventListener('error', function (e) { lastErr = String(e.message || 'error').slice(0, 90) + ' @' + String(e.filename || '').split('/').pop() + ':' + (e.lineno || 0); });
 
@@ -113,6 +122,8 @@
           var last = Number((/^az-reload:(\d+)$/.exec(window.name || '') || [])[1]) || 0;
           if (Date.now() - last > 10 * 60 * 1000) { window.name = 'az-reload:' + Date.now(); location.replace(mon ? '/tv' + mon : location.pathname + location.search); return; }
         }
+        var given = j.screens && Number(j.screens[id]);
+        if (!fromPath && !q && !preview && (given === 1 || given === 2) && given !== mon) { mon = given; remember(mon); pin(); }
         put(mon ? j['tv' + mon] : j.all);
       }).catch(function () {});
   }
@@ -133,7 +144,7 @@
 
   // ── How it is doing, for Netlify's request log (a plain file, so nothing runs on Netlify).
   function ping(ev) {
-    var q = new URLSearchParams({ m: mon, o: Math.round(opened / 1000), s: Math.round((Date.now() - opened) / 1000), v: vstate + (lock ? '-wl' : '') });
+    var q = new URLSearchParams({ id: id, m: mon, o: Math.round(opened / 1000), s: Math.round((Date.now() - opened) / 1000), v: vstate + (lock ? '-wl' : '') });
     if (ev) q.set('ev', ev);
     if (lastErr) { q.set('err', lastErr); lastErr = ''; }
     if (ev === 'open') q.set('scr', screen.width + 'x' + screen.height + ' page ' + innerWidth + 'x' + innerHeight + ' x' + (window.devicePixelRatio || 1) + ' mem ' + (navigator.deviceMemory || '?'));

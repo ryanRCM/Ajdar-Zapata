@@ -12,13 +12,14 @@ const root = path.join(__dirname, '..', 'site');
 const types = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.json': 'application/json', '.webm': 'video/webm', '.mp4': 'video/mp4', '.txt': 'text/plain' };
 const tvInputs = require('./tv-inputs.cjs');
 const tvPage = require('./tv-page.cjs');
-let fakePage = '';   // when set, the stand-in show.json says a new TV page is live
+let fakePage = '', fakeScreens = null;   // stand-ins for show.json   // when set, the stand-in show.json says a new TV page is live
 
 const server = http.createServer((req, res) => {
   let p = decodeURIComponent(req.url.split('?')[0]);
   // As Netlify: the injected badge script (a stand-in that only leaves a mark), and the addresses in site/_redirects.
   if (p === '/.netlify/scripts/hud') { res.writeHead(200, { 'content-type': 'text/javascript' }); return res.end('window.__netlifyRan = true;'); }
   if (p === '/' || p === '/tv1' || p === '/tv2') p = '/tv/';
+  if (p === '/tv/show.json' && fakeScreens) { res.writeHead(200, { 'content-type': 'application/json' }); return res.end(JSON.stringify({ ...JSON.parse(fs.readFileSync(path.join(root, 'tv', 'show.json'))), screens: fakeScreens })); }
   if (p === '/tv/show.json' && fakePage) { res.writeHead(200, { 'content-type': 'application/json' }); return res.end(JSON.stringify({ ...JSON.parse(fs.readFileSync(path.join(root, 'tv', 'show.json'))), page: fakePage })); }
   if (p.endsWith('/')) p += 'index.html';
   const f = path.join(root, p);
@@ -223,6 +224,18 @@ const server = http.createServer((req, res) => {
       fakePage = '';
       const pass = loads === 2 && r.where === '/tv2' && /\/tv\/tv2\./.test(r.on); ok = ok && pass;
       console.log(`${pass ? '✅' : '❌'} a new TV page goes live: the open TV reloads onto it once (page loads ${loads}), stays ${r.where}, shows ${r.on}`);
+      await ctx.close();
+    }
+    { // no remote: show.json's "screens" gives a shop TV its half by its ID
+      const ctx = await b.newContext({ viewport: { width: 1920, height: 1080 }, userAgent: SHOP }); const p = await ctx.newPage();
+      await p.goto(base + '/'); await p.waitForTimeout(2000);
+      const tid = await p.evaluate(() => localStorage.getItem('az-screen-id'));
+      fakeScreens = { [tid]: 2 }; await p.close();
+      const q = await ctx.newPage(); await q.goto(base + '/'); await q.waitForTimeout(3000);
+      const r = await q.evaluate(() => ({ on: document.querySelector('img.on')?.getAttribute('src') || '', where: location.pathname }));
+      fakeScreens = null;
+      const pass = /\/tv\/tv2\./.test(r.on) && r.where === '/tv2'; ok = ok && pass;
+      console.log(`${pass ? '✅' : '❌'} a shop TV given half 2 in show.json by its ID: shows ${r.on}, address ${r.where}`);
       await ctx.close();
     }
     for (const c of [left, right, laptop, phone, shop]) await c.close();
