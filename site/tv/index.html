@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Only this page's own code runs here: Netlify's injected badge script (/.netlify/scripts/hud) is refused. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline'">
+<title>Ajdar Zapata</title>
+<!-- The shop TVs' page (Ryan, 24 Nov 2026: "make it static", "make sure it doesn't kick it out", "Netlify is
+     just the host"). The TVs' browser left the moving pages (/monitor-1/, /monitor-2/) within a minute every
+     time, even with every animation off, while the USB videos play all day. The likely cause: the TV goes to
+     sleep (or its screensaver) about a minute after the last button press, unless a video is playing. So:
+       - a tiny silent video plays all the time in a corner, under the picture (awake.webm / awake.mp4): a playing
+         video keeps the TV's screen on, the same way the USB videos do;
+       - one ready-made picture, still (site/tv/*.jpg, made by tools/tv-stills.cjs): each TV shows its half of the
+         menu, always (24 Nov 2026: "the menu in two parts, one on each monitor, always fixed"); no fonts, canvas
+         or animation, as light as a page can be;
+       - it never reloads and never leaves its address: a new menu is swapped in quietly;
+       - plain files only: nothing on Netlify but the files themselves.
+     Which TV: ajdarzapata.co.uk/tv1 = left TV (items 1-21 and the sauces, yellow), /tv2 = right TV (items 22-43,
+     orange). A TV that has opened /tv1 or /tv2 once remembers it, so plain ajdarzapata.co.uk then works on it
+     too. Anyone else who opens the plain address (phones, laptops) goes on to the phone menu (/menu/).
+     ?preview only looks (it isn't remembered); ?screen=0 makes a device forget it is a TV.
+     How it is doing: every opening reports to /tv/ping.txt (Netlify's request log keeps a day of these):
+     m = monitor, o = when it opened, s = seconds open, ev = what happened, v = the keep-awake video. -->
+<style>
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #ff5a16; cursor: none; }
+  img { position: fixed; z-index: 1; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; }
+  img.on { opacity: 1; }
+  /* the keep-awake video: in the corner, under the picture (it must be on the screen to count, not be seen) */
+  video { position: fixed; z-index: 0; right: 0; bottom: 0; width: 64px; height: 64px; }
+</style>
+</head>
+<body>
+<i id="nl-badge-frame" hidden></i>
+<video id="awake" muted loop playsinline autoplay preload="auto" disablepictureinpicture disableremoteplayback>
+  <source src="/tv/awake.webm" type="video/webm">
+  <source src="/tv/awake.mp4" type="video/mp4">
+</video>
+<img id="a" alt=""><img id="b" alt="">
+<script>
+(function () {
+  var params = new URLSearchParams(location.search), preview = params.has('preview');
+  var phone = /iPhone|iPad|iPod|Android.*Mobile|Mobile Safari/i.test(navigator.userAgent);
+
+  // ── Which TV: the address (/tv1, /tv2, ?screen=1/2), else what this TV remembers, else not a shop TV.
+  function remembered() {
+    var m = '';
+    try { m = localStorage.getItem('az-tv-m') || ''; } catch (e) {}
+    if (m !== '1' && m !== '2') m = (document.cookie.match(/(?:^|; )az_tv=([12])/) || [])[1] || '';
+    return Number(m) || 0;
+  }
+  function remember(m) {
+    try { if (m) localStorage.setItem('az-tv-m', String(m)); else localStorage.removeItem('az-tv-m'); } catch (e) {}
+    document.cookie = 'az_tv=' + (m || '') + '; Max-Age=' + (m ? 5 * 365 * 86400 : 0) + '; Path=/; SameSite=Lax; Secure';
+  }
+  var fromPath = /^\/tv-?([12])\/?$/.exec(location.pathname), q = params.get('screen');
+  if (q === '0') { remember(0); location.replace('/menu/'); return; }
+  var mon = fromPath ? Number(fromPath[1]) : (q === '1' || q === '2') ? Number(q) : remembered();
+  if (!mon) { location.replace('/menu/'); return; }                      // a phone or laptop: the phone menu
+  if ((fromPath || q) && !preview && !phone && remembered() !== mon) remember(mon);
+
+  var opened = Date.now(), lastErr = '';
+  window.addEventListener('error', function (e) { lastErr = String(e.message || 'error').slice(0, 90) + ' @' + String(e.filename || '').split('/').pop() + ':' + (e.lineno || 0); });
+
+  // ── Keep the screen on: the silent video plays all the time (and the wake lock, where the browser has one).
+  var video = document.getElementById('awake'), vstate = 'starting', lock = null;
+  function play() {
+    video.muted = true;
+    try {
+      var p = video.play();
+      if (p && p.then) p.then(function () { vstate = 'playing'; }, function () { vstate = 'blocked'; });
+    } catch (e) { vstate = 'blocked'; }
+  }
+  video.addEventListener('playing', function () { vstate = 'playing'; });
+  video.addEventListener('error', function () { vstate = 'error'; }, true);
+  video.addEventListener('pause', function () { if (!document.hidden) setTimeout(play, 1000); });
+  play();
+  function wakeLock() {
+    try { if (!lock && navigator.wakeLock) navigator.wakeLock.request('screen').then(function (l) { lock = l; l.addEventListener('release', function () { lock = null; }); }, function () {}); } catch (e) {}
+  }
+  wakeLock();
+
+  // ── The picture (site/tv/show.json, from tools/tv-stills.cjs): each TV shows its half of the menu, still, always.
+  // Its name changes whenever it changes, so a TV can never keep an old copy.
+  var imgs = [document.getElementById('a'), document.getElementById('b')], front = 0, shown = '';
+  // Load the new picture behind the one on screen, then swap. If it can't load, the old one stays up.
+  function put(file) {
+    var back = imgs[1 - front], src = '/tv/' + file;
+    if (!file || src === shown) return;
+    back.onload = function () { back.className = 'on'; imgs[front].className = ''; front = 1 - front; shown = src; };
+    back.onerror = function () {};
+    back.src = src;
+  }
+  // Read the list again every two minutes: a new menu goes up within two minutes of going live.
+  function load() {
+    fetch('/tv/show.json?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.json(); })
+      .then(function (j) { put(j['tv' + mon]); }).catch(function () {});
+  }
+  load();
+  setInterval(load, 2 * 60 * 1000);
+
+  // ── How it is doing, for Netlify's request log (a plain file, so nothing runs on Netlify).
+  function ping(ev) {
+    var q = new URLSearchParams({ m: mon, o: Math.round(opened / 1000), s: Math.round((Date.now() - opened) / 1000), v: vstate + (lock ? '-wl' : '') });
+    if (ev) q.set('ev', ev);
+    if (lastErr) { q.set('err', lastErr); lastErr = ''; }
+    if (ev === 'open') q.set('scr', screen.width + 'x' + screen.height + ' page ' + innerWidth + 'x' + innerHeight + ' x' + (window.devicePixelRatio || 1) + ' mem ' + (navigator.deviceMemory || '?'));
+    return '/tv/ping.txt?' + q;
+  }
+  function beat(ev) {
+    if (!preview) fetch(ping(ev), { cache: 'no-store' }).catch(function () {});
+    if (video.paused && !document.hidden) play();
+  }
+  function bye(ev) {   // a last word as the page is put away or closed
+    if (preview) return;
+    try { if (navigator.sendBeacon && navigator.sendBeacon(ping(ev))) return; } catch (e) {}
+    try { fetch(ping(ev), { keepalive: true }); } catch (e) {}
+  }
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) bye('hidden'); else { beat('shown'); play(); wakeLock(); }
+  });
+  window.addEventListener('pagehide', function () { bye('bye'); });
+  document.addEventListener('freeze', function () { bye('frozen'); });
+  document.addEventListener('resume', function () { beat('resumed'); });
+  setTimeout(function () { beat('open'); }, 1500);
+  [10, 20, 30, 40, 50, 60, 75, 90, 120, 180, 300].forEach(function (s) { setTimeout(function () { beat(); }, s * 1000); });
+  setInterval(function () { beat(); }, 10 * 60 * 1000);
+})();
+</script>
+</body>
+</html>

@@ -25,6 +25,7 @@
 </style>
 </head>
 <body>
+<i id="nl-badge-frame" hidden></i><!-- stops Netlify's injected badge script: it gives up when this is here -->
 <main>
   <div class="board"><img src="/menu/page-1.png" alt="Starters and sides, sauce selection" width="1075" height="1520"></div>
   <div class="board"><img src="/menu/page-2.png" alt="Sandwiches and burgers" width="1075" height="1520" loading="lazy"></div>
@@ -39,16 +40,11 @@
   </footer>
 </main>
 <script>
-  // If this is actually one of the locked shop TVs (it lost its page), send it back to its monitor.
-  (async () => {
-    try {
-      const id = localStorage.getItem('az-screen-id');
-      if (!id) return;
-      const r = await fetch('/api/screen?' + new URLSearchParams({ id }), { cache: 'no-store' });
-      const j = r.ok ? await r.json() : {};
-      if (j.monitor === 1 || j.monitor === 2) location.replace('/monitor-' + j.monitor + '/');
-    } catch (e) {}
-  })();
+  // A shop TV that lands here goes back to its own page (it remembers which TV it is: site/tv/index.html).
+  try {
+    var m = localStorage.getItem('az-tv-m') || (document.cookie.match(/(?:^|; )az_tv=([12])/) || [])[1];
+    if (m === '1' || m === '2') location.replace('/tv' + m);
+  } catch (e) {}
 </script>
 </body>
 </html>

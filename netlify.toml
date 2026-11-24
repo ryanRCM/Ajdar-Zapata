@@ -1,6 +1,15 @@
 [build]
   publish = "site"
 
-# /api/screen: tells each TV which monitor to show and which deploy is live (see netlify/functions/screen.mjs).
-[functions]
-  directory = "netlify/functions"
+# Netlify is just the host (Ryan, 24 Nov 2026): it serves the files in site/, nothing runs on it (no functions,
+# no edge functions, no storage, no build step).
+
+# The TV pictures' names change whenever a picture changes (tools/tv-stills.cjs), so a TV may keep each one.
+[[headers]]
+  for = "/tv/*.jpg"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+[[headers]]
+  for = "/tv/awake.*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"

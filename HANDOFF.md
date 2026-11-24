@@ -1,27 +1,33 @@
-# Ajdar Zapata · handoff · 2 Nov 2026
+# Ajdar Zapata · handoff · 24 Nov 2026
 
 *Start with `CLAUDE.md`. Separate from LAIFE.*
 
 ## Where it is
 | What | Status |
 |---|---|
-| Website | `site/` on Netlify, auto-deploys from `main` ✅. Netlify connector connected 30 Oct: site `ajdar-zapata` (renamed from `domain-lock`). Linked to the repo 2 Nov, Netlify's deploy key added to GitHub (read-only) by Ryan. If ajdarzapata.co.uk still shows the old single-page menu, the latest build is blocked or hasn't run: see Waiting on Ryan |
-| Domain | **ajdarzapata.co.uk** bought 30 Oct 2026 via Netlify (Netlify DNS), renews 30 Oct 2027 ✅. **Live 30 Oct**: https and www both serve the menu, http redirects to https |
-| TVs | 2 horizontal TVs: **/monitor-1** (still) and **/monitor-2** (Fable's motion, merged 2 Nov: 7-scene food reel with slab wipes and kinetic type, embers, flame licks, heading-rule light runs, logo rings). Monitor 2 runs **on orange** (Ryan, 2 Nov: "Background ORANGE not black"): own recoloured boards in `site/monitor-2/`, made by `tools/orange-boards.py`; re-run it after any new board PNGs. Both 3 boards full width. Netlify badge hidden. What each scene does: `prompts/fable-monitor-2-result.md` |
-| Menu | `menu/Ajdar_Zapata_Boards.pdf` (current), rendered into `site/board-1..3.png` |
-| Check | `node tools/check.cjs` → ✅ 1920×1080 and 1366×768 |
-| Old | The first version was a Claude artifact (claude.ai/artifact/DQufCywpypLtHh7m5geduP). It needs a sign-in, so it's retired: the TVs use the domain |
+| TVs | Since 24 Nov the website is the main thing again, not USB. **Half the menu on each TV, always still**: **left TV ajdarzapata.co.uk/tv1** (items 1-21 and the sauces, yellow), **right TV ajdarzapata.co.uk/tv2** (items 22-43, orange). One still picture each, plus a tiny silent video that keeps the TV awake (the likely reason the TV browser kept closing the page). Not yet seen on the real TVs |
+| Hosting | Netlify, **just the host**: plain files, nothing runs on Netlify (functions, edge function and Blobs removed 24 Nov). Every push to `main` goes live in about a minute |
+| Domain | ajdarzapata.co.uk, bought through Netlify 30 Oct 2026, renews 30 Oct 2027 |
+| Netlify plan | Personal: $9 a month, 1,000 credits a month, billed at the start of each monthly cycle. Each push to `main` costs 15 credits; the TVs cost a few. Out of credits with auto-recharge off (the default) = every site on the account is paused |
+| Menu | Mama's menu (18 Nov), one list: `tools/make-menu.py`. After a change: rebuild (CLAUDE.md), then `node tools/tv-stills.cjs`, then `node tools/check.cjs` |
+| Check | `node tools/check.cjs` → all ✅ (24 Nov) |
 
-## Next
-1. Ryan puts ajdarzapata.co.uk/monitor-1 and /monitor-2 on the TVs. Watch monitor 2 on the real TV: if it stutters, thin the flame licks in `site/monitor-2/motion.js`.
-2. **Menu as data** (Ryan wants all the data on the site later). Move the menu into `site/menu.json`: number, name EN, name FA, description, price, category, board, tags (NEW, HOUSE SIGNATURE), sold out. Draw the boards from it in HTML/CSS, keeping the look of `Ajdar_Zapata_Boards.pdf` (black, orange headings, numbered orange tags, Persian beside English, address bar at the bottom). Then a price change is one line. Check every price against the PDF before it goes live.
-3. **Later:** a staff page to change prices or mark sold out from a phone, plus a dated log of what's going on. Needs a real database (e.g. Netlify Blobs or a small backend), so plan it with Ryan first.
+## Roadmap (Ryan, 24 Nov: "boot it once and leave it forever")
+1. **TVs on the website, for good.** Ryan does the TV checklist below, tells Claude, and Claude reads the TVs' reports (Netlify request log, `/tv/ping.txt`, kept 24 hours) to confirm they stay up.
+2. **Netlify paid from the business owner's card.** Netlify → team ryanrcm → Usage & billing → Billing details → Payment information → Change payment method. The card owner types the card in themselves. Never put card details in a chat.
+3. **Later: Mama changes the menu from her phone.** Plan it with Ryan: the simplest safe way for a price change to reach `tools/make-menu.py`, be checked, and go live.
+
+## Keep the TVs on (Ryan, once per TV, in the TV's own settings)
+- [ ] Start page of the TV's browser: **ajdarzapata.co.uk/tv1** on the left TV, **ajdarzapata.co.uk/tv2** on the right TV.
+- [ ] The TV starts in that browser when it is switched on (start-up source / boot app).
+- [ ] Switch **off**: screensaver, sleep timer, auto power-off, no-signal power-off, eco / energy saving, automatic source switching, USB auto-play. Take the USB sticks out.
+- [ ] Power on after a power cut ("power on state": on / last state).
+- [ ] Plug the TVs into the wall, not a timer strip.
+- [ ] Send Claude the TV's make and model (label on the back, or Settings → About), so the exact menu names can be checked.
 
 ## Waiting on Ryan
-- [x] **Unblock Netlify builds.** Ryan made the GitHub repo public (2 Nov), which removes Netlify's private-repo block on commits from an "unrecognized Git contributor" (Claude's commits). The repo holds no secrets: keep it that way.
-- [ ] Put /monitor-1 and /monitor-2 on the TVs; say hit or miss on the monitor 2 animation.
-- [ ] Persian allergy line (Fable's translation, reviewed 2 Nov, reads correctly): Ryan to confirm with the shop.
-- [ ] Hang **monitor 1 on the left**, monitor 2 on the right: the address reads across the pair.
-- [ ] Any more specs.
+- [ ] The checklist above, then "they're on".
+- [ ] The card change (roadmap 2).
+- [ ] Mama's own prices for the placeholders (19 Zapata Chicken Burger, the platter sizes): see CLAUDE.md.
 
-**Paste-in:** "Read CLAUDE.md and HANDOFF.md in ryanRCM/Ajdar-Zapata, then do Next 1."
+**Paste-in:** "Read CLAUDE.md and HANDOFF.md in ryanRCM/Ajdar-Zapata. The TVs are on: read their reports and tell me if they stay up."

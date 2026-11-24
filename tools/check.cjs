@@ -1,30 +1,35 @@
 // Serves site/ locally and checks both TVs at TV sizes before every push:
 // every menu panel and picture loads, panels sit fully on screen and never overlap, nothing else
 // (reel, coming soon, address, logo) covers a panel, no side scroll, no errors,
-// and on monitor 2 the slideshow moves on with a food scene playing. Also checks the phone menu page loads.
+// and on monitor 2 the slideshow moves on with a food scene playing. Also checks the phone menu page loads, and the
+// shop TVs' page (/tv1, /tv2, the plain address): its pictures are up to date with the menu, each TV shows its
+// own half of the menu, still (the halves together are the whole menu, once), it remembers which TV it is, the
+// keep-awake video plays, it never reloads, and Netlify's script never runs.
 // Run: node tools/check.cjs [--shots]   (needs Playwright + Chromium)
 const { chromium } = require('playwright');
 const http = require('http'), fs = require('fs'), path = require('path');
 const root = path.join(__dirname, '..', 'site');
-const types = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp' };
+const types = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.json': 'application/json', '.webm': 'video/webm', '.mp4': 'video/mp4', '.txt': 'text/plain' };
+const tvInputs = require('./tv-inputs.cjs');
 
 const server = http.createServer((req, res) => {
   let p = decodeURIComponent(req.url.split('?')[0]);
-  // Stand-in for the Netlify Function the TVs check in with (netlify/functions/screen.mjs).
-  if (p === '/api/screen') { res.writeHead(200, { 'content-type': 'application/json' }); return res.end('{"version":"local"}'); }
-  if (p === '/') p = '/monitor-1/';
+  // As Netlify: the injected badge script (a stand-in that only leaves a mark), and the addresses in site/_redirects.
+  if (p === '/.netlify/scripts/hud') { res.writeHead(200, { 'content-type': 'text/javascript' }); return res.end('window.__netlifyRan = true;'); }
+  if (p === '/' || p === '/tv1' || p === '/tv2') p = '/tv/';
   if (p.endsWith('/')) p += 'index.html';
   const f = path.join(root, p);
   if (!f.startsWith(root) || !fs.existsSync(f)) { res.writeHead(404); return res.end(); }
   res.writeHead(200, { 'content-type': types[path.extname(f)] || 'application/octet-stream' });
   if (req.method === 'HEAD') return res.end();   // the clock check (/show.js) only reads the Date header
+  if (f.endsWith('.html')) return res.end(fs.readFileSync(f, 'utf8') + '\n<script async src="/.netlify/scripts/hud?variant=public" data-nf-variant="public"></script>');
   fs.createReadStream(f).pipe(res);
 }).listen(0);
 
 (async () => {
   const base = 'http://localhost:' + server.address().port;
   const b = await chromium.launch(); let ok = true;
-  for (const page of ['/', '/monitor-1/', '/monitor-2/']) for (const [w, h] of [[1920, 1080], [1366, 768]]) {
+  for (const page of ['/monitor-1/', '/monitor-2/']) for (const [w, h] of [[1920, 1080], [1366, 768]]) {
     const p = await b.newPage({ viewport: { width: w, height: h } }); const errs = [];
     p.on('pageerror', e => errs.push(e.message));
     p.on('requestfailed', r => { if (!r.url().includes('fonts.g') && !(/\/api\/screen|\/show\.js\?clock/.test(r.url()) && /ABORTED/.test(r.failure()?.errorText || ''))) errs.push('failed ' + r.url()); });
@@ -90,6 +95,94 @@ const server = http.createServer((req, res) => {
     const pass = /sec-sauces/.test(live || ''); ok = ok && pass;
     console.log(`${pass ? '✅' : '❌'} /monitor-1/ sparkles round the section the right TV shows: ${live}`);
     await p.close();
+  }
+  // The two halves of the menu (/monitor-1/?half=1, ?half=2; the TVs show pictures of them): each half's panels sit
+  // on screen, never overlap and load; half 2 uses the right TV's orange panels; together they are the whole menu, once.
+  {
+    const seen = {};
+    for (const half of [1, 2]) {
+      const p = await b.newPage({ viewport: { width: 1920, height: 1080 } }); const errs = [];
+      p.on('pageerror', e => errs.push(e.message));
+      await p.goto(base + '/monitor-1/?preview&half=' + half); await p.waitForTimeout(1500);
+      const r = await p.evaluate(() => {
+        const box = el => el.getBoundingClientRect();
+        const meets = (a, c) => a.left < c.right - 1 && c.left < a.right - 1 && a.top < c.bottom - 1 && c.top < a.bottom - 1;
+        const secs = [...document.querySelectorAll('.card[class*="sec-"]')].filter(c => c.offsetParent);
+        const bad = [];
+        secs.forEach(c => { const r = box(c); if (r.left < 0 || r.top < 0 || r.right > innerWidth + 1 || r.bottom > innerHeight + 1) bad.push(c.className + ' off screen');
+          const i = c.querySelector('img'); if (!(i && i.naturalWidth > 0)) bad.push(c.className + ' not loaded'); });
+        secs.forEach((a, k) => secs.slice(k + 1).forEach(c => { if (meets(box(a), box(c))) bad.push(a.className + ' overlaps ' + c.className); }));
+        return { names: secs.map(c => (c.className.match(/sec-(\w+)/) || [])[1]), bad, orange: secs.every(c => /\/monitor-2\//.test(c.querySelector('img').src)) };
+      });
+      seen[half] = r.names;
+      const pass = r.names.length >= 4 && !r.bad.length && !errs.length && (half === 1 ? !r.orange : r.orange); ok = ok && pass;
+      console.log(`${pass ? '✅' : '❌'} half ${half} of the menu: ${r.names.join(', ')}${r.bad.length ? ' ' + r.bad.join('; ') : ''}${errs.length ? ' ' + errs.join('; ') : ''}`);
+      await p.close();
+    }
+    const all = ['starters', 'sauces', 'sandwiches', 'burgers', 'doner', 'platters', 'shawarma', 'hotdogs', 'drinks'];
+    const both = seen[1].filter(n => seen[2].includes(n)), none = all.filter(n => !seen[1].includes(n) && !seen[2].includes(n));
+    const pass = !both.length && !none.length; ok = ok && pass;
+    console.log(`${pass ? '✅' : '❌'} the two halves are the whole menu, once${both.length ? ', on both: ' + both.join(' ') : ''}${none.length ? ', missing: ' + none.join(' ') : ''}`);
+  }
+  // The shop TVs' page. (1) Its two pictures were made from the menu as it is now, and are both there.
+  {
+    const show = JSON.parse(fs.readFileSync(path.join(root, 'tv', 'show.json')));
+    const listed = [show.tv1, show.tv2];
+    const missing = listed.filter(f => !fs.existsSync(path.join(root, 'tv', f)));
+    const stray = fs.readdirSync(path.join(root, 'tv')).filter(f => /\.jpg$/.test(f) && !listed.includes(f));
+    const fresh = show.inputs === tvInputs();
+    const pass = fresh && !missing.length && !stray.length && ['awake.webm', 'awake.mp4', 'ping.txt'].every(f => fs.existsSync(path.join(root, 'tv', f)));
+    ok = ok && pass;
+    console.log(`${pass ? '✅' : '❌'} TV pictures: ${listed.length}, up to date with the menu ${fresh}${fresh ? '' : ' (run: node tools/tv-stills.cjs)'}${missing.length ? ', missing ' + missing.join(' ') : ''}${stray.length ? ', unused ' + stray.join(' ') : ''}`);
+  }
+  // (2) Each TV on its own address, then the plain address on the same TV (it remembers), a phone and a laptop
+  // on the plain address (the phone menu), a look with ?preview (not remembered), and ?screen=0 (forgets).
+  const PHONE = 'Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Mobile Safari/537.36';
+  const visit = async (ctx, url, wait) => {
+    const p = await ctx.newPage(); const errs = [], asked = []; let loads = 0;
+    p.on('pageerror', e => errs.push(e.message)); p.on('console', m => { if (m.type() === 'error' && !/Content Security Policy|hud/.test(m.text())) errs.push(m.text()); });
+    p.on('framenavigated', f => { if (f === p.mainFrame()) loads++; }); p.on('request', r => asked.push(new URL(r.url()).pathname));
+    await p.goto(base + url); await p.waitForTimeout(wait);
+    const st = await p.evaluate(() => ({ path: location.pathname, on: (document.querySelector('img.on') || { getAttribute: () => '' }).getAttribute('src'),
+      video: !!document.querySelector('video') && !document.querySelector('video').paused, netlify: !!window.__netlifyRan })).catch(() => ({}));
+    await p.close();
+    return { ...st, errs, loads, asked };
+  };
+  const tvCase = async (label, ctx, url, want, wait = 6000, loads = 1) => {
+    const r = await visit(ctx, url, wait);
+    const shows = /\/tv\/tv1\./.test(r.on || '') ? 1 : /\/tv\/tv2\./.test(r.on || '') ? 2 : 0;
+    const bad = r.asked.filter(a => /^\/(api|\.netlify\/functions)\//.test(a));
+    const pass = want === 'menu' ? r.path === '/menu/' && !r.errs.length
+      : shows === want && r.loads === loads && r.video && !r.netlify && !r.errs.length && !bad.length;
+    ok = ok && pass;
+    console.log(`${pass ? '✅' : '❌'} ${label}: ${want === 'menu' ? 'went to ' + r.path : 'shows monitor ' + shows + ', page loads ' + r.loads + ', keep-awake video playing ' + r.video + ', Netlify script ran ' + r.netlify}${r.errs.length ? ', errors ' + r.errs.join('; ') : ''}${bad.length ? ', asked Netlify ' + bad.join(' ') : ''}`);
+  };
+  {
+    const left = await b.newContext({ viewport: { width: 1920, height: 1080 } }), right = await b.newContext({ viewport: { width: 1920, height: 1080 } });
+    await tvCase('left TV /tv1', left, '/tv1', 1);
+    await tvCase('right TV /tv2', right, '/tv2', 2);
+    { // still: the right TV keeps its one picture
+      const p = await right.newPage(); await p.goto(base + '/tv2');
+      const first = await p.evaluate(() => new Promise(r => setTimeout(() => r(document.querySelector('img.on')?.getAttribute('src')), 3000)));
+      await p.waitForTimeout(20000);
+      const then = await p.evaluate(() => document.querySelector('img.on')?.getAttribute('src'));
+      const pass = !!first && first === then; ok = ok && pass;
+      console.log(`${pass ? '✅' : '❌'} right TV stays still: ${first} -> ${then}`);
+      await p.close();
+    }
+    await tvCase('left TV, plain address afterwards', left, '/', 1);
+    await tvCase('right TV, plain address afterwards', right, '/', 2);
+    await tvCase('right TV lands on the phone menu: back to its page', right, '/menu/', 2, 6000, 2);
+    await tvCase('right TV told to forget (?screen=0)', right, '/?screen=0', 'menu', 1500);
+    await tvCase('right TV after forgetting, plain address', right, '/', 'menu', 1500);
+    const laptop = await b.newContext({ viewport: { width: 1440, height: 900 } });
+    await tvCase('a laptop, plain address', laptop, '/', 'menu', 1500);
+    await tvCase('a laptop looking at /tv2?preview', laptop, '/tv2?preview', 2);
+    await tvCase('the same laptop, plain address (not remembered)', laptop, '/', 'menu', 1500);
+    const phone = await b.newContext({ viewport: { width: 390, height: 844 }, userAgent: PHONE });
+    await tvCase('a phone opening /tv2', phone, '/tv2', 2);
+    await tvCase('the same phone, plain address (not remembered)', phone, '/', 'menu', 1500);
+    for (const c of [left, right, laptop, phone]) await c.close();
   }
   const m = await b.newPage({ viewport: { width: 390, height: 844 } }); const merrs = [];
   m.on('pageerror', e => merrs.push(e.message));
