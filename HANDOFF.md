@@ -5,7 +5,7 @@
 ## Where it is
 | What | Status |
 |---|---|
-| TVs | Since 24 Nov the website is the main thing again, not USB. **Left TV: ajdarzapata.co.uk/tv1** (the whole menu), **right TV: ajdarzapata.co.uk/tv2** (one section at a time, Santa's Robbery in the Christmas season). Still pictures plus a tiny silent video that keeps the TV awake (the likely reason the TV browser kept closing the page). Not yet seen on the real TVs |
+| TVs | Since 24 Nov the website is the main thing again, not USB. **Half the menu on each TV, always still**: **left TV ajdarzapata.co.uk/tv1** (items 1-21 and the sauces, yellow), **right TV ajdarzapata.co.uk/tv2** (items 22-43, orange). One still picture each, plus a tiny silent video that keeps the TV awake (the likely reason the TV browser kept closing the page). Not yet seen on the real TVs |
 | Hosting | Netlify, **just the host**: plain files, nothing runs on Netlify (functions, edge function and Blobs removed 24 Nov). Every push to `main` goes live in about a minute |
 | Domain | ajdarzapata.co.uk, bought through Netlify 30 Oct 2026, renews 30 Oct 2027 |
 | Netlify plan | Personal: $9 a month, 1,000 credits a month, billed at the start of each monthly cycle. Each push to `main` costs 15 credits; the TVs cost a few. Out of credits with auto-recharge off (the default) = every site on the account is paused |

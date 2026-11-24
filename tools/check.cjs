@@ -3,7 +3,8 @@
 // (reel, coming soon, address, logo) covers a panel, no side scroll, no errors,
 // and on monitor 2 the slideshow moves on with a food scene playing. Also checks the phone menu page loads, and the
 // shop TVs' page (/tv1, /tv2, the plain address): its pictures are up to date with the menu, each TV shows its
-// own, it remembers which TV it is, the keep-awake video plays, it never reloads, and Netlify's script never runs.
+// own half of the menu, still (the halves together are the whole menu, once), it remembers which TV it is, the
+// keep-awake video plays, it never reloads, and Netlify's script never runs.
 // Run: node tools/check.cjs [--shots]   (needs Playwright + Chromium)
 const { chromium } = require('playwright');
 const http = require('http'), fs = require('fs'), path = require('path');
@@ -95,13 +96,41 @@ const server = http.createServer((req, res) => {
     console.log(`${pass ? '✅' : '❌'} /monitor-1/ sparkles round the section the right TV shows: ${live}`);
     await p.close();
   }
-  // The shop TVs' page. (1) Its pictures were made from the menu as it is now, in both looks, and are all there.
+  // The two halves of the menu (/monitor-1/?half=1, ?half=2; the TVs show pictures of them): each half's panels sit
+  // on screen, never overlap and load; half 2 uses the right TV's orange panels; together they are the whole menu, once.
+  {
+    const seen = {};
+    for (const half of [1, 2]) {
+      const p = await b.newPage({ viewport: { width: 1920, height: 1080 } }); const errs = [];
+      p.on('pageerror', e => errs.push(e.message));
+      await p.goto(base + '/monitor-1/?preview&half=' + half); await p.waitForTimeout(1500);
+      const r = await p.evaluate(() => {
+        const box = el => el.getBoundingClientRect();
+        const meets = (a, c) => a.left < c.right - 1 && c.left < a.right - 1 && a.top < c.bottom - 1 && c.top < a.bottom - 1;
+        const secs = [...document.querySelectorAll('.card[class*="sec-"]')].filter(c => c.offsetParent);
+        const bad = [];
+        secs.forEach(c => { const r = box(c); if (r.left < 0 || r.top < 0 || r.right > innerWidth + 1 || r.bottom > innerHeight + 1) bad.push(c.className + ' off screen');
+          const i = c.querySelector('img'); if (!(i && i.naturalWidth > 0)) bad.push(c.className + ' not loaded'); });
+        secs.forEach((a, k) => secs.slice(k + 1).forEach(c => { if (meets(box(a), box(c))) bad.push(a.className + ' overlaps ' + c.className); }));
+        return { names: secs.map(c => (c.className.match(/sec-(\w+)/) || [])[1]), bad, orange: secs.every(c => /\/monitor-2\//.test(c.querySelector('img').src)) };
+      });
+      seen[half] = r.names;
+      const pass = r.names.length >= 4 && !r.bad.length && !errs.length && (half === 1 ? !r.orange : r.orange); ok = ok && pass;
+      console.log(`${pass ? '✅' : '❌'} half ${half} of the menu: ${r.names.join(', ')}${r.bad.length ? ' ' + r.bad.join('; ') : ''}${errs.length ? ' ' + errs.join('; ') : ''}`);
+      await p.close();
+    }
+    const all = ['starters', 'sauces', 'sandwiches', 'burgers', 'doner', 'platters', 'shawarma', 'hotdogs', 'drinks'];
+    const both = seen[1].filter(n => seen[2].includes(n)), none = all.filter(n => !seen[1].includes(n) && !seen[2].includes(n));
+    const pass = !both.length && !none.length; ok = ok && pass;
+    console.log(`${pass ? '✅' : '❌'} the two halves are the whole menu, once${both.length ? ', on both: ' + both.join(' ') : ''}${none.length ? ', missing: ' + none.join(' ') : ''}`);
+  }
+  // The shop TVs' page. (1) Its two pictures were made from the menu as it is now, and are both there.
   {
     const show = JSON.parse(fs.readFileSync(path.join(root, 'tv', 'show.json')));
-    const listed = Object.values(show.sets).flatMap(x => [x.m1, ...x.m2.map(y => y[0])]);
+    const listed = [show.tv1, show.tv2];
     const missing = listed.filter(f => !fs.existsSync(path.join(root, 'tv', f)));
     const stray = fs.readdirSync(path.join(root, 'tv')).filter(f => /\.jpg$/.test(f) && !listed.includes(f));
-    const fresh = show.inputs === tvInputs() && !!show.sets.christmas && !!show.sets.none;
+    const fresh = show.inputs === tvInputs();
     const pass = fresh && !missing.length && !stray.length && ['awake.webm', 'awake.mp4', 'ping.txt'].every(f => fs.existsSync(path.join(root, 'tv', f)));
     ok = ok && pass;
     console.log(`${pass ? '✅' : '❌'} TV pictures: ${listed.length}, up to date with the menu ${fresh}${fresh ? '' : ' (run: node tools/tv-stills.cjs)'}${missing.length ? ', missing ' + missing.join(' ') : ''}${stray.length ? ', unused ' + stray.join(' ') : ''}`);
@@ -121,7 +150,7 @@ const server = http.createServer((req, res) => {
   };
   const tvCase = async (label, ctx, url, want, wait = 6000, loads = 1) => {
     const r = await visit(ctx, url, wait);
-    const shows = /\/tv\/[a-z]+-m1\./.test(r.on || '') ? 1 : /\/tv\/[a-z]+-m2-/.test(r.on || '') ? 2 : 0;
+    const shows = /\/tv\/tv1\./.test(r.on || '') ? 1 : /\/tv\/tv2\./.test(r.on || '') ? 2 : 0;
     const bad = r.asked.filter(a => /^\/(api|\.netlify\/functions)\//.test(a));
     const pass = want === 'menu' ? r.path === '/menu/' && !r.errs.length
       : shows === want && r.loads === loads && r.video && !r.netlify && !r.errs.length && !bad.length;
@@ -132,16 +161,13 @@ const server = http.createServer((req, res) => {
     const left = await b.newContext({ viewport: { width: 1920, height: 1080 } }), right = await b.newContext({ viewport: { width: 1920, height: 1080 } });
     await tvCase('left TV /tv1', left, '/tv1', 1);
     await tvCase('right TV /tv2', right, '/tv2', 2);
-    { // the right TV moves on to its next picture after the first one's hold
+    { // still: the right TV keeps its one picture
       const p = await right.newPage(); await p.goto(base + '/tv2');
       const first = await p.evaluate(() => new Promise(r => setTimeout(() => r(document.querySelector('img.on')?.getAttribute('src')), 3000)));
-      const sets = JSON.parse(fs.readFileSync(path.join(root, 'tv', 'show.json'))).sets;
-      const look = await p.evaluate(() => { const d = new Date(), m = d.getMonth() + 1; return m === 11 || m === 12 || (m === 1 && d.getDate() <= 6) ? 'christmas' : 'none'; });
-      const hold = sets[look].m2[0][1];
-      await p.waitForTimeout(hold * 1000);
+      await p.waitForTimeout(20000);
       const then = await p.evaluate(() => document.querySelector('img.on')?.getAttribute('src'));
-      const pass = !!first && !!then && first !== then; ok = ok && pass;
-      console.log(`${pass ? '✅' : '❌'} right TV moves on after ${hold} s: ${first} -> ${then}`);
+      const pass = !!first && first === then; ok = ok && pass;
+      console.log(`${pass ? '✅' : '❌'} right TV stays still: ${first} -> ${then}`);
       await p.close();
     }
     await tvCase('left TV, plain address afterwards', left, '/', 1);
@@ -157,15 +183,6 @@ const server = http.createServer((req, res) => {
     await tvCase('a phone opening /tv2', phone, '/tv2', 2);
     await tvCase('the same phone, plain address (not remembered)', phone, '/', 'menu', 1500);
     for (const c of [left, right, laptop, phone]) await c.close();
-    // the look follows the date by itself: Christmas until 6 Jan, plain from 7 Jan
-    for (const [day, look] of [['2026-12-20T12:00:00', 'christmas'], ['2027-01-10T12:00:00', 'none']]) for (const tv of [1, 2]) {
-      const ctx = await b.newContext({ viewport: { width: 1920, height: 1080 } }); const p = await ctx.newPage();
-      await p.clock.setFixedTime(new Date(day)); await p.goto(base + '/tv' + tv); await p.waitForTimeout(3000);
-      const on = await p.evaluate(() => document.querySelector('img.on')?.getAttribute('src') || '');
-      const pass = on.startsWith(`/tv/${look}-m${tv}`); ok = ok && pass;
-      console.log(`${pass ? '✅' : '❌'} TV ${tv} on ${day.slice(0, 10)} shows the ${look} look: ${on}`);
-      await ctx.close();
-    }
   }
   const m = await b.newPage({ viewport: { width: 390, height: 844 } }); const merrs = [];
   m.on('pageerror', e => merrs.push(e.message));

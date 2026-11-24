@@ -2,6 +2,8 @@
 menu (tools/make-menu.py), in the look of the old lifted boards but sharp at 2x. Replaces the lifting in
 tools/build-walls.py (the boards PDF can't be renumbered); the logo files it made are kept as they are.
     python3 tools/make-sections.py && node tools/sections.cjs && python3 tools/make-sections.py layout
+The two halves the shop TVs show, still (24 Nov 2026: "the menu in two parts, one on each monitor, always fixed"):
+site/monitor-1/halves.css, also written by `layout`, or on its own with: python3 tools/make-sections.py halves
 """
 import html, json, runpy, sys, pathlib
 D = runpy.run_path('tools/make-menu.py')
@@ -14,6 +16,8 @@ KEY = {'STARTERS & SIDES': 'starters', 'SAUCE SELECTION': 'sauces', 'SANDWICHES'
 WIDTH = {'starters': 758, 'sauces': 758, 'drinks': 1094, 'sandwiches': 1094, 'burgers': 1094, 'doner': 900, 'platters': 900, 'shawarma': 900, 'hotdogs': 900}
 DESC = {'sandwiches', 'burgers'}          # only these show ingredients on the TVs, as on the old boards
 STATIC = [['starters', 'sauces'], ['sandwiches', 'burgers', 'drinks'], ['doner', 'platters', 'shawarma', 'hotdogs']]
+# The halves, in reading order: left TV items 1-21 and the sauces, right TV 22-43 (columns, top to bottom).
+HALVES = {1: [['starters', 'sauces'], ['sandwiches', 'burgers']], 2: [['doner', 'platters', 'shawarma'], ['hotdogs', 'drinks']]}
 SIZES = pathlib.Path('tools/.sections.json')
 
 def row(x, key):
@@ -66,8 +70,47 @@ body{{font-family:'Barlow Semi Condensed',sans-serif;color:{c['name']};padding:4
     return ('<!doctype html><html><head><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Semi+Condensed:wght@500;700;800&family=Vazirmatn:wght@700;800&display=swap" rel="stylesheet">'
             f'<style>{css}</style></head><body>{secs}</body></html>')
 
+def sizes():
+    # the panels' sizes, from tools/sections.cjs; without that file, from the panel pictures (drawn at 2x)
+    if SIZES.exists(): return {k: tuple(v) for k, v in json.loads(SIZES.read_text()).items()}
+    from PIL import Image
+    return {k: tuple(round(v / 2) for v in Image.open(f'site/monitor-1/sec-{k}.png').size) for k in WIDTH}
+
+def halves():
+    """site/monitor-1/halves.css: /monitor-1/?half=1 and ?half=2, each half of the menu as big as fits on one TV.
+    Half 2 wears the right TV's orange marble and glass."""
+    size = sizes()
+    W, H, M, GAP, PAD, TOP = 1920.0, 1080.0, 14.0, 12.0, 10.0, 12.0
+    BOT = H - 12.0
+    pct = lambda v, ref: f'{v / ref * 100:.3f}%'
+    css = ['/* Made by tools/make-sections.py: do not edit by hand. The two halves of the menu, one per shop TV, still. */',
+           'html.half-2 { --marble: url(/marble-orange.jpg); --rim: #ff8a00; --glass-top: rgba(255, 230, 170, .96); --glass-mid: rgba(255, 186, 90, .94);',
+           '  --glass-low: rgba(255, 146, 40, .95); --glass-pool: rgba(255, 90, 0, .45); --glass-shade: rgba(150, 40, 0, .3); --type: #7a0800; }']
+    out = []
+    for half, cols in HALVES.items():
+        shown = [n for c in cols for n in c]
+        fixed_w = 2 * M + GAP * (len(cols) - 1) + 2 * PAD * len(cols)
+        s = (W - fixed_w) / sum(max(size[n][0] for n in c) for c in cols)
+        for c in cols: s = min(s, (BOT - TOP - GAP * (len(c) - 1) - 2 * PAD * len(c)) / sum(size[n][1] for n in c))
+        extra_w = (W - fixed_w - s * sum(max(size[n][0] for n in c) for c in cols)) / len(cols)
+        css.append(f'/* half {half}: text scale {s:.3f} */')
+        css += [f'html.half-{half} .sec-{n} {{ display: none; }}' for n in WIDTH if n not in shown]
+        x = M
+        for c in cols:
+            cw = max(size[n][0] for n in c) * s + 2 * PAD + extra_w
+            used = sum(size[n][1] * s + 2 * PAD for n in c) + GAP * (len(c) - 1)
+            grow = (BOT - TOP - used) / len(c); y = TOP
+            for n in c:
+                h = size[n][1] * s + 2 * PAD + grow
+                css.append(f'html.half-{half} .sec-{n} {{ left: {pct(x, W)}; top: {pct(y, H)}; width: {pct(cw, W)}; height: {pct(h, H)}; }}')
+                y += h + GAP
+            x += cw + GAP
+        out.append(f'half {half} text scale {s:.3f}')
+    open('site/monitor-1/halves.css', 'w').write('\n'.join(css) + '\n')
+    print('halves written; ' + ', '.join(out))
+
 def layout():
-    size = {k: tuple(v) for k, v in json.loads(SIZES.read_text()).items()}
+    size = sizes()
     W, H, M, GAP, PAD, TOP = 1920.0, 1080.0, 14.0, 12.0, 10.0, 12.0
     BOT = H - 12.0
     pct = lambda v, ref: f'{v / ref * 100:.3f}%'
@@ -98,8 +141,10 @@ def layout():
     css.append(f'.side {{ left: {pct(W - M - SIDE_W, W)}; top: {pct(TOP, H)}; width: {pct(SIDE_W, W)}; height: {pct(BOT - TOP, H)}; }}')
     open('site/monitor-2/layout.css', 'w').write('\n'.join(css) + '\n')
     print(f'layout written; full-menu TV text scale {s1:.3f}')
+    halves()
 
 if sys.argv[1:] == ['layout']: layout()
+elif sys.argv[1:] == ['halves']: halves()
 else:
     for mon in (1, 2): pathlib.Path(f'tools/.sections-{mon}.html').write_text(page(mon))
     print('wrote tools/.sections-1.html, -2.html')

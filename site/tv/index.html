@@ -12,12 +12,13 @@
      sleep (or its screensaver) about a minute after the last button press, unless a video is playing. So:
        - a tiny silent video plays all the time in a corner, under the picture (awake.webm / awake.mp4): a playing
          video keeps the TV's screen on, the same way the USB videos do;
-       - one ready-made picture at a time (site/tv/*.jpg, made by tools/tv-stills.cjs): no fonts, canvas or
-         animation, as light as a page can be;
-       - it never reloads and never leaves its address: a new menu is swapped in picture by picture;
+       - one ready-made picture, still (site/tv/*.jpg, made by tools/tv-stills.cjs): each TV shows its half of the
+         menu, always (24 Nov 2026: "the menu in two parts, one on each monitor, always fixed"); no fonts, canvas
+         or animation, as light as a page can be;
+       - it never reloads and never leaves its address: a new menu is swapped in quietly;
        - plain files only: nothing on Netlify but the files themselves.
-     Which TV: ajdarzapata.co.uk/tv1 = monitor 1 (the whole menu, left TV), /tv2 = monitor 2 (one section at a time,
-     right TV). A TV that has opened /tv1 or /tv2 once remembers it, so plain ajdarzapata.co.uk then works on it
+     Which TV: ajdarzapata.co.uk/tv1 = left TV (items 1-21 and the sauces, yellow), /tv2 = right TV (items 22-43,
+     orange). A TV that has opened /tv1 or /tv2 once remembers it, so plain ajdarzapata.co.uk then works on it
      too. Anyone else who opens the plain address (phones, laptops) goes on to the phone menu (/menu/).
      ?preview only looks (it isn't remembered); ?screen=0 makes a device forget it is a TV.
      How it is doing: every opening reports to /tv/ping.txt (Netlify's request log keeps a day of these):
@@ -80,39 +81,21 @@
   }
   wakeLock();
 
-  // ── The pictures (site/tv/show.json, from tools/tv-stills.cjs), in both looks. A picture's name changes whenever
-  // it changes, so a TV can never keep an old copy.
-  var imgs = [document.getElementById('a'), document.getElementById('b')], front = 0;
-  var show = null, step = -1, timer = null;
-  function christmas() { var d = new Date(), m = d.getMonth() + 1; return m === 11 || m === 12 || (m === 1 && d.getDate() <= 6); }
-  // The look by date, as on the site (season.js): Christmas 1 Nov - 6 Jan (snow, Santa's Robbery), else plain.
-  function list() {
-    if (!show) return [];
-    var set = show.sets[christmas() ? 'christmas' : 'none'] || show.sets.none;
-    return mon === 1 ? [[set.m1, 600]] : set.m2;
-  }
-  // Load the next picture behind the one on screen, then swap. If it can't load, the old one stays up.
+  // ── The picture (site/tv/show.json, from tools/tv-stills.cjs): each TV shows its half of the menu, still, always.
+  // Its name changes whenever it changes, so a TV can never keep an old copy.
+  var imgs = [document.getElementById('a'), document.getElementById('b')], front = 0, shown = '';
+  // Load the new picture behind the one on screen, then swap. If it can't load, the old one stays up.
   function put(file) {
     var back = imgs[1 - front], src = '/tv/' + file;
-    if (imgs[front].getAttribute('src') === src) return;
-    back.onload = function () { back.className = 'on'; imgs[front].className = ''; front = 1 - front; };
+    if (!file || src === shown) return;
+    back.onload = function () { back.className = 'on'; imgs[front].className = ''; front = 1 - front; shown = src; };
     back.onerror = function () {};
     back.src = src;
   }
-  function next() {
-    clearTimeout(timer);
-    var l = list();
-    if (!l.length) { timer = setTimeout(next, 5000); return; }
-    step = (step + 1) % l.length;
-    put(l[step][0]);
-    timer = setTimeout(next, Math.max(5, l[step][1]) * 1000);
-  }
   // Read the list again every two minutes: a new menu goes up within two minutes of going live.
   function load() {
-    fetch('/tv/show.json?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) {
-      if (show && j.v === show.v) return;
-      show = j; step = -1; next();
-    }).catch(function () {});
+    fetch('/tv/show.json?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.json(); })
+      .then(function (j) { put(j['tv' + mon]); }).catch(function () {});
   }
   load();
   setInterval(load, 2 * 60 * 1000);
