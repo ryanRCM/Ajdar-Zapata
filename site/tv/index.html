@@ -21,6 +21,8 @@
      orange). A TV that has opened /tv1 or /tv2 once remembers it, so plain ajdarzapata.co.uk then works on it
      too. Anyone else who opens the plain address (phones, laptops) goes on to the phone menu (/menu/).
      ?preview only looks (it isn't remembered); ?screen=0 makes a device forget it is a TV.
+     The shop TVs (their own browser, see shopTV) are never sent to the phone menu: until told which they are,
+     they show the whole menu; pressing 1 or 2 on a TV's remote tells it (0 forgets).
      How it is doing: every opening reports to /tv/ping.txt (Netlify's request log keeps a day of these):
      m = monitor, o = when it opened, s = seconds open, ev = what happened, v = the keep-awake video. -->
 <style>
@@ -41,7 +43,10 @@
 <script>
 (function () {
   var params = new URLSearchParams(location.search), preview = params.has('preview');
-  var phone = /iPhone|iPad|iPod|Android.*Mobile|Mobile Safari/i.test(navigator.userAgent);
+  var ua = navigator.userAgent, phone = /iPhone|iPad|iPod|Android.*Mobile|Mobile Safari/i.test(ua);
+  // The shop TVs' own browser (24 Nov 2026: Android 9 WebView, board t963_ak301, Chrome 97), or any Android
+  // in-app browser that isn't a phone's: never sent to the phone menu.
+  var shopTV = /t963_ak301/i.test(ua) || (/; wv\)/.test(ua) && !/Mobile/.test(ua));
 
   // ── Which TV: the address (/tv1, /tv2, ?screen=1/2), else what this TV remembers, else not a shop TV.
   function remembered() {
@@ -57,7 +62,8 @@
   var fromPath = /^\/tv-?([12])\/?$/.exec(location.pathname), q = params.get('screen');
   if (q === '0') { remember(0); location.replace('/menu/'); return; }
   var mon = fromPath ? Number(fromPath[1]) : (q === '1' || q === '2') ? Number(q) : remembered();
-  if (!mon) { location.replace('/menu/'); return; }                      // a phone or laptop: the phone menu
+  if (!mon && !shopTV) { location.replace('/menu/'); return; }           // a phone or laptop: the phone menu
+  // a shop TV not yet told which it is shows the whole menu (mon 0) until it is: press 1 or 2 on its remote
   if ((fromPath || q) && !preview && !phone && remembered() !== mon) remember(mon);
 
   var opened = Date.now(), lastErr = '';
@@ -95,10 +101,21 @@
   // Read the list again every two minutes: a new menu goes up within two minutes of going live.
   function load() {
     fetch('/tv/show.json?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.json(); })
-      .then(function (j) { put(j['tv' + mon]); }).catch(function () {});
+      .then(function (j) { put(mon ? j['tv' + mon] : j.all); }).catch(function () {});
   }
   load();
   setInterval(load, 2 * 60 * 1000);
+
+  // ── Telling a TV which it is with its remote: 1 = left TV (first half), 2 = right TV (second half), 0 = forget
+  // (back to the whole menu). Remembered like /tv1 and /tv2.
+  document.addEventListener('keydown', function (e) {
+    var k = e.key === 'Numpad1' ? '1' : e.key === 'Numpad2' ? '2' : e.key === 'Numpad0' ? '0' : e.key;
+    if (k !== '0' && k !== '1' && k !== '2') return;
+    mon = Number(k);
+    if (!preview) remember(mon);
+    load();
+    beat('key' + k);
+  });
 
   // ── How it is doing, for Netlify's request log (a plain file, so nothing runs on Netlify).
   function ping(ev) {
