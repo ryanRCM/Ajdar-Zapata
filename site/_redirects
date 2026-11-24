@@ -1,4 +1,8 @@
-# The plain address shows monitor 1, so TVs already on ajdarzapata.co.uk keep working.
-/            /monitor-1/   200!
+# The TVs' page (Ryan, 24 Nov 2026): /tv1 = the left TV (monitor 1, the whole menu), /tv2 = the right TV
+# (monitor 2, one section at a time). A TV that has opened its address once also shows it on the plain address;
+# everyone else who opens the plain address is sent on to the phone menu by the page (site/tv/index.html).
+/            /tv/          200!
+/tv1         /tv/          200
+/tv2         /tv/          200
 /monitor1    /monitor-1/   301
 /monitor2    /monitor-2/   301
