@@ -13,13 +13,15 @@ PALETTE = {1: {'heading': (120, 10, 0), 'price': (222, 22, 10), 'persian': (168,
            2: {'heading': (110, 6, 0), 'price': (206, 14, 30), 'persian': (150, 46, 0), 'name': (14, 10, 8), 'desc': (70, 46, 34)}}
 KEY = {'STARTERS & SIDES': 'starters', 'SAUCE SELECTION': 'sauces', 'SANDWICHES': 'sandwiches', 'BURGERS': 'burgers', 'DONER BAGUETTES': 'doner',
        'DONER PLATTERS': 'platters', 'SHAWARMA': 'shawarma', 'HOT DOGS': 'hotdogs', 'DRINKS': 'drinks'}
-WIDTH = {'starters': 758, 'sauces': 758, 'drinks': 1094, 'sandwiches': 1094, 'burgers': 1094, 'doner': 900, 'platters': 900, 'shawarma': 900, 'hotdogs': 900}
+WIDTH = {'starters': 1094, 'sauces': 900, 'drinks': 1094, 'sandwiches': 1094, 'burgers': 1094, 'doner': 900, 'platters': 900, 'shawarma': 900, 'hotdogs': 900}
 DESC = {'sandwiches', 'burgers'}          # only these show ingredients on the TVs, as on the old boards
-STATIC = [['starters', 'sauces'], ['sandwiches', 'burgers', 'drinks'], ['doner', 'platters', 'shawarma', 'hotdogs']]
-# The halves, in reading order: left TV items 1-21 and the sauces, right TV 22-43 (columns, top to bottom).
-HALVES = {1: [['starters', 'sauces'], ['sandwiches', 'burgers']], 2: [['doner', 'platters', 'shawarma'], ['hotdogs', 'drinks']]}
-# The food allergy notice (Mama, 24 Nov 2026: "at the bottom of both, small, so the menu doesn't shrink") sits in the
-# first column's spare space on each TV: that column's panels don't stretch, the notice takes what is left.
+STATIC = [['starters', 'sandwiches', 'burgers'], ['drinks', 'sauces'], ['doner', 'platters', 'shawarma', 'hotdogs']]
+# The halves (Mama and Ryan, 24 Nov 2026: "swap the sauce and drinks", "sandwiches on the second line after starters",
+# "sauces on the right above the food allergy", "drinks at the end"): columns, top to bottom.
+HALVES = {1: [['starters', 'sandwiches'], ['burgers', 'drinks']], 2: [['doner', 'platters', 'shawarma'], ['hotdogs', 'sauces']]}
+# The food allergy notice at the end of the menu: half 2, under its last column, at least NOTE_MIN px tall at 1080
+# (the menu is sized to leave that room; that column's panels don't stretch, the notice takes what is left).
+NOTE = {2: 1}; NOTE_MIN = 130.0
 SIZES = pathlib.Path('tools/.sections.json')
 
 def row(x, key):
@@ -93,7 +95,9 @@ def halves():
         shown = [n for c in cols for n in c]
         fixed_w = 2 * M + GAP * (len(cols) - 1) + 2 * PAD * len(cols)
         s = (W - fixed_w) / sum(max(size[n][0] for n in c) for c in cols)
-        for c in cols: s = min(s, (BOT - TOP - GAP * (len(c) - 1) - 2 * PAD * len(c)) / sum(size[n][1] for n in c))
+        for k, c in enumerate(cols):
+            room = (NOTE_MIN + GAP) if NOTE.get(half) == k else 0
+            s = min(s, (BOT - TOP - room - GAP * (len(c) - 1) - 2 * PAD * len(c)) / sum(size[n][1] for n in c))
         extra_w = (W - fixed_w - s * sum(max(size[n][0] for n in c) for c in cols)) / len(cols)
         css.append(f'/* half {half}: text scale {s:.3f} */')
         css += [f'html.half-{half} .sec-{n} {{ display: none; }}' for n in WIDTH if n not in shown]
@@ -101,12 +105,13 @@ def halves():
         for k, c in enumerate(cols):
             cw = max(size[n][0] for n in c) * s + 2 * PAD + extra_w
             used = sum(size[n][1] * s + 2 * PAD for n in c) + GAP * (len(c) - 1)
-            grow = 0 if k == 0 else (BOT - TOP - used) / len(c); y = TOP
+            note = NOTE.get(half) == k
+            grow = 0 if note else (BOT - TOP - used) / len(c); y = TOP
             for n in c:
                 h = size[n][1] * s + 2 * PAD + grow
                 css.append(f'html.half-{half} .sec-{n} {{ left: {pct(x, W)}; top: {pct(y, H)}; width: {pct(cw, W)}; height: {pct(h, H)}; }}')
                 y += h + GAP
-            if k == 0:   # the allergy notice in what is left at the bottom of the first column
+            if note:   # the allergy notice in what is left at the bottom of this column
                 css.append(f'html.half-{half} .note {{ display: flex; left: {pct(x, W)}; top: {pct(y, H)}; width: {pct(cw, W)}; height: {pct(BOT - y, H)}; }}')
             x += cw + GAP
         out.append(f'half {half} text scale {s:.3f}')
