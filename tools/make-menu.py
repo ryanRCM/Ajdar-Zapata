@@ -78,7 +78,8 @@ PAGES = [
 ]
 SAUCES = [('Zapata Special Sauce', 'سس مخصوص زاپاتا'), ('Garlic', 'سس سیر'), ('Garlic & Dill', 'سس سیر و شوید'), ('Spicy Chilli', 'سس چیلی تند'), ('Mushroom', 'سس قارچ'), ('Ketchup', 'سس کچاپ'), ('Mayo', 'سس مایونز')]
 DRINKS = [(37, 'Coca-Cola', 'کوکاکولا', '£1.50'), (38, 'Diet Coke', 'کوکا رژیمی', '£1.50'), (39, 'Fanta', 'فانتا', '£1.50'), (40, '7UP', 'سون‌آپ', '£1.50'),
-          (41, 'Ayran', 'دوغ', '£2.00'), (42, 'Still Water', 'آب معدنی', '£1.50'), (43, 'Sparkling Water', 'آب گازدار', '£2.00')]
+          (41, 'Ayran · Sparkling or still', 'دوغ', '£1.99'), (42, 'Still Water', 'آب معدنی', '£1.50'), (43, 'Sparkling Water', 'آب گازدار', '£2.00'),
+          (44, 'Istak', 'ایستک', '£1.59')]   # Mama, 24 Nov 2026: Ayran sparkling or still £1.99; Istak £1.59
 e = html.escape
 
 def item(x):

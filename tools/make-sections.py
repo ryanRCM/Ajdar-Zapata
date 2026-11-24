@@ -38,7 +38,10 @@ def sec(title, fa, items):
     if items == 'SAUCES':
         h += ''.join(f'<div class="s"><span class="t">{e(a.upper())}</span><span class="f" dir="rtl">{e(b)}</span></div>' for a, b in SAUCES)
     elif items == 'DRINKS':   # every drink on its own row with its own number and price (Mama, 24 Nov 2026), 37-43 as printed
-        h += ''.join(f'<div class="r"><span class="n">{n}</span><div class="b"><div class="t">{e(a.upper())}</div></div><span class="f" dir="rtl">{e(b)}</span><span class="p">{p}</span></div>' for n, a, b, p in DRINKS)
+        def dname(a):
+            a = a.upper()
+            return e(a.split(' · ')[0]) + (f'<span class="pill">{e(a.split(" · ")[1])}</span>' if ' · ' in a else '')
+        h += ''.join(f'<div class="r"><span class="n">{n}</span><div class="b"><div class="t">{dname(a)}</div></div><span class="f" dir="rtl">{e(b)}</span><span class="p">{p}</span></div>' for n, a, b, p in DRINKS)
     else:
         h += ''.join(row(x, key) for x in items)
     return h + '</div>'
