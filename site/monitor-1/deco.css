@@ -6,20 +6,24 @@
 .note { display: none; }
 html.half-1 .note, html.half-2 .note { position: absolute; z-index: 1; flex-direction: column; justify-content: center;
   padding: .8vh 1.6vh; color: var(--ink); text-align: left; }
-.note .nt { display: flex; justify-content: space-between; align-items: baseline; gap: 1vh; position: relative; }
+.note .nt { display: flex; justify-content: flex-start; align-items: baseline; position: relative; }
+.note .nt.fa { justify-content: flex-end; margin-top: .5vh; }
 .note .nt b { font: 800 2.1vh/1.1 "Barlow Semi Condensed", "Arial Narrow", sans-serif; color: #8a0c00; letter-spacing: .02em; white-space: nowrap; }
 .note .nt b[lang="fa"] { font: 800 1.9vh/1.2 Vazirmatn, Tahoma, sans-serif; }
 .note p { position: relative; margin: .35vh 0 0; font: 600 1.25vh/1.25 "Barlow Semi Condensed", "Arial Narrow", sans-serif; color: #3c2414; }
 .note p[lang="fa"] { font: 600 1.2vh/1.45 Vazirmatn, Tahoma, sans-serif; text-align: right; }
 
 .deco { position: absolute; z-index: 2; pointer-events: none; }
-.deco .pic { position: absolute; inset: 0; display: flex; align-items: flex-end; justify-content: center; opacity: 0; }
+.deco .pic { position: absolute; inset: 0; display: flex; align-items: flex-end; justify-content: center; opacity: 0; transform-origin: 50% 100%; }
 .deco .pic.only { opacity: 1; }
 .deco .bob { height: 100%; width: 100%; display: flex; align-items: flex-end; justify-content: center; animation: deco-bob 3s ease-in-out infinite; }
-.deco img { max-width: 100%; max-height: 100%; object-fit: contain; filter: drop-shadow(0 .35vh .4vh rgba(90, 20, 0, .35)); }
+/* a sticker: a thin white edge and a soft shadow, like the food photos on the big chains' boards */
+.deco img { max-width: 100%; max-height: 100%; object-fit: contain;
+  filter: drop-shadow(0 0 .16vh #fff) drop-shadow(0 0 .16vh #fff) drop-shadow(0 .45vh .5vh rgba(90, 20, 0, .4)); }
 .deco img.framed { border-radius: .8vh; }
-.deco svg { height: 100%; width: auto; overflow: visible; transform-origin: 50% 100%; animation: deco-flick 2s ease-in-out infinite; }
-@keyframes deco-bob { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-6%) rotate(-1.5deg); } }
+.deco svg { height: 100%; width: auto; overflow: visible; transform-origin: 50% 100%; animation: deco-flick 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 .7vh rgba(255, 170, 0, .75)); }
+@keyframes deco-bob { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-3%) rotate(-1.5deg); } }
 @keyframes deco-flick { 0%, 100% { transform: scale(1, 1) skewX(0deg); } 25% { transform: scale(.96, 1.08) skewX(-3deg); }
   50% { transform: scale(1.03, .95) skewX(2deg); } 75% { transform: scale(.98, 1.05) skewX(-1deg); } }
 

@@ -22,9 +22,10 @@
   const style = document.createElement('style');
   style.textContent = [2, 3].map(k => {
     const on = 100 / k, edge = 0.5 / T * 100;
-    return `@keyframes deco-cyc-${k} { 0% { opacity: 0; transform: translateX(35%) scale(.85); } ${edge.toFixed(2)}% { opacity: 1; transform: none; }
-      ${(on - edge).toFixed(2)}% { opacity: 1; transform: none; } ${on.toFixed(2)}% { opacity: 0; transform: translateX(-35%) scale(.85); }
-      100% { opacity: 0; transform: translateX(-35%) scale(.85); } }`;
+    // pops up from the heading line with a little bounce and shrinks away again: it never leaves its gap
+    return `@keyframes deco-cyc-${k} { 0% { opacity: 0; transform: scale(.45) rotate(-8deg); } ${edge.toFixed(2)}% { opacity: 1; transform: scale(1.08) rotate(2deg); }
+      ${(edge * 1.7).toFixed(2)}% { opacity: 1; transform: none; } ${(on - edge).toFixed(2)}% { opacity: 1; transform: none; }
+      ${on.toFixed(2)}% { opacity: 0; transform: scale(.45) rotate(8deg); } 100% { opacity: 0; transform: scale(.45); } }`;
   }).join('\n');
   document.head.appendChild(style);
 
@@ -46,10 +47,16 @@
       if (!card || !card.offsetParent || !g) return;
       const b = shown(card.querySelector('img'));
       const x0 = b.left + g[0] * b.width, x1 = b.left + g[1] * b.width, y0 = b.top + g[2] * b.height, y1 = b.top + g[3] * b.height;
-      const gw = x1 - x0, hh = (y1 - y0) * 1.3;
+      // as tall as the room from the heading line up to just over the panel's top edge (a little into the empty
+      // bottom of the panel above, or the screen's top), so it never covers any menu text
+      const cr = card.getBoundingClientRect(), gap = innerHeight * 12 / 1080, pad = innerHeight * 0.0148;
+      const above = [...document.querySelectorAll('#stage .card')].some(o => o !== card && o.offsetParent && (() => { const r = o.getBoundingClientRect();
+        return r.bottom <= cr.top + 1 && r.bottom > cr.top - gap * 3 && r.left < cr.right && cr.left < r.right; })());
+      const top = above ? cr.top - gap - pad * 0.5 : Math.max(2, cr.top - gap * 0.8);
+      const gw = x1 - x0, hh = y1 - 1 - top;
       const box = document.createElement('div');
       box.className = 'deco';
-      Object.assign(box.style, { left: x0 + gw * 0.12 + 'px', width: gw * 0.76 + 'px', top: y1 - hh + 'px', height: hh + 'px' });
+      Object.assign(box.style, { left: x0 + gw * 0.07 + 'px', width: gw * 0.86 + 'px', top: top + 'px', height: hh + 'px' });
       const list = PICS[id], k = list.length;
       list.forEach((name, i) => {
         const pic = document.createElement('div');

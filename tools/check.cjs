@@ -115,20 +115,21 @@ const server = http.createServer((req, res) => {
           const i = c.querySelector('img'); if (!(i && i.naturalWidth > 0)) bad.push(c.className + ' not loaded'); });
         secs.forEach((a, k) => secs.slice(k + 1).forEach(c => { if (meets(box(a), box(c))) bad.push(a.className + ' overlaps ' + c.className); }));
         const note = document.querySelector('.note');
-        if (!note || !note.offsetParent) bad.push('no allergy notice'); else {
+        if (note && note.offsetParent) {
           const r = box(note); if (r.top < 0 || r.bottom > innerHeight + 1 || note.scrollHeight > note.clientHeight + 1) bad.push('allergy notice cut off');
           secs.forEach(c => { if (meets(r, box(c))) bad.push('allergy notice overlaps ' + c.className); }); }
-        return { names: secs.map(c => (c.className.match(/sec-(\w+)/) || [])[1]), bad, orange: secs.every(c => /\/monitor-2\//.test(c.querySelector('img').src)) };
+        return { names: secs.map(c => (c.className.match(/sec-(\w+)/) || [])[1]), bad, note: !!(note && note.offsetParent), orange: secs.every(c => /\/monitor-2\//.test(c.querySelector('img').src)) };
       });
-      seen[half] = r.names;
+      seen[half] = r.names; seen['note' + half] = r.note;
       const pass = r.names.length >= 4 && !r.bad.length && !errs.length && !r.orange; ok = ok && pass;
       console.log(`${pass ? '✅' : '❌'} half ${half} of the menu: ${r.names.join(', ')}${r.bad.length ? ' ' + r.bad.join('; ') : ''}${errs.length ? ' ' + errs.join('; ') : ''}`);
       await p.close();
     }
     const all = ['starters', 'sauces', 'sandwiches', 'burgers', 'doner', 'platters', 'shawarma', 'hotdogs', 'drinks'];
     const both = seen[1].filter(n => seen[2].includes(n)), none = all.filter(n => !seen[1].includes(n) && !seen[2].includes(n));
-    const pass = !both.length && !none.length; ok = ok && pass;
-    console.log(`${pass ? '✅' : '❌'} the two halves are the whole menu, once${both.length ? ', on both: ' + both.join(' ') : ''}${none.length ? ', missing: ' + none.join(' ') : ''}`);
+    const notes = (seen.note1 ? 1 : 0) + (seen.note2 ? 1 : 0);
+    const pass = !both.length && !none.length && notes >= 1; ok = ok && pass;
+    console.log(`${pass ? '✅' : '❌'} the two halves are the whole menu, once, with the allergy notice on ${notes}${both.length ? ', on both: ' + both.join(' ') : ''}${none.length ? ', missing: ' + none.join(' ') : ''}`);
   }
   // The shop TVs' page. (1) Its pictures (the two halves and the whole menu) were made from the menu as it is now.
   {
