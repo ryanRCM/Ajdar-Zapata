@@ -15,7 +15,8 @@
        - one ready-made picture, still (site/tv/*.jpg, made by tools/tv-stills.cjs): each TV shows its half of the
          menu, always (24 Nov 2026: "the menu in two parts, one on each monitor, always fixed"); no fonts, canvas
          or animation, as light as a page can be;
-       - it never reloads and never leaves its address: a new menu is swapped in quietly;
+       - a new menu is swapped in quietly; when this page itself changes it reloads onto the new version by itself
+         (Ryan, 24 Nov 2026: "make it refresh automatically"), at most once in 10 minutes;
        - plain files only: nothing on Netlify but the files themselves.
      Which TV: ajdarzapata.co.uk/tv1 = left TV (items 1-21 and the sauces, yellow), /tv2 = right TV (items 22-43,
      orange). A TV that has opened /tv1 or /tv2 once remembers it, so plain ajdarzapata.co.uk then works on it
@@ -42,6 +43,7 @@
 <img id="a" alt=""><img id="b" alt="">
 <script>
 (function () {
+  var PAGE = '97edc46463';   // this page's version: stamped by tools/tv-page.cjs, also into show.json as "page"
   var params = new URLSearchParams(location.search), preview = params.has('preview');
   var ua = navigator.userAgent, phone = /iPhone|iPad|iPod|Android.*Mobile|Mobile Safari/i.test(ua);
   // The shop TVs' own browser (24 Nov 2026: Android 9 WebView, board t963_ak301, Chrome 97), or any Android
@@ -65,6 +67,10 @@
   if (!mon && !shopTV) { location.replace('/menu/'); return; }           // a phone or laptop: the phone menu
   // a shop TV not yet told which it is shows the whole menu (mon 0) until it is: press 1 or 2 on its remote
   if ((fromPath || q) && !preview && !phone && remembered() !== mon) remember(mon);
+  // The address says which TV this is, so a reload never needs the TV's memory: the plain address becomes /tv1 or
+  // /tv2 in place (no reload).
+  function pin() { try { if (mon && !preview && location.pathname !== '/tv' + mon) history.replaceState(null, '', '/tv' + mon); } catch (e) {} }
+  pin();
 
   var opened = Date.now(), lastErr = '';
   window.addEventListener('error', function (e) { lastErr = String(e.message || 'error').slice(0, 90) + ' @' + String(e.filename || '').split('/').pop() + ':' + (e.lineno || 0); });
@@ -101,7 +107,14 @@
   // Read the list again every two minutes: a new menu goes up within two minutes of going live.
   function load() {
     fetch('/tv/show.json?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.json(); })
-      .then(function (j) { put(mon ? j['tv' + mon] : j.all); }).catch(function () {});
+      .then(function (j) {
+        // A new version of this page is live: reload onto it (at most once in 10 minutes, so it can never loop).
+        if (j.page && j.page !== PAGE && !preview) {
+          var last = Number((/^az-reload:(\d+)$/.exec(window.name || '') || [])[1]) || 0;
+          if (Date.now() - last > 10 * 60 * 1000) { window.name = 'az-reload:' + Date.now(); location.replace(mon ? '/tv' + mon : location.pathname + location.search); return; }
+        }
+        put(mon ? j['tv' + mon] : j.all);
+      }).catch(function () {});
   }
   load();
   setInterval(load, 2 * 60 * 1000);
@@ -113,6 +126,7 @@
     if (k !== '0' && k !== '1' && k !== '2') return;
     mon = Number(k);
     if (!preview) remember(mon);
+    if (mon) pin(); else try { if (!preview) history.replaceState(null, '', '/'); } catch (e) {}
     load();
     beat('key' + k);
   });

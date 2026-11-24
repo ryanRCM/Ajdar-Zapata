@@ -44,6 +44,7 @@ const STILL = '.word::after,.soon::after,.bigwipe,.slabs,.burst,.wipe,.sweep,.ri
   const files = Object.values(final);
   const show = { v: crypto.createHash('sha1').update(files.join(',')).digest('hex').slice(0, 10), inputs: inputsHash(), tv1: final.tv1, tv2: final.tv2, all: final.all };
   fs.writeFileSync(path.join(out, 'show.json'), JSON.stringify(show) + '\n');
+  require('child_process').execFileSync('node', [path.join(__dirname, 'tv-page.cjs')], { stdio: 'inherit' });   // and the page's version
   console.log('site/tv:', files.length, 'pictures, version', show.v);
   await b.close(); server.close();
 })();

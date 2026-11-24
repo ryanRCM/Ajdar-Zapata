@@ -11,12 +11,15 @@ const http = require('http'), fs = require('fs'), path = require('path');
 const root = path.join(__dirname, '..', 'site');
 const types = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.json': 'application/json', '.webm': 'video/webm', '.mp4': 'video/mp4', '.txt': 'text/plain' };
 const tvInputs = require('./tv-inputs.cjs');
+const tvPage = require('./tv-page.cjs');
+let fakePage = '';   // when set, the stand-in show.json says a new TV page is live
 
 const server = http.createServer((req, res) => {
   let p = decodeURIComponent(req.url.split('?')[0]);
   // As Netlify: the injected badge script (a stand-in that only leaves a mark), and the addresses in site/_redirects.
   if (p === '/.netlify/scripts/hud') { res.writeHead(200, { 'content-type': 'text/javascript' }); return res.end('window.__netlifyRan = true;'); }
   if (p === '/' || p === '/tv1' || p === '/tv2') p = '/tv/';
+  if (p === '/tv/show.json' && fakePage) { res.writeHead(200, { 'content-type': 'application/json' }); return res.end(JSON.stringify({ ...JSON.parse(fs.readFileSync(path.join(root, 'tv', 'show.json'))), page: fakePage })); }
   if (p.endsWith('/')) p += 'index.html';
   const f = path.join(root, p);
   if (!f.startsWith(root) || !fs.existsSync(f)) { res.writeHead(404); return res.end(); }
@@ -130,6 +133,10 @@ const server = http.createServer((req, res) => {
     const listed = [show.tv1, show.tv2, show.all];
     const missing = listed.filter(f => !fs.existsSync(path.join(root, 'tv', f)));
     const stray = fs.readdirSync(path.join(root, 'tv')).filter(f => /\.jpg$/.test(f) && !listed.includes(f));
+    const html = fs.readFileSync(path.join(root, 'tv', 'index.html'), 'utf8');
+    const stamped = (html.match(tvPage.STAMP) || [''])[0] === `var PAGE = '${tvPage.version(html)}';` && show.page === tvPage.version(html);
+    if (!stamped) console.log('❌ TV page version not stamped (run: node tools/tv-page.cjs)');
+    ok = ok && stamped;
     const fresh = show.inputs === tvInputs();
     const pass = fresh && !missing.length && !stray.length && ['awake.webm', 'awake.mp4', 'ping.txt'].every(f => fs.existsSync(path.join(root, 'tv', f)));
     ok = ok && pass;
@@ -143,7 +150,7 @@ const server = http.createServer((req, res) => {
   const visit = async (ctx, url, wait) => {
     const p = await ctx.newPage(); const errs = [], asked = []; let loads = 0;
     p.on('pageerror', e => errs.push(e.message)); p.on('console', m => { if (m.type() === 'error' && !/Content Security Policy|hud/.test(m.text())) errs.push(m.text()); });
-    p.on('framenavigated', f => { if (f === p.mainFrame()) loads++; }); p.on('request', r => asked.push(new URL(r.url()).pathname));
+    p.on('domcontentloaded', () => loads++); p.on('request', r => asked.push(new URL(r.url()).pathname));
     await p.goto(base + url); await p.waitForTimeout(wait);
     const st = await p.evaluate(() => ({ path: location.pathname, on: (document.querySelector('img.on') || { getAttribute: () => '' }).getAttribute('src'),
       video: !!document.querySelector('video') && !document.querySelector('video').paused, netlify: !!window.__netlifyRan })).catch(() => ({}));
@@ -174,7 +181,7 @@ const server = http.createServer((req, res) => {
     }
     await tvCase('left TV, plain address afterwards', left, '/', 1);
     await tvCase('right TV, plain address afterwards', right, '/', 2);
-    await tvCase('right TV lands on the phone menu: back to its page', right, '/menu/', 2, 6000, 2);
+    await tvCase('right TV lands on the phone menu: back to its page', right, '/menu/', 2);
     await tvCase('right TV told to forget (?screen=0)', right, '/?screen=0', 'menu', 1500);
     await tvCase('right TV after forgetting, plain address', right, '/', 'menu', 1500);
     const laptop = await b.newContext({ viewport: { width: 1440, height: 900 } });
@@ -188,13 +195,14 @@ const server = http.createServer((req, res) => {
     // then 2 on its remote makes it the right TV, remembered
     const shop = await b.newContext({ viewport: { width: 1920, height: 1080 }, userAgent: SHOP });
     await tvCase('a shop TV not yet told which it is, plain address', shop, '/', 'all');
-    await tvCase('the same shop TV on the phone menu: back to the whole menu', shop, '/menu/', 'all', 6000, 2);
+    await tvCase('the same shop TV on the phone menu: back to the whole menu', shop, '/menu/', 'all');
     {
       const p = await shop.newPage(); await p.goto(base + '/'); await p.waitForTimeout(3000);
       await p.keyboard.press('2'); await p.waitForTimeout(3000);
       const on = await p.evaluate(() => document.querySelector('img.on')?.getAttribute('src') || '');
-      const pass = /\/tv\/tv2\./.test(on); ok = ok && pass;
-      console.log(`${pass ? '✅' : '❌'} pressing 2 on the shop TV's remote: shows ${on}`);
+      const where = await p.evaluate(() => location.pathname);
+      const pass = /\/tv\/tv2\./.test(on) && where === '/tv2'; ok = ok && pass;
+      console.log(`${pass ? '✅' : '❌'} pressing 2 on the shop TV's remote: shows ${on}, address ${where}`);
       await p.close();
     }
     await tvCase('the same shop TV after pressing 2, plain address', shop, '/', 2);
@@ -205,6 +213,17 @@ const server = http.createServer((req, res) => {
       const pass = /\/tv\/tv1\./.test(on); ok = ok && pass;
       console.log(`${pass ? '✅' : '❌'} then pressing 1: shows ${on}`);
       await p.close();
+    }
+    { // a new version of the TV page goes live: an open TV reloads onto it once, and never loops
+      const ctx = await b.newContext({ viewport: { width: 1920, height: 1080 } }); const p = await ctx.newPage(); let loads = 0;
+      p.on('domcontentloaded', () => loads++);
+      fakePage = 'newer';
+      await p.goto(base + '/tv2'); await p.waitForTimeout(8000);
+      const r = await p.evaluate(() => ({ where: location.pathname, on: document.querySelector('img.on')?.getAttribute('src') || '' }));
+      fakePage = '';
+      const pass = loads === 2 && r.where === '/tv2' && /\/tv\/tv2\./.test(r.on); ok = ok && pass;
+      console.log(`${pass ? '✅' : '❌'} a new TV page goes live: the open TV reloads onto it once (page loads ${loads}), stays ${r.where}, shows ${r.on}`);
+      await ctx.close();
     }
     for (const c of [left, right, laptop, phone, shop]) await c.close();
   }
