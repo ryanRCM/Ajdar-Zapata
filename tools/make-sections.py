@@ -37,10 +37,8 @@ def sec(title, fa, items):
     h = f'<div class="sec" id="{key}" style="width:{WIDTH[key]}px"><div class="h"><span>{e(title)}</span><span class="hf" dir="rtl">{e(fa)}</span></div>'
     if items == 'SAUCES':
         h += ''.join(f'<div class="s"><span class="t">{e(a.upper())}</span><span class="f" dir="rtl">{e(b)}</span></div>' for a, b in SAUCES)
-    elif items == 'DRINKS':
-        soft = [d for d in DRINKS if d[3] == '£1.50']
-        h += (f'<div class="r soft"><div class="b"><div class="t sm">{e(" · ".join(d[1].upper() for d in soft))}</div><div class="f" dir="rtl">{e("، ".join(d[2] for d in soft))}</div></div><span class="p">£1.50</span></div>')
-        h += ''.join(f'<div class="r"><span class="n">{n}</span><div class="b"><div class="t">{e(a.upper())}</div></div><span class="f" dir="rtl">{e(b)}</span><span class="p">{p}</span></div>' for n, a, b, p in DRINKS if p != '£1.50')
+    elif items == 'DRINKS':   # every drink on its own row with its own number and price (Mama, 24 Nov 2026), 37-43 as printed
+        h += ''.join(f'<div class="r"><span class="n">{n}</span><div class="b"><div class="t">{e(a.upper())}</div></div><span class="f" dir="rtl">{e(b)}</span><span class="p">{p}</span></div>' for n, a, b, p in DRINKS)
     else:
         h += ''.join(row(x, key) for x in items)
     return h + '</div>'
@@ -78,14 +76,13 @@ def sizes():
 
 def halves():
     """site/monitor-1/halves.css: /monitor-1/?half=1 and ?half=2, each half of the menu as big as fits on one TV.
-    Half 2 wears the right TV's orange marble and glass."""
+    Both halves in the same yellow, so the two TVs read as one board (Ryan, 24 Nov 2026: "one big one")."""
     size = sizes()
     W, H, M, GAP, PAD, TOP = 1920.0, 1080.0, 14.0, 12.0, 10.0, 12.0
     BOT = H - 12.0
     pct = lambda v, ref: f'{v / ref * 100:.3f}%'
     css = ['/* Made by tools/make-sections.py: do not edit by hand. The two halves of the menu, one per shop TV, still. */',
-           'html.half-2 { --marble: url(/marble-orange.jpg); --rim: #ff8a00; --glass-top: rgba(255, 230, 170, .96); --glass-mid: rgba(255, 186, 90, .94);',
-           '  --glass-low: rgba(255, 146, 40, .95); --glass-pool: rgba(255, 90, 0, .45); --glass-shade: rgba(150, 40, 0, .3); --type: #7a0800; }']
+]
     out = []
     for half, cols in HALVES.items():
         shown = [n for c in cols for n in c]
