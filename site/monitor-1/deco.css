@@ -1,0 +1,32 @@
+/* The two halves of the menu (?half=1, ?half=2), as the shop TVs show them (Mama and Ryan, 24 Nov 2026):
+   small pictures that come and go in the empty middle of each heading, the food allergy notice at the bottom
+   of the first column, and in the Christmas season a gentle string of lights, snow on the panels and a few
+   twinkles. The menu itself is untouched. Every animation repeats within 12 s, so tools/tv-stills.cjs can make
+   a seamless looping picture of it. Only transform and opacity move. */
+.note { display: none; }
+html.half-1 .note, html.half-2 .note { position: absolute; z-index: 1; flex-direction: column; justify-content: center;
+  padding: .8vh 1.6vh; color: var(--ink); text-align: left; }
+.note .nt { display: flex; justify-content: space-between; align-items: baseline; gap: 1vh; position: relative; }
+.note .nt b { font: 800 2.1vh/1.1 "Barlow Semi Condensed", "Arial Narrow", sans-serif; color: #8a0c00; letter-spacing: .02em; white-space: nowrap; }
+.note .nt b[lang="fa"] { font: 800 1.9vh/1.2 Vazirmatn, Tahoma, sans-serif; }
+.note p { position: relative; margin: .35vh 0 0; font: 600 1.25vh/1.25 "Barlow Semi Condensed", "Arial Narrow", sans-serif; color: #3c2414; }
+.note p[lang="fa"] { font: 600 1.2vh/1.45 Vazirmatn, Tahoma, sans-serif; text-align: right; }
+
+.deco { position: absolute; z-index: 2; pointer-events: none; }
+.deco .pic { position: absolute; inset: 0; display: flex; align-items: flex-end; justify-content: center; opacity: 0; }
+.deco .pic.only { opacity: 1; }
+.deco .bob { height: 100%; width: 100%; display: flex; align-items: flex-end; justify-content: center; animation: deco-bob 3s ease-in-out infinite; }
+.deco img { max-width: 100%; max-height: 100%; object-fit: contain; filter: drop-shadow(0 .35vh .4vh rgba(90, 20, 0, .35)); }
+.deco img.framed { border-radius: .8vh; }
+.deco svg { height: 100%; width: auto; overflow: visible; transform-origin: 50% 100%; animation: deco-flick 2s ease-in-out infinite; }
+@keyframes deco-bob { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-6%) rotate(-1.5deg); } }
+@keyframes deco-flick { 0%, 100% { transform: scale(1, 1) skewX(0deg); } 25% { transform: scale(.96, 1.08) skewX(-3deg); }
+  50% { transform: scale(1.03, .95) skewX(2deg); } 75% { transform: scale(.98, 1.05) skewX(-1deg); } }
+
+/* Christmas: lights along the top, snow on the panels, a few twinkles (season.js sets data-season). */
+.xmas-lights { position: absolute; z-index: 3; left: 0; top: 0; width: 100%; height: 2.4vh; pointer-events: none; overflow: visible; }
+.xmas-lights .bulb { animation: bulb 3s ease-in-out infinite; }
+@keyframes bulb { 0%, 100% { opacity: 1; } 50% { opacity: .45; } }
+.snowcap { position: absolute; z-index: 2; pointer-events: none; height: 1.3vh; }
+.twinkle { position: absolute; z-index: 3; pointer-events: none; width: 2vh; height: 2vh; margin: -1vh 0 0 -1vh; animation: twinkle-k 4s ease-in-out infinite; }
+@keyframes twinkle-k { 0%, 100% { opacity: 0; transform: scale(.2) rotate(0deg); } 40% { opacity: 1; transform: scale(1) rotate(40deg); } 60% { opacity: .9; transform: scale(.8) rotate(55deg); } 80% { opacity: 0; transform: scale(.3) rotate(80deg); } }

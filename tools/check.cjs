@@ -114,6 +114,10 @@ const server = http.createServer((req, res) => {
         secs.forEach(c => { const r = box(c); if (r.left < 0 || r.top < 0 || r.right > innerWidth + 1 || r.bottom > innerHeight + 1) bad.push(c.className + ' off screen');
           const i = c.querySelector('img'); if (!(i && i.naturalWidth > 0)) bad.push(c.className + ' not loaded'); });
         secs.forEach((a, k) => secs.slice(k + 1).forEach(c => { if (meets(box(a), box(c))) bad.push(a.className + ' overlaps ' + c.className); }));
+        const note = document.querySelector('.note');
+        if (!note || !note.offsetParent) bad.push('no allergy notice'); else {
+          const r = box(note); if (r.top < 0 || r.bottom > innerHeight + 1 || note.scrollHeight > note.clientHeight + 1) bad.push('allergy notice cut off');
+          secs.forEach(c => { if (meets(r, box(c))) bad.push('allergy notice overlaps ' + c.className); }); }
         return { names: secs.map(c => (c.className.match(/sec-(\w+)/) || [])[1]), bad, orange: secs.every(c => /\/monitor-2\//.test(c.querySelector('img').src)) };
       });
       seen[half] = r.names;
@@ -121,7 +125,7 @@ const server = http.createServer((req, res) => {
       console.log(`${pass ? '✅' : '❌'} half ${half} of the menu: ${r.names.join(', ')}${r.bad.length ? ' ' + r.bad.join('; ') : ''}${errs.length ? ' ' + errs.join('; ') : ''}`);
       await p.close();
     }
-    const all = ['starters', 'sauces', 'sandwiches', 'burgers', 'doner', 'platters', 'shawarma', 'hotdogs', 'drinks', 'allergy'];
+    const all = ['starters', 'sauces', 'sandwiches', 'burgers', 'doner', 'platters', 'shawarma', 'hotdogs', 'drinks'];
     const both = seen[1].filter(n => seen[2].includes(n)), none = all.filter(n => !seen[1].includes(n) && !seen[2].includes(n));
     const pass = !both.length && !none.length; ok = ok && pass;
     console.log(`${pass ? '✅' : '❌'} the two halves are the whole menu, once${both.length ? ', on both: ' + both.join(' ') : ''}${none.length ? ', missing: ' + none.join(' ') : ''}`);
@@ -129,9 +133,9 @@ const server = http.createServer((req, res) => {
   // The shop TVs' page. (1) Its pictures (the two halves and the whole menu) were made from the menu as it is now.
   {
     const show = JSON.parse(fs.readFileSync(path.join(root, 'tv', 'show.json')));
-    const listed = [show.tv1, show.tv2, show.all];
+    const listed = [show.tv1, show.tv2, show.tv1x, show.tv2x, show.all];
     const missing = listed.filter(f => !fs.existsSync(path.join(root, 'tv', f)));
-    const stray = fs.readdirSync(path.join(root, 'tv')).filter(f => /\.jpg$/.test(f) && !listed.includes(f));
+    const stray = fs.readdirSync(path.join(root, 'tv')).filter(f => /\.(jpg|webp)$/.test(f) && !/^awake\./.test(f) && !listed.includes(f));
     const html = fs.readFileSync(path.join(root, 'tv', 'index.html'), 'utf8');
     const stamped = (html.match(tvPage.STAMP) || [''])[0] === `var PAGE = '${tvPage.version(html)}';` && show.page === tvPage.version(html);
     if (!stamped) console.log('❌ TV page version not stamped (run: node tools/tv-page.cjs)');
@@ -158,7 +162,7 @@ const server = http.createServer((req, res) => {
   };
   const tvCase = async (label, ctx, url, want, wait = 6000, loads = 1) => {
     const r = await visit(ctx, url, wait);
-    const shows = /\/tv\/tv1\./.test(r.on || '') ? 1 : /\/tv\/tv2\./.test(r.on || '') ? 2 : /\/tv\/all\./.test(r.on || '') ? 'all' : 0;
+    const shows = /\/tv\/tv1x?\./.test(r.on || '') ? 1 : /\/tv\/tv2x?\./.test(r.on || '') ? 2 : /\/tv\/all\./.test(r.on || '') ? 'all' : 0;
     const bad = r.asked.filter(a => /^\/(api|\.netlify\/functions)\//.test(a));
     const pass = want === 'menu' ? r.path === '/menu/' && !r.errs.length
       : shows === want && r.loads === loads && r.video && !r.netlify && !r.errs.length && !bad.length;
@@ -200,7 +204,7 @@ const server = http.createServer((req, res) => {
       await p.keyboard.press('2'); await p.waitForTimeout(3000);
       const on = await p.evaluate(() => document.querySelector('img.on')?.getAttribute('src') || '');
       const where = await p.evaluate(() => location.pathname);
-      const pass = /\/tv\/tv2\./.test(on) && where === '/tv2'; ok = ok && pass;
+      const pass = /\/tv\/tv2x?\./.test(on) && where === '/tv2'; ok = ok && pass;
       console.log(`${pass ? '✅' : '❌'} pressing 2 on the shop TV's remote: shows ${on}, address ${where}`);
       await p.close();
     }
@@ -209,7 +213,7 @@ const server = http.createServer((req, res) => {
       const p = await shop.newPage(); await p.goto(base + '/'); await p.waitForTimeout(2500);
       await p.keyboard.press('1'); await p.waitForTimeout(3000);
       const on = await p.evaluate(() => document.querySelector('img.on')?.getAttribute('src') || '');
-      const pass = /\/tv\/tv1\./.test(on); ok = ok && pass;
+      const pass = /\/tv\/tv1x?\./.test(on); ok = ok && pass;
       console.log(`${pass ? '✅' : '❌'} then pressing 1: shows ${on}`);
       await p.close();
     }
@@ -220,7 +224,7 @@ const server = http.createServer((req, res) => {
       await p.goto(base + '/tv2'); await p.waitForTimeout(8000);
       const r = await p.evaluate(() => ({ where: location.pathname, on: document.querySelector('img.on')?.getAttribute('src') || '' }));
       fakePage = '';
-      const pass = loads === 2 && r.where === '/tv2' && /\/tv\/tv2\./.test(r.on); ok = ok && pass;
+      const pass = loads === 2 && r.where === '/tv2' && /\/tv\/tv2x?\./.test(r.on); ok = ok && pass;
       console.log(`${pass ? '✅' : '❌'} a new TV page goes live: the open TV reloads onto it once (page loads ${loads}), stays ${r.where}, shows ${r.on}`);
       await ctx.close();
     }
@@ -232,7 +236,7 @@ const server = http.createServer((req, res) => {
       const q = await ctx.newPage(); await q.goto(base + '/'); await q.waitForTimeout(3000);
       const r = await q.evaluate(() => ({ on: document.querySelector('img.on')?.getAttribute('src') || '', where: location.pathname }));
       fakeScreens = null;
-      const pass = /\/tv\/tv2\./.test(r.on) && r.where === '/tv2'; ok = ok && pass;
+      const pass = /\/tv\/tv2x?\./.test(r.on) && r.where === '/tv2'; ok = ok && pass;
       console.log(`${pass ? '✅' : '❌'} a shop TV given half 2 in show.json by its ID: shows ${r.on}, address ${r.where}`);
       await ctx.close();
     }
@@ -246,7 +250,8 @@ const server = http.createServer((req, res) => {
     const show = JSON.parse(fs.readFileSync(path.join(root, 'tv', 'show.json')));
     const ask = async q => { const r = await fn(new Request('https://x/tv/show.json?' + q), { next: async () => new Response(JSON.stringify(show)) }); return r ? (await r.json()).all : 'untouched'; };
     const a = await ask('t=1795538057731'), bb = await ask('t=1795538059239'), c = await ask('t=1795538059239&p=x'), d = await ask('t=1795538000000');
-    const pass = a === show.tv2 && bb === show.tv1 && c === 'untouched' && d === 'untouched'; ok = ok && pass;   // swapped 24 Nov: the 17.7 s TV is on the right
+    const dd = new Date(), mm = dd.getUTCMonth() + 1, xm = mm === 11 || mm === 12 || (mm === 1 && dd.getUTCDate() <= 6);
+    const pass = a === (xm ? show.tv2x : show.tv2) && bb === (xm ? show.tv1x : show.tv1) && c === 'untouched' && d === 'untouched'; ok = ok && pass;   // swapped 24 Nov: the 17.7 s TV is on the right
     console.log(`${pass ? '✅' : '❌'} bridge for the 16:16 page: right TV (17.7 s) ${a}, left TV (19.2 s) ${bb}, current page ${c}, other times ${d}`);
   }
   const m = await b.newPage({ viewport: { width: 390, height: 844 } }); const merrs = [];

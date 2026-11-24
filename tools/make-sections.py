@@ -13,14 +13,13 @@ PALETTE = {1: {'heading': (120, 10, 0), 'price': (222, 22, 10), 'persian': (168,
            2: {'heading': (110, 6, 0), 'price': (206, 14, 30), 'persian': (150, 46, 0), 'name': (14, 10, 8), 'desc': (70, 46, 34)}}
 KEY = {'STARTERS & SIDES': 'starters', 'SAUCE SELECTION': 'sauces', 'SANDWICHES': 'sandwiches', 'BURGERS': 'burgers', 'DONER BAGUETTES': 'doner',
        'DONER PLATTERS': 'platters', 'SHAWARMA': 'shawarma', 'HOT DOGS': 'hotdogs', 'DRINKS': 'drinks'}
-# The food allergy notice, back on the TVs (Mama via Ryan, 24 Nov 2026), in the same words as the phone menu.
-ALLERGY = ('FOOD ALLERGIES & INTOLERANCES', 'حساسیت و عدم تحمل غذایی', 'Before ordering please speak to our staff about your requirements.',
-           'لطفاً پیش از سفارش، نیازهای خود را با کارکنان ما در میان بگذارید.')
-WIDTH = {'starters': 758, 'sauces': 758, 'drinks': 1094, 'sandwiches': 1094, 'burgers': 1094, 'doner': 900, 'platters': 900, 'shawarma': 900, 'hotdogs': 900, 'allergy': 900}
+WIDTH = {'starters': 758, 'sauces': 758, 'drinks': 1094, 'sandwiches': 1094, 'burgers': 1094, 'doner': 900, 'platters': 900, 'shawarma': 900, 'hotdogs': 900}
 DESC = {'sandwiches', 'burgers'}          # only these show ingredients on the TVs, as on the old boards
-STATIC = [['starters', 'sauces'], ['sandwiches', 'burgers', 'drinks'], ['doner', 'platters', 'shawarma', 'hotdogs', 'allergy']]
+STATIC = [['starters', 'sauces'], ['sandwiches', 'burgers', 'drinks'], ['doner', 'platters', 'shawarma', 'hotdogs']]
 # The halves, in reading order: left TV items 1-21 and the sauces, right TV 22-43 (columns, top to bottom).
-HALVES = {1: [['starters', 'sauces'], ['sandwiches', 'burgers']], 2: [['doner', 'platters', 'shawarma', 'allergy'], ['hotdogs', 'drinks']]}
+HALVES = {1: [['starters', 'sauces'], ['sandwiches', 'burgers']], 2: [['doner', 'platters', 'shawarma'], ['hotdogs', 'drinks']]}
+# The food allergy notice (Mama, 24 Nov 2026: "at the bottom of both, small, so the menu doesn't shrink") sits in the
+# first column's spare space on each TV: that column's panels don't stretch, the notice takes what is left.
 SIZES = pathlib.Path('tools/.sections.json')
 
 def row(x, key):
@@ -68,13 +67,9 @@ body{{font-family:'Barlow Semi Condensed',sans-serif;color:{c['name']};padding:4
 .ml{{min-width:150px;font-size:44px}} .ml i{{font:800 19px/1 'Barlow Semi Condensed',sans-serif;font-style:normal;-webkit-text-stroke:0;background:{c['price']};color:#fff;border-radius:6px;padding:3px 7px 4px;margin-right:7px;vertical-align:9px;letter-spacing:0}}
 .soft .b .f{{margin-top:6px;font-size:25px}} .soft{{padding-left:68px}}
 .s{{display:flex;align-items:center;gap:26px;padding:8px 0 9px;border-bottom:2px solid rgba(90,30,0,.14)}} .s .t{{flex:0 0 52%;text-align:right;font-size:40px}} .s .f{{font-size:31px}}
-.al{{font:600 29px/1.3 'Barlow Semi Condensed',sans-serif;color:{c['name']};padding:12px 0 2px;white-space:nowrap}} .alf{{font:700 25px/1.45 'Vazirmatn',sans-serif;color:{c['desc']};padding:4px 0 6px;white-space:normal}} .alf b{{color:{c['persian']};font-weight:800}}
 #starters .r{{padding:6px 0 7px}} #doner .r,#platters .r,#shawarma .r,#hotdogs .r{{padding:8px 0 9px}}
 '''
     secs = ''.join(sec(*s) for _, _, ss in PAGES for s in ss)
-    t, tf, en, fa = ALLERGY
-    secs += (f'<div class="sec" id="allergy" style="width:{WIDTH["allergy"]}px"><div class="h"><span>{e(t)}</span></div>'
-             f'<div class="al">{e(en)}</div><div class="al alf" dir="rtl"><b>{e(tf)}:</b> {e(fa)}</div></div>')
     return ('<!doctype html><html><head><meta charset="utf-8"><link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Semi+Condensed:wght@500;700;800&family=Vazirmatn:wght@700;800&display=swap" rel="stylesheet">'
             f'<style>{css}</style></head><body>{secs}</body></html>')
 
@@ -103,14 +98,16 @@ def halves():
         css.append(f'/* half {half}: text scale {s:.3f} */')
         css += [f'html.half-{half} .sec-{n} {{ display: none; }}' for n in WIDTH if n not in shown]
         x = M
-        for c in cols:
+        for k, c in enumerate(cols):
             cw = max(size[n][0] for n in c) * s + 2 * PAD + extra_w
             used = sum(size[n][1] * s + 2 * PAD for n in c) + GAP * (len(c) - 1)
-            grow = (BOT - TOP - used) / len(c); y = TOP
+            grow = 0 if k == 0 else (BOT - TOP - used) / len(c); y = TOP
             for n in c:
                 h = size[n][1] * s + 2 * PAD + grow
                 css.append(f'html.half-{half} .sec-{n} {{ left: {pct(x, W)}; top: {pct(y, H)}; width: {pct(cw, W)}; height: {pct(h, H)}; }}')
                 y += h + GAP
+            if k == 0:   # the allergy notice in what is left at the bottom of the first column
+                css.append(f'html.half-{half} .note {{ display: flex; left: {pct(x, W)}; top: {pct(y, H)}; width: {pct(cw, W)}; height: {pct(BOT - y, H)}; }}')
             x += cw + GAP
         out.append(f'half {half} text scale {s:.3f}')
     open('site/monitor-1/halves.css', 'w').write('\n'.join(css) + '\n')
