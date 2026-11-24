@@ -43,7 +43,7 @@
 <img id="a" alt=""><img id="b" alt="">
 <script>
 (function () {
-  var PAGE = '862db6a9fe';   // this page's version: stamped by tools/tv-page.cjs, also into show.json as "page"
+  var PAGE = 'a481bd7a29';   // this page's version: stamped by tools/tv-page.cjs, also into show.json as "page"
   var params = new URLSearchParams(location.search), preview = params.has('preview');
   var ua = navigator.userAgent, phone = /iPhone|iPad|iPod|Android.*Mobile|Mobile Safari/i.test(ua);
   // The shop TVs' own browser (24 Nov 2026: Android 9 WebView, board t963_ak301, Chrome 97), or any Android
@@ -124,7 +124,9 @@
         }
         var given = j.screens && Number(j.screens[id]);
         if (!fromPath && !q && !preview && (given === 1 || given === 2) && given !== mon) { mon = given; remember(mon); pin(); }
-        put(mon ? j['tv' + mon] : j.all);
+        // the Christmas look from 1 Nov to 6 Jan (as site/season.js), else the plain one
+        var d = new Date(), mo = d.getMonth() + 1, xmas = mo === 11 || mo === 12 || (mo === 1 && d.getDate() <= 6);
+        put(mon ? (xmas && j['tv' + mon + 'x']) || j['tv' + mon] : j.all);
       }).catch(function () {});
   }
   load();

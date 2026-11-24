@@ -18,7 +18,9 @@ export default async (request, context) => {
   if (!half) return;
   const res = await context.next();
   const j = await res.json();
-  j.all = j['tv' + half];
+  // the Christmas look (lights, snow, twinkles) from 1 Nov to 6 Jan, as site/season.js
+  const d = new Date(), m = d.getUTCMonth() + 1, xmas = m === 11 || m === 12 || (m === 1 && d.getUTCDate() <= 6);
+  j.all = (xmas && j['tv' + half + 'x']) || j['tv' + half];
   return new Response(JSON.stringify(j), { headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' } });
 };
 export const config = { path: '/tv/show.json' };
