@@ -43,7 +43,7 @@
 <img id="a" alt=""><img id="b" alt="">
 <script>
 (function () {
-  var PAGE = '6dc527c20e';   // this page's version: stamped by tools/tv-page.cjs, also into show.json as "page"
+  var PAGE = '862db6a9fe';   // this page's version: stamped by tools/tv-page.cjs, also into show.json as "page"
   var params = new URLSearchParams(location.search), preview = params.has('preview');
   var ua = navigator.userAgent, phone = /iPhone|iPad|iPod|Android.*Mobile|Mobile Safari/i.test(ua);
   // The shop TVs' own browser (24 Nov 2026: Android 9 WebView, board t963_ak301, Chrome 97), or any Android
@@ -113,9 +113,9 @@
     back.onerror = function () {};
     back.src = src;
   }
-  // Read the list again every two minutes: a new menu goes up within two minutes of going live.
+  // Read the list again every 30 seconds (Ryan, 24 Nov 2026: "do updates swiftly").
   function load() {
-    fetch('/tv/show.json?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.json(); })
+    fetch('/tv/show.json?t=' + Date.now() + '&p=' + PAGE, { cache: 'no-store' }).then(function (r) { return r.json(); })
       .then(function (j) {
         // A new version of this page is live: reload onto it (at most once in 10 minutes, so it can never loop).
         if (j.page && j.page !== PAGE && !preview) {
@@ -128,7 +128,7 @@
       }).catch(function () {});
   }
   load();
-  setInterval(load, 2 * 60 * 1000);
+  setInterval(load, 30 * 1000);   // every 30 s: an update reaches the TVs within about a minute of going live
 
   // ── Telling a TV which it is with its remote: 1 = left TV (first half), 2 = right TV (second half), 0 = forget
   // (back to the whole menu). Remembered like /tv1 and /tv2.

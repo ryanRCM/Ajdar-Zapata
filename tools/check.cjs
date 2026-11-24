@@ -240,6 +240,17 @@ const server = http.createServer((req, res) => {
     }
     for (const c of [left, right, laptop, phone, shop]) await c.close();
   }
+  // The temporary bridge for the TVs still on the 16:16 page (netlify/edge-functions/tv-old.js): by when they ask,
+  // the first gets half 1, the second half 2; the current page (p=) and other times are left alone.
+  {
+    const src = fs.readFileSync(path.join(__dirname, '..', 'netlify', 'edge-functions', 'tv-old.js'), 'utf8');
+    const fn = (await import('data:text/javascript,' + encodeURIComponent(src))).default;
+    const show = JSON.parse(fs.readFileSync(path.join(root, 'tv', 'show.json')));
+    const ask = async q => { const r = await fn(new Request('https://x/tv/show.json?' + q), { next: async () => new Response(JSON.stringify(show)) }); return r ? (await r.json()).all : 'untouched'; };
+    const a = await ask('t=1795538057731'), bb = await ask('t=1795538059239'), c = await ask('t=1795538059239&p=x'), d = await ask('t=1795538000000');
+    const pass = a === show.tv1 && bb === show.tv2 && c === 'untouched' && d === 'untouched'; ok = ok && pass;
+    console.log(`${pass ? '✅' : '❌'} bridge for the 16:16 page: first TV ${a}, second TV ${bb}, current page ${c}, other times ${d}`);
+  }
   const m = await b.newPage({ viewport: { width: 390, height: 844 } }); const merrs = [];
   m.on('pageerror', e => merrs.push(e.message));
   await m.goto(base + '/menu/'); await m.waitForTimeout(800);
