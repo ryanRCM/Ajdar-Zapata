@@ -1,6 +1,14 @@
 # The TVs' page (Ryan, 24 Nov 2026): /tv1 = the left TV (monitor 1, the whole menu), /tv2 = the right TV
 # (monitor 2, one section at a time). A TV that has opened its address once also shows it on the plain address;
 # everyone else who opens the plain address is sent on to the phone menu by the page (site/tv/index.html).
+# A shop TV still opening an old address (its browser may have saved it on 2 Nov) gets the TV page too: the old TV
+# lock left a cookie (az_tv = 1 or 2) on both TVs, and the page reads it. These must stay above the /monitor1 lines.
+/monitor-1    /tv/          200!  Cookie=az_tv
+/monitor-1/   /tv/          200!  Cookie=az_tv
+/monitor-2    /tv/          200!  Cookie=az_tv
+/monitor-2/   /tv/          200!  Cookie=az_tv
+/monitor1     /tv/          200!  Cookie=az_tv
+/monitor2     /tv/          200!  Cookie=az_tv
 /            /tv/          200!
 /tv1         /tv/          200
 /tv2         /tv/          200
