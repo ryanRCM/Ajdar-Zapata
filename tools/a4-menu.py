@@ -2,7 +2,7 @@
 Writes menu/a4/Main.dc.html (front) and menu/a4/Back.dc.html (back): the two artboards of Ryan's Claude Design
 artifact "Ajdar Zapata A4 Menu" (https://claude.ai/artifact/Lip9yS3R3pBajm6cpGiJEK): publish them there. The PDF:
 node tools/a4-pdf.cjs (or the artifact's Export > PDF). The logo is that artifact's upload (/_blob/...), also menu/a4/logo.png. K1/K2 scale the text so each
-page is full (front 1.12, back 1.0 fit as of 26 Nov; lower K1 if the front ever overflows).
+page is full (front 1.11, back 1.06 fit as of 26 Nov, after Mama's sheet; lower K1 if the front ever overflows).
 The final PDF of 26 Nov is menu/Ajdar_Zapata_A4_Double_Sided.pdf.
     python3 tools/a4-menu.py
 """
@@ -117,8 +117,8 @@ back = (f'<div style="display: flex; justify-content: center; margin-bottom: 8px
 </div>''')
 
 P = 'menu/a4/'
-open(P + 'Main.dc.html', 'w').write(page('Ajdar Zapata Menu – front', front, float(os.environ.get('K1','1.12'))))
-open(P + 'Back.dc.html', 'w').write(page('Ajdar Zapata Menu – back', back, float(os.environ.get('K2','1.0'))))
+open(P + 'Main.dc.html', 'w').write(page('Ajdar Zapata Menu – front', front, float(os.environ.get('K1','1.11'))))
+open(P + 'Back.dc.html', 'w').write(page('Ajdar Zapata Menu – back', back, float(os.environ.get('K2','1.06'))))
 # self-check: every item, description and price from the repo list appears
 allx = [x for t in secs for x in secs[t][1]]
 txt = open(P + 'Main.dc.html').read() + open(P + 'Back.dc.html').read()

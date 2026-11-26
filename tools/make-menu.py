@@ -6,6 +6,10 @@ Anything with pickle sauce has no Zapata special sauce (14, 15, 21, 33-35).
 Later on 18 Nov (Mama gave the old numbers; here +1): Giant Zapata Doner without cheese; platters just 'with salad',
 in medium and large (prices to come); shawarma with red cabbage, jalapeños and garlic or chilli sauce, no Zapata sauce. PLACEHOLDER prices chosen by Claude at Ryan's request (18 Nov, "u choose placeholder"), until Mama gives hers:
 19 Zapata Fillet Chicken Burger £11.50; platters M/L 26 £12.50/£15.50, 27 £11.50/£14.50, 28 £13.50/£16.50.
+26 Nov 2026, Mama's sheet via Ryan (his dictation, 15:17): 3 Fries M £2.99 / L £4.99; 14 and 15 + tomato; 18 £7.50; 19 £9.50;
+22-25 + lettuce; 24 £12.50; 25 £17.50 + cheese + red cabbage; platters one size, with chips & salad: 26 £10.50, 27 £9.50,
+28 £10.50; shawarma 29 £6.99, 30 £5.99, 31 £6.99, "with garlic and chilli sauce" (was "garlic or chilli"). No placeholder
+prices left: 19 and the platters are Mama's now.
 26 Nov 2026 (Ryan): English "Meat" is Lamb (doner, platter, shawarma; Persian stays گوشت, which is right); 6 Zapata Loaded Fries gets mushroom; 32 Hot Dog £9.50 (was £8.50); no NEW / HOUSE SIGNATURE tags any more; phone 020 8259 4026 only (not 07773 001111); allergy notice no longer claims every dish lists its ingredients (fries, wings, nuggets, drinks don't); 19 is now Zapata Fillet Chicken Burger (Persian فیله برگر مرغ زاپاتا is Claude's, for Mama to check).
     python3 tools/make-menu.py && node tools/menu-pdf.cjs   ->  menu/Ajdar_Zapata_Menu.pdf
 """
@@ -21,7 +25,7 @@ PAGES = [
    ('STARTERS & SIDES', 'پیش‌غذا', [
      it(1, 'Chicken Wings · 5 pcs', 'بال مرغ ۵ تکه', '£5.49'),
      it(2, 'Chicken Wings · 8 pcs', 'بال مرغ ۸ تکه', '£7.99'),
-     it(3, 'Fries', 'چیپس', '£2.99'),
+     it(3, 'Fries', 'چیپس', 'M £2.99 · L £4.99'),
      it(4, 'Cheesy Fries', 'چیپس پنیری', '£3.99'),
      it(5, 'Peri Peri Fries', 'چیپس پری‌پری', '£3.49'),
      it(6, 'Zapata Loaded Fries', 'چیپس ویژه زاپاتا', '£7.99', den='Chips, cheese, olives, mushroom & beef salami.', dfa='چیپس، پنیر، زیتون، قارچ و کالباس گوشت.'),
@@ -36,34 +40,34 @@ PAGES = [
      it(11, 'Beef Salami Sandwich', 'ساندویچ کالباس گوشت', '£13.00', den='Beef salami, pickles, lettuce & tomato in a baguette ' + ZS, dfa='کالباس گوشت، خیارشور، کاهو و گوجه در نان باگت ' + ZSF),
      it(12, 'Chicken Salami Sandwich', 'ساندویچ کالباس مرغ', '£12.00', den='Chicken salami, pickles, lettuce & tomato in a baguette ' + ZS, dfa='کالباس مرغ، خیارشور، کاهو و گوجه در نان باگت ' + ZSF),
      it(13, 'Mixed Salami Sandwich', 'ساندویچ کالباس میکس', '£12.50', den='Chicken & beef salami, pickles, lettuce & tomato in a baguette ' + ZS, dfa='کالباس مرغ و گوشت، خیارشور، کاهو و گوجه در نان باگت ' + ZSF),
-     it(14, 'Royal Zapata Sandwich', 'ساندویچ رویال زاپاتا', '£21.50', den='1 beef steak, 1 chicken steak, 2 slices beef salami, mushroom & cheese in a baguette with pickle sauce.', dfa='۱ استیک گوشت، ۱ استیک مرغ، ۲ ورق کالباس گوشت، قارچ و پنیر در نان باگت با سس خیارشور.'),
-     it(15, 'Giant Ajdar Zapata', 'غول اژدر زاپاتا', '£22.50', den='1 beef steak, 1 chicken steak, 2 slices salami, 1 hot dog, 1 beef patty, mushroom & cheese in a baguette with pickle sauce.', dfa='۱ استیک گوشت، ۱ استیک مرغ، ۲ ورق کالباس، ۱ عدد هات‌داگ، ۱ برگر گوشت، قارچ و پنیر در نان باگت با سس خیارشور.'),
+     it(14, 'Royal Zapata Sandwich', 'ساندویچ رویال زاپاتا', '£21.50', den='1 beef steak, 1 chicken steak, 2 slices beef salami, mushroom, cheese & tomato in a baguette with pickle sauce.', dfa='۱ استیک گوشت، ۱ استیک مرغ، ۲ ورق کالباس گوشت، قارچ، پنیر و گوجه در نان باگت با سس خیارشور.'),
+     it(15, 'Giant Ajdar Zapata', 'غول اژدر زاپاتا', '£22.50', den='1 beef steak, 1 chicken steak, 2 slices salami, 1 hot dog, 1 beef patty, mushroom, cheese & tomato in a baguette with pickle sauce.', dfa='۱ استیک گوشت، ۱ استیک مرغ، ۲ ورق کالباس، ۱ عدد هات‌داگ، ۱ برگر گوشت، قارچ، پنیر و گوجه در نان باگت با سس خیارشور.'),
    ]),
    ('BURGERS', 'برگر', [
      it(16, 'Classic Burger', 'برگر کلاسیک', '£9.50', den='Beef patty, pickles, tomato, lettuce & Zapata special sauce.', dfa='برگر گوشت، خیارشور، گوجه، کاهو و سس مخصوص زاپاتا.'),
      it(17, 'Double Cheeseburger', 'دبل چیزبرگر', '£11.50', den='Two beef patties, cheese, pickles, tomato, lettuce & Zapata special sauce.', dfa='دو برگر گوشت، پنیر، خیارشور، گوجه، کاهو و سس مخصوص زاپاتا.'),
-     it(18, 'Chicken Fillet Burger', 'فیله برگر مرغ', '£9.50', den='1 chicken fillet, pickles, tomato, lettuce & Zapata special sauce.', dfa='۱ فیله مرغ، خیارشور، گوجه، کاهو و سس مخصوص زاپاتا.'),
-     it(19, 'Zapata Fillet Chicken Burger', 'فیله برگر مرغ زاپاتا', '£11.50', den='Chicken fillet, cheese & mushroom, pickles, tomato, lettuce & Zapata special sauce.', dfa='فیله مرغ، پنیر و قارچ، خیارشور، گوجه، کاهو و سس مخصوص زاپاتا.'),
+     it(18, 'Chicken Fillet Burger', 'فیله برگر مرغ', '£7.50', den='1 chicken fillet, pickles, tomato, lettuce & Zapata special sauce.', dfa='۱ فیله مرغ، خیارشور، گوجه، کاهو و سس مخصوص زاپاتا.'),
+     it(19, 'Zapata Fillet Chicken Burger', 'فیله برگر مرغ زاپاتا', '£9.50', den='Chicken fillet, cheese & mushroom, pickles, tomato, lettuce & Zapata special sauce.', dfa='فیله مرغ، پنیر و قارچ، خیارشور، گوجه، کاهو و سس مخصوص زاپاتا.'),
      it(20, 'Royal Zapata Burger', 'رویال برگر زاپاتا', '£13.50', den='Two beef patties, 2 slices salami, mushroom, cheese, pickles, tomato, lettuce & Zapata special sauce.', dfa='دو برگر گوشت، ۲ ورق کالباس، قارچ، پنیر، خیارشور، گوجه، کاهو و سس مخصوص زاپاتا.'),
      it(21, 'Giant Zapata Burger', 'غول برگر زاپاتا', '£18.50', den='1 beef patty, 2 slices salami, 1 chicken fillet steak, mushroom, cheese, pickles & tomato with pickle sauce.', dfa='۱ برگر گوشت، ۲ ورق کالباس، ۱ فیله استیک مرغ، قارچ، پنیر، خیارشور و گوجه با سس خیارشور.'),
    ]),
  ]),
  ('Doner & Shawarma', 'دونر و شاورما', [
    ('DONER BAGUETTES', 'دونر باگت', [
-     it(22, 'Lamb Doner', 'دونر گوشت', '£11.50', den='Lamb doner, pickles, tomato, onion & parsley in a baguette ' + ZS, dfa='دونر گوشت، خیارشور، گوجه، پیاز و جعفری در نان باگت ' + ZSF),
-     it(23, 'Chicken Doner', 'دونر مرغ', '£10.50', den='Chicken doner, pickles, tomato, onion & parsley in a baguette ' + ZS, dfa='دونر مرغ، خیارشور، گوجه، پیاز و جعفری در نان باگت ' + ZSF),
-     it(24, 'Mixed Doner', 'دونر میکس', '£17.50', den='Lamb & chicken doner, pickles, tomato, onion & parsley in a baguette ' + ZS, dfa='دونر گوشت و مرغ، خیارشور، گوجه، پیاز و جعفری در نان باگت ' + ZSF),
-     it(25, 'Giant Zapata Doner', 'غول دونر زاپاتا', '£12.50', den='Lamb & chicken doner, mushrooms, pickles, tomato, onion & parsley in a baguette ' + ZS, dfa='دونر گوشت و مرغ، قارچ، خیارشور، گوجه، پیاز و جعفری در نان باگت ' + ZSF),
+     it(22, 'Lamb Doner', 'دونر گوشت', '£11.50', den='Lamb doner, pickles, lettuce, tomato, onion & parsley in a baguette ' + ZS, dfa='دونر گوشت، خیارشور، کاهو، گوجه، پیاز و جعفری در نان باگت ' + ZSF),
+     it(23, 'Chicken Doner', 'دونر مرغ', '£10.50', den='Chicken doner, pickles, lettuce, tomato, onion & parsley in a baguette ' + ZS, dfa='دونر مرغ، خیارشور، کاهو، گوجه، پیاز و جعفری در نان باگت ' + ZSF),
+     it(24, 'Mixed Doner', 'دونر میکس', '£12.50', den='Lamb & chicken doner, pickles, lettuce, tomato, onion & parsley in a baguette ' + ZS, dfa='دونر گوشت و مرغ، خیارشور، کاهو، گوجه، پیاز و جعفری در نان باگت ' + ZSF),
+     it(25, 'Giant Zapata Doner', 'غول دونر زاپاتا', '£17.50', den='Lamb & chicken doner, mushrooms, cheese, pickles, lettuce, red cabbage, tomato, onion & parsley in a baguette ' + ZS, dfa='دونر گوشت و مرغ، قارچ، پنیر، خیارشور، کاهو، کلم قرمز، گوجه، پیاز و جعفری در نان باگت ' + ZSF),
    ]),
    ('DONER PLATTERS', 'خوراک دونر', [
-     it(26, 'Lamb Doner Platter', 'خوراک دونر گوشت', 'M £12.50 · L £15.50', den='Lamb doner with salad. Medium or large.', dfa='دونر گوشت با سالاد. متوسط یا بزرگ.'),
-     it(27, 'Chicken Doner Platter', 'خوراک دونر مرغ', 'M £11.50 · L £14.50', den='Chicken doner with salad. Medium or large.', dfa='دونر مرغ با سالاد. متوسط یا بزرگ.'),
-     it(28, 'Mixed Doner Platter', 'خوراک دونر میکس', 'M £13.50 · L £16.50', den='Mixed lamb & chicken doner with salad. Medium or large.', dfa='دونر میکس گوشت و مرغ به‌علاوه سالاد. متوسط یا بزرگ.'),
+     it(26, 'Lamb Doner Platter', 'خوراک دونر گوشت', '£10.50', den='Lamb doner with chips & salad.', dfa='دونر گوشت با چیپس و سالاد.'),
+     it(27, 'Chicken Doner Platter', 'خوراک دونر مرغ', '£9.50', den='Chicken doner with chips & salad.', dfa='دونر مرغ با چیپس و سالاد.'),
+     it(28, 'Mixed Doner Platter', 'خوراک دونر میکس', '£10.50', den='Mixed lamb & chicken doner with chips & salad.', dfa='دونر میکس گوشت و مرغ با چیپس و سالاد.'),
    ]),
    ('SHAWARMA', 'شاورما', [
-     it(29, 'Lamb Shawarma', 'شاورما گوشت', '£8.49', den='Lamb shawarma, tomato, onion, parsley, red cabbage & jalapeños with garlic or chilli sauce, wrapped in pitta bread.', dfa='شاورمای گوشت، گوجه، پیاز، جعفری، کلم قرمز و هالاپینو با سس سیر یا چیلی، پیچیده در نان پیتا.'),
-     it(30, 'Chicken Shawarma', 'شاورما مرغ', '£7.49', den='Chicken shawarma, tomato, onion, parsley, red cabbage & jalapeños with garlic or chilli sauce, wrapped in pitta bread.', dfa='شاورمای مرغ، گوجه، پیاز، جعفری، کلم قرمز و هالاپینو با سس سیر یا چیلی، پیچیده در نان پیتا.'),
-     it(31, 'Mixed Shawarma', 'شاورما میکس', '£9.49', den='Lamb & chicken shawarma, tomato, onion, parsley, red cabbage & jalapeños with garlic or chilli sauce, wrapped in pitta bread.', dfa='شاورمای گوشت و مرغ، گوجه، پیاز، جعفری، کلم قرمز و هالاپینو با سس سیر یا چیلی، پیچیده در نان پیتا.'),
+     it(29, 'Lamb Shawarma', 'شاورما گوشت', '£6.99', den='Lamb shawarma, tomato, onion, parsley, red cabbage & jalapeños with garlic and chilli sauce, wrapped in pitta bread.', dfa='شاورمای گوشت، گوجه، پیاز، جعفری، کلم قرمز و هالاپینو با سس سیر و چیلی، پیچیده در نان پیتا.'),
+     it(30, 'Chicken Shawarma', 'شاورما مرغ', '£5.99', den='Chicken shawarma, tomato, onion, parsley, red cabbage & jalapeños with garlic and chilli sauce, wrapped in pitta bread.', dfa='شاورمای مرغ، گوجه، پیاز، جعفری، کلم قرمز و هالاپینو با سس سیر و چیلی، پیچیده در نان پیتا.'),
+     it(31, 'Mixed Shawarma', 'شاورما میکس', '£6.99', den='Lamb & chicken shawarma, tomato, onion, parsley, red cabbage & jalapeños with garlic and chilli sauce, wrapped in pitta bread.', dfa='شاورمای گوشت و مرغ، گوجه، پیاز، جعفری، کلم قرمز و هالاپینو با سس سیر و چیلی، پیچیده در نان پیتا.'),
    ]),
  ]),
  ('Hot Dogs & Drinks', 'هات‌داگ و نوشیدنی', [

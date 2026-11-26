@@ -9,14 +9,14 @@ html.half-1 .sec-starters { left: 0.729%; top: 1.111%; width: 48.958%; height: 5
 html.half-1 .sec-sandwiches { left: 0.729%; top: 53.708%; width: 48.958%; height: 45.181%; }
 html.half-1 .sec-burgers { left: 50.313%; top: 1.111%; width: 48.958%; height: 49.708%; }
 html.half-1 .sec-drinks { left: 50.313%; top: 51.931%; width: 48.958%; height: 46.958%; }
-/* half 2: text scale 0.708 */
+/* half 2: text scale 0.735 */
 html.half-2 .sec-starters { display: none; }
 html.half-2 .sec-drinks { display: none; }
 html.half-2 .sec-sandwiches { display: none; }
 html.half-2 .sec-burgers { display: none; }
-html.half-2 .sec-doner { left: 0.729%; top: 1.111%; width: 48.958%; height: 36.200%; }
-html.half-2 .sec-platters { left: 0.729%; top: 38.422%; width: 48.958%; height: 28.858%; }
-html.half-2 .sec-shawarma { left: 0.729%; top: 68.392%; width: 48.958%; height: 30.497%; }
-html.half-2 .sec-hotdogs { left: 50.313%; top: 1.111%; width: 48.958%; height: 43.542%; }
-html.half-2 .sec-sauces { left: 50.313%; top: 45.764%; width: 48.958%; height: 30.169%; }
-html.half-2 .note { display: flex; left: 50.313%; top: 77.044%; width: 48.958%; height: 21.845%; }
+html.half-2 .sec-doner { left: 0.729%; top: 1.111%; width: 48.958%; height: 39.199%; }
+html.half-2 .sec-platters { left: 0.729%; top: 41.421%; width: 48.958%; height: 24.777%; }
+html.half-2 .sec-shawarma { left: 0.729%; top: 67.309%; width: 48.958%; height: 31.580%; }
+html.half-2 .sec-hotdogs { left: 50.313%; top: 1.111%; width: 48.958%; height: 45.117%; }
+html.half-2 .sec-sauces { left: 50.313%; top: 47.339%; width: 48.958%; height: 31.240%; }
+html.half-2 .note { display: flex; left: 50.313%; top: 79.690%; width: 48.958%; height: 19.199%; }

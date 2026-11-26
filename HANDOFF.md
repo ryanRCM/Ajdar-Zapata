@@ -1,4 +1,4 @@
-# Ajdar Zapata · handoff · 26 Nov 2026 (final)
+# Ajdar Zapata · handoff · 26 Nov 2026 (final, after Mama's sheet)
 
 *Start with `CLAUDE.md`. Separate from LAIFE.* Ryan, 26 Nov 2026: "a finalized handoff so we don't lose this", "no more mix-ups".
 
@@ -25,19 +25,27 @@
 - **Allergy notice:** A4 and phone menu: the full one (tell staff before ordering; full information on the 14 major allergens on request; kitchen has allergens, no guarantee), English and Persian, last on the page. Its old line "every dish on this menu lists its main ingredients" was removed: not true (fries, wings, nuggets, drinks). TVs: the same full notice since 26 Nov (Ryan: "proper food allergy"; it was the Food Standards Agency sign's short words 24-26 Nov).
 - A4 layout: front = Starters, Sandwiches, Burgers, Doner Baguettes; back = Platters, Shawarma, Hot Dogs, then Sauces and Drinks, then address and phone, then the allergy notice. Ingredients in English and Persian. Ryan rejected the TVs' yellow look for the A4.
 
-## The menu on 26 Nov 2026 (snapshot; if this and `tools/make-menu.py` ever differ, the list wins)
-- **Starters & Sides**: 1 Chicken Wings · 5 pcs £5.49 · 2 Chicken Wings · 8 pcs £7.99 · 3 Fries £2.99 · 4 Cheesy Fries £3.99 · 5 Peri Peri Fries £3.49 · 6 Zapata Loaded Fries £7.99 · 7 Chicken Nuggets £4.99 · 8 Mexican Corn Cup £8.99 · 10 Coleslaw £3.99
+## Mama's sheet, 26 Nov 2026 15:17 (two handwritten pages, read out by Ryan; live the same afternoon)
+- 3 Fries: **M £2.99 / L £4.99** (was one size £2.99).
+- 14 Royal Zapata Sandwich and 15 Giant Ajdar Zapata: **+ tomato**.
+- 18 Chicken Fillet Burger **£7.50** (was £9.50); 19 Zapata Fillet Chicken Burger **£9.50** (was Claude's placeholder £11.50).
+- 22-25 doner baguettes: **+ lettuce**. 24 Mixed Doner **£12.50** (was £17.50); 25 Giant Zapata Doner **£17.50** (was £12.50), **+ cheese, + red cabbage**.
+- Platters 26-28: **one size, "with chips & salad"** (M/L gone): 26 **£10.50**, 27 **£9.50**, 28 **£10.50**.
+- Shawarma 29 **£6.99**, 30 **£5.99**, 31 **£6.99**; "with garlic **and** chilli sauce" (was "or").
+- **No placeholder prices left**: every price is Mama's.
+
+## The menu on 26 Nov 2026, after Mama's sheet (snapshot; if this and `tools/make-menu.py` ever differ, the list wins)
+- **Starters & Sides**: 1 Chicken Wings · 5 pcs £5.49 · 2 Chicken Wings · 8 pcs £7.99 · 3 Fries M £2.99 / L £4.99 · 4 Cheesy Fries £3.99 · 5 Peri Peri Fries £3.49 · 6 Zapata Loaded Fries £7.99 · 7 Chicken Nuggets £4.99 · 8 Mexican Corn Cup £8.99 · 10 Coleslaw £3.99
 - **Sandwiches**: 11 Beef Salami Sandwich £13.00 · 12 Chicken Salami Sandwich £12.00 · 13 Mixed Salami Sandwich £12.50 · 14 Royal Zapata Sandwich £21.50 · 15 Giant Ajdar Zapata £22.50
-- **Burgers**: 16 Classic Burger £9.50 · 17 Double Cheeseburger £11.50 · 18 Chicken Fillet Burger £9.50 · 19 Zapata Fillet Chicken Burger £11.50 · 20 Royal Zapata Burger £13.50 · 21 Giant Zapata Burger £18.50
-- **Doner Baguettes**: 22 Lamb Doner £11.50 · 23 Chicken Doner £10.50 · 24 Mixed Doner £17.50 · 25 Giant Zapata Doner £12.50
-- **Doner Platters**: 26 Lamb Doner Platter M £12.50 / L £15.50 · 27 Chicken Doner Platter M £11.50 / L £14.50 · 28 Mixed Doner Platter M £13.50 / L £16.50
-- **Shawarma**: 29 Lamb Shawarma £8.49 · 30 Chicken Shawarma £7.49 · 31 Mixed Shawarma £9.49
+- **Burgers**: 16 Classic Burger £9.50 · 17 Double Cheeseburger £11.50 · 18 Chicken Fillet Burger £7.50 · 19 Zapata Fillet Chicken Burger £9.50 · 20 Royal Zapata Burger £13.50 · 21 Giant Zapata Burger £18.50
+- **Doner Baguettes**: 22 Lamb Doner £11.50 · 23 Chicken Doner £10.50 · 24 Mixed Doner £12.50 · 25 Giant Zapata Doner £17.50
+- **Doner Platters**: 26 Lamb Doner Platter £10.50 · 27 Chicken Doner Platter £9.50 · 28 Mixed Doner Platter £10.50
+- **Shawarma**: 29 Lamb Shawarma £6.99 · 30 Chicken Shawarma £5.99 · 31 Mixed Shawarma £6.99
 - **Hot Dogs**: 32 Hot Dog £9.50 · 33 Zapata Hot Dog £11.50 · 34 Doner Hot Dog £14.50 · 35 Ajdar Hot Dog £15.50 · 36 Sosis Bandari £9.50
 - **Sauces**: Garlic, Garlic & Dill, Spicy Chilli, Ketchup, Mayo, BBQ
 - **Drinks**: 37 Coca-Cola £1.50 · 38 Diet Coke £1.50 · 39 Fanta £1.50 · 40 7UP £1.50 · 41 Ayran · Sparkling or still £1.99 · 42 Still Water £1.50 · 43 Sparkling Water £2.00 · 44 Istak £1.50
 
 ## Open (ask Ryan / Mama)
-- [ ] Mama's own prices for the placeholders Claude chose: 19 (£11.50) and the platter sizes (26-28). Every other price is Mama's.
 - [ ] Mama to check Claude's Persian: سس باربیکیو (BBQ), فیله برگر مرغ زاپاتا (19).
 - [ ] Ryan: should Pickle Sauce also be in the sauce list? (His photo stopped at BBQ.)
 
