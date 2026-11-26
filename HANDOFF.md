@@ -1,4 +1,7 @@
-# Ajdar Zapata · handoff · 24 Nov 2026
+# Ajdar Zapata · handoff · 26 Nov 2026
+
+**26 Nov:** menu list changed (see CLAUDE.md "no more mix-ups"). TV pictures need `node tools/tv-stills.cjs` + `node tools/check.cjs`, then push, before the TVs show it. Printed A4: `tools/a4-menu.py`.
+
 
 *Start with `CLAUDE.md`. Separate from LAIFE.*
 
