@@ -9,7 +9,7 @@
 | Output | What | How it's made |
 |---|---|---|
 | **TV board** (the shop's two TVs) | ajdarzapata.co.uk/tv1 (left: Starters, Sandwiches, Burgers, Drinks) and /tv2 (right: Doner, Platters, Shawarma, Hot Dogs, Sauces, allergy notice) | `python3 tools/make-sections.py && node tools/sections.cjs && python3 tools/make-sections.py layout`, then `node tools/tv-stills.cjs`, `node tools/check.cjs`, push to `main` |
-| **A4 to send out** (double-sided, black and orange) | `menu/Ajdar_Zapata_A4_Double_Sided.pdf` (final, 26 Nov) · artifact "Ajdar Zapata A4 Menu" https://claude.ai/artifact/Lip9yS3R3pBajm6cpGiJEK | `python3 tools/a4-menu.py` → `menu/a4/Main.dc.html` (front), `Back.dc.html` (back); publish both to that artifact; print with Export › PDF |
+| **A4 to send out** (double-sided, black and orange) | `menu/Ajdar_Zapata_A4_Double_Sided.pdf` (final, 26 Nov) · artifact "Ajdar Zapata A4 Menu" https://claude.ai/artifact/Lip9yS3R3pBajm6cpGiJEK | `python3 tools/a4-menu.py` → `menu/a4/Main.dc.html` (front), `Back.dc.html` (back); `node tools/a4-pdf.cjs` → the PDF; publish both artboards to that artifact |
 | **Phone menu** (/menu/ for everyone else) | `menu/Ajdar_Zapata_Menu.pdf`, 4 orange pages | `python3 tools/make-menu.py && node tools/menu-pdf.cjs && pdftoppm -png -r 130 menu/Ajdar_Zapata_Menu.pdf site/menu/page` |
 
 ## Ryan's decisions, 26 Nov 2026 (all in the list, all three outputs)
@@ -41,8 +41,17 @@
 - [ ] Mama to check Claude's Persian: سس باربیکیو (BBQ), فیله برگر مرغ زاپاتا (19).
 - [ ] Ryan: should Pickle Sauce also be in the sauce list? (His photo stopped at BBQ.)
 
+## A big menu update, step by step (Ryan, 26 Nov 2026: "I'm going to give you sheets and everything, and once we've confirmed it, update it with everything")
+1. **Read Ryan's sheets** (photos, Excel, Google Sheets, PDFs) and write every change into `tools/make-menu.py`: names, Persian, prices, ingredients (English and Persian), sauces, drinks, new or removed items and sections. Prices only from Ryan or Mama, never guessed.
+2. **Confirm before building:** `python3 tools/menu-check.py --diff` lists every change against the live menu (origin/main). Send Ryan that list in plain words and wait for his yes. Anything unclear on a sheet: ask, don't guess.
+3. **Build and check everything:** `bash tools/build-all.sh` (about 10 minutes): printed and phone menu, TV panels, the A4 and its PDF (`menu/Ajdar_Zapata_A4_Double_Sided.pdf`), `tools/menu-check.py` (every output word for word against the list), the TV pictures, `tools/check.cjs`. `--quick` skips the TV pictures to look at the A4 and panels first.
+4. **If a section is added or renamed:** `KEY`, `WIDTH`, `HALVES` in `tools/make-sections.py` (which TV it goes on), the A4's column lists in `tools/a4-menu.py` (`cols([...], [...])`), the picture labels ("Burgers, 16 to 21") in `site/monitor-1/index.html` and `site/monitor-2/index.html`, and the phone page's `site/menu/index.html` if the printed menu's page count changes. `menu-check.py` flags all of these.
+5. **Look at it:** open the A4 PDF and the TV pages (`/monitor-1/?half=1&preview`, `?half=2`) and check nothing runs off or overlaps; if the A4 front overflows, lower `K1` in `tools/a4-menu.py`.
+6. **Send Ryan** the A4 PDF and a picture of each TV; publish `menu/a4/Main.dc.html` and `Back.dc.html` to the A4 artifact.
+7. **Live and handoff:** commit with what and why, push to `main` (that puts it on the shop TVs), check Netlify's current deploy is that commit, then update this file: the decisions, the menu snapshot, what's open.
+
 ## Building in a Claude sandbox (26 Nov 2026)
-Google Fonts is blocked there, so the panels fall back to local fonts. Install them first or the Persian comes out thin: `npm i @fontsource/bebas-neue @fontsource/barlow-semi-condensed @fontsource/vazirmatn`, convert the woff2 files to ttf into `~/.fonts` with fontTools (Vazirmatn: the **arabic** subset only, no latin files, or Chrome picks the wrong weight), `fc-cache -f`. Checked 26 Nov: the panels then match the 24 Nov ones.
+Google Fonts is blocked there, so the panels fall back to local fonts. Install them first or the Persian comes out thin: `npm i @fontsource/bebas-neue @fontsource/barlow-semi-condensed @fontsource/vazirmatn @fontsource/barlow-condensed @fontsource/barlow` (the last two for the A4 PDF), convert the woff2 files to ttf into `~/.fonts` with fontTools (Vazirmatn: the **arabic** subset only, no latin files, or Chrome picks the wrong weight), `fc-cache -f`. Checked 26 Nov: the panels then match the 24 Nov ones.
 
 ## Telling each TV which it is (24 Nov 2026)
 The two TVs are identical to the site, so each is told once. Either press **1** on the left TV's remote and **2** on the right TV's remote while the menu is showing, or set the start pages to `ajdarzapata.co.uk/tv1` (left) and `/tv2` (right). Until told, a TV shows the whole menu. If a TV shows the whole menu again after being switched off and on, it forgets (its browser keeps no memory): then set the start pages, which never need memory.
@@ -59,4 +68,4 @@ The two TVs are identical to the site, so each is told once. Either press **1** 
 - [ ] The checklist above, then "they're on".
 - [ ] The card change: Netlify → team ryanrcm → Usage & billing → Billing details → Payment information → Change payment method (the card owner types it in).
 
-**Paste-in for the next session:** "Read CLAUDE.md and HANDOFF.md in ryanRCM/Ajdar-Zapata. The menu is tools/make-menu.py; change it there and update the TV board, the A4 and the phone menu together."
+**Paste-in for the next session:** "Read CLAUDE.md and HANDOFF.md in ryanRCM/Ajdar-Zapata. The menu is tools/make-menu.py; for a big update follow 'A big menu update, step by step': menu-check --diff for my yes, then build-all, then push."

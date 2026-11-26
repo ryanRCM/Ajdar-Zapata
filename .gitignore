@@ -1,3 +1,4 @@
 tools/shot-*.png
 node_modules/
 tools/.sections*
+tools/.a4-*
