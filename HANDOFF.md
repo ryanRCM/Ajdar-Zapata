@@ -5,11 +5,12 @@
 ## The one rule
 **`tools/make-menu.py` on `main` is the only true menu.** Every change goes into it first, then into all three outputs below, in the same push. Never work from an old artifact, PDF or picture: the "Ajdar Zapata Screens" artifact (board-1..3) and `menu/Ajdar_Zapata_Boards*.pdf`, `Full_Menu_A4.pdf`, `Takeaway_Flyer_A5.pdf`, `Three_TV_Boards.pdf`, `Vertical_Menu_Boards.pdf` are OLD (Cheddar, Green Sauce, Pepsi, Corn Balls, old prices): reference only.
 
-## The three outputs
+## The outputs (all from the one list)
 | Output | What | How it's made |
 |---|---|---|
 | **TV board** (the shop's two TVs) | ajdarzapata.co.uk/tv1 (left: Starters, Sandwiches, Burgers, Drinks) and /tv2 (right: Doner, Platters, Shawarma, Hot Dogs, Sauces, allergy notice) | `python3 tools/make-sections.py && node tools/sections.cjs && python3 tools/make-sections.py layout`, then `node tools/tv-stills.cjs`, `node tools/check.cjs`, push to `main` |
 | **A4 to send out** (double-sided, black and orange) | `menu/Ajdar_Zapata_A4_Double_Sided.pdf` (final, 26 Nov) · artifact "Ajdar Zapata A4 Menu" https://claude.ai/artifact/Lip9yS3R3pBajm6cpGiJEK | `python3 tools/a4-menu.py` → `menu/a4/Main.dc.html` (front), `Back.dc.html` (back); `node tools/a4-pdf.cjs` → the PDF; publish both artboards to that artifact |
+| **Leaflet** (A5, double-sided, black and orange; Ryan 26 Nov: menu without ingredients, address and phone, no allergy notice, the offer at the bottom) | `menu/Ajdar_Zapata_Leaflet_A5.pdf` · artifact "Ajdar Zapata Leaflet" https://claude.ai/artifact/89Tw2CpFz5xUPwB4HESdyz | `python3 tools/leaflet.py` → `menu/leaflet/Main.dc.html` (front), `Back.dc.html` (back); `node tools/a4-pdf.cjs leaflet` → the PDF; publish both artboards to that artifact. The offer box: `OFFER` in `tools/leaflet.py` (Ryan's words from the shop's offer stand; empty = a box asking for it) |
 | **Phone menu** (/menu/ for everyone else) | `menu/Ajdar_Zapata_Menu.pdf`, 4 orange pages | `python3 tools/make-menu.py && node tools/menu-pdf.cjs && pdftoppm -png -r 130 menu/Ajdar_Zapata_Menu.pdf site/menu/page` |
 
 ## Ryan's decisions, 26 Nov 2026 (all in the list, all three outputs)
@@ -49,6 +50,7 @@
 ## Open (ask Ryan / Mama)
 - [ ] Mama to check Claude's Persian: سس باربیکیو (BBQ), فیله برگر مرغ زاپاتا (19).
 - [ ] Ryan: should Pickle Sauce also be in the sauce list? (His photo stopped at BBQ.)
+- [ ] Ryan: the offer for the bottom of the leaflet ("this offer stand": a photo or the words), then `OFFER` in `tools/leaflet.py`.
 
 ## A big menu update, step by step (Ryan, 26 Nov 2026: "I'm going to give you sheets and everything, and once we've confirmed it, update it with everything")
 1. **Read Ryan's sheets** (photos, Excel, Google Sheets, PDFs) and write every change into `tools/make-menu.py`: names, Persian, prices, ingredients (English and Persian), sauces, drinks, new or removed items and sections. Prices only from Ryan or Mama, never guessed.

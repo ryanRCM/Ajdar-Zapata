@@ -68,6 +68,20 @@ def check():
         if d != list(drinks): bad.append(f'A4 drinks differ from the list')
         if PHONE not in a4 or '07773' in a4: bad.append('A4: phone must be 020 8259 4026 only')
     except FileNotFoundError as e: bad.append(f'A4 not built: {e.filename}')
+    # 1b. the A5 leaflet: names, Persian names and prices only; address and phone; no ingredients, no allergy notice
+    try:
+        lf = rd('menu/leaflet/Main.dc.html') + rd('menu/leaflet/Back.dc.html')
+        rows = re.findall(r'<div class="r"><span class="n">(\d+)</span><span class="t">(.*?)</span><span class="f">(.*?)</span><span class="p">(.*?)</span></div>', lf)
+        got = {int(n): (U(en), U(fa), U(p).replace('<br>', ' · ')) for n, en, fa, p in rows}
+        for n, x in items.items():
+            if got.get(n) != (x['en'], x['fa'], x['price']): bad.append(f'leaflet: {n} {x["en"]} {"missing" if n not in got else "differs: " + str(got[n])}')
+        for n in set(got) - set(items): bad.append(f'leaflet: {n} is not in the list')
+        if [(U(a), U(b)) for a, b in re.findall(r'<div class="s"><span>([^<]*)</span><em>([^<]*)</em></div>', lf)] != list(sauces): bad.append('leaflet: sauces differ from the list')
+        if [(int(n), U(a), U(b), p) for n, a, b, p in re.findall(r'<div class="s"><span><b class="dn">(\d+)</b>(.*?) <em>(.*?)</em></span><strong>(.*?)</strong></div>', lf)] != list(drinks): bad.append('leaflet: drinks differ from the list')
+        if PHONE not in lf or '864 High Road' not in lf or '07773' in lf: bad.append('leaflet: needs the address and 020 8259 4026 only')
+        if any(x['den'] and html.escape(x['den']) in lf for x in items.values()): bad.append('leaflet: has ingredients (it should not)')
+        if ALLERGY_EN in U(lf): bad.append('leaflet: has the allergy notice (Ryan: not on the leaflet)')
+    except FileNotFoundError as e: bad.append(f'leaflet not built: {e.filename}')
     # 2. the TV panels (what tools/sections.cjs photographs)
     src = rd('tools/make-sections.py'); tree = ast.parse(src)
     const = {t.id: ast.literal_eval(n.value) for n in tree.body if isinstance(n, ast.Assign) for t in n.targets
@@ -122,7 +136,7 @@ def check():
     for f in ('menu/a4/Back.dc.html', 'site/monitor-1/index.html', 'menu/menu.html'):
         t = U(rd(f))
         if ALLERGY_EN not in t or ALLERGY_FA not in t: bad.append(f'{f}: the food allergy notice is not exactly the FSA sign')
-    print(f'Checked {len(items)} items, {len(sauces)} sauces, {len(drinks)} drinks on the A4, both TVs and the phone menu:',
+    print(f'Checked {len(items)} items, {len(sauces)} sauces, {len(drinks)} drinks on the A4, the leaflet, both TVs and the phone menu:',
           'all match the list' if not bad else f'{len(bad)} problems')
     for b in bad: print('  ✗', b)
     return not bad
