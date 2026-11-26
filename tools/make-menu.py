@@ -12,6 +12,7 @@ in medium and large (prices to come); shawarma with red cabbage, jalapeños and 
 prices left: 19 and the platters are Mama's now.
 26 Nov 2026 (Ryan): English "Meat" is Lamb (doner, platter, shawarma; Persian stays گوشت, which is right); 6 Zapata Loaded Fries gets mushroom; 32 Hot Dog £9.50 (was £8.50); no NEW / HOUSE SIGNATURE tags any more; phone 020 8259 4026 only (not 07773 001111); allergy notice no longer claims every dish lists its ingredients (fries, wings, nuggets, drinks don't); 19 is now Zapata Fillet Chicken Burger (Persian فیله برگر مرغ زاپاتا is Claude's, for Mama to check).
     python3 tools/make-menu.py && node tools/menu-pdf.cjs   ->  menu/Ajdar_Zapata_Menu.pdf
+26 Nov 2026 16:04 (Ryan): 24 Mixed Doner £11.50 (was £12.50 on Mama's sheet).
 """
 import html, json, subprocess, pathlib
 OUT_HTML = pathlib.Path('menu/menu.html')
@@ -56,7 +57,7 @@ PAGES = [
    ('DONER BAGUETTES', 'دونر باگت', [
      it(22, 'Lamb Doner', 'دونر گوشت', '£11.50', den='Lamb doner, pickles, lettuce, tomato, onion & parsley in a baguette ' + ZS, dfa='دونر گوشت، خیارشور، کاهو، گوجه، پیاز و جعفری در نان باگت ' + ZSF),
      it(23, 'Chicken Doner', 'دونر مرغ', '£10.50', den='Chicken doner, pickles, lettuce, tomato, onion & parsley in a baguette ' + ZS, dfa='دونر مرغ، خیارشور، کاهو، گوجه، پیاز و جعفری در نان باگت ' + ZSF),
-     it(24, 'Mixed Doner', 'دونر میکس', '£12.50', den='Lamb & chicken doner, pickles, lettuce, tomato, onion & parsley in a baguette ' + ZS, dfa='دونر گوشت و مرغ، خیارشور، کاهو، گوجه، پیاز و جعفری در نان باگت ' + ZSF),
+     it(24, 'Mixed Doner', 'دونر میکس', '£11.50', den='Lamb & chicken doner, pickles, lettuce, tomato, onion & parsley in a baguette ' + ZS, dfa='دونر گوشت و مرغ، خیارشور، کاهو، گوجه، پیاز و جعفری در نان باگت ' + ZSF),
      it(25, 'Giant Zapata Doner', 'غول دونر زاپاتا', '£17.50', den='Lamb & chicken doner, mushrooms, cheese, pickles, lettuce, red cabbage, tomato, onion & parsley in a baguette ' + ZS, dfa='دونر گوشت و مرغ، قارچ، پنیر، خیارشور، کاهو، کلم قرمز، گوجه، پیاز و جعفری در نان باگت ' + ZSF),
    ]),
    ('DONER PLATTERS', 'خوراک دونر', [

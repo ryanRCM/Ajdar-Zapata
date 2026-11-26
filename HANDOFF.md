@@ -35,12 +35,14 @@
 - Platters 26-28: **one size, "with chips & salad"** (M/L gone): 26 **£10.50**, 27 **£9.50**, 28 **£10.50**.
 - Shawarma 29 **£6.99**, 30 **£5.99**, 31 **£6.99**; "with garlic **and** chilli sauce" (was "or").
 - **No placeholder prices left**: every price is Mama's.
+- 16:04 (Ryan): **24 Mixed Doner £11.50** (Mama's sheet had £12.50).
+- 16:05: the leaflet's offer is **the shop's loyalty card, word for word** (Ryan's photo): "LOYALTY CARD · DAILY REWARDS / £10 = 1 STAMP · £20+ = 2 STAMPS · ONE ORDER PER DAY / 5 STAMPS · 1 FREE SHAWARMA" (`OFFER` in `tools/leaflet.py`).
 
 ## The menu on 26 Nov 2026, after Mama's sheet (snapshot; if this and `tools/make-menu.py` ever differ, the list wins)
 - **Starters & Sides**: 1 Chicken Wings · 5 pcs £5.49 · 2 Chicken Wings · 8 pcs £7.99 · 3 Fries M £2.99 / L £4.99 · 4 Cheesy Fries £3.99 · 5 Peri Peri Fries £3.49 · 6 Zapata Loaded Fries £7.99 · 7 Chicken Nuggets £4.99 · 8 Mexican Corn Cup £8.99 · 10 Coleslaw £3.99
 - **Sandwiches**: 11 Beef Salami Sandwich £13.00 · 12 Chicken Salami Sandwich £12.00 · 13 Mixed Salami Sandwich £12.50 · 14 Royal Zapata Sandwich £21.50 · 15 Giant Ajdar Zapata £22.50
 - **Burgers**: 16 Classic Burger £9.50 · 17 Double Cheeseburger £11.50 · 18 Chicken Fillet Burger £7.50 · 19 Zapata Fillet Chicken Burger £9.50 · 20 Royal Zapata Burger £13.50 · 21 Giant Zapata Burger £18.50
-- **Doner Baguettes**: 22 Lamb Doner £11.50 · 23 Chicken Doner £10.50 · 24 Mixed Doner £12.50 · 25 Giant Zapata Doner £17.50
+- **Doner Baguettes**: 22 Lamb Doner £11.50 · 23 Chicken Doner £10.50 · 24 Mixed Doner £11.50 · 25 Giant Zapata Doner £17.50
 - **Doner Platters**: 26 Lamb Doner Platter £10.50 · 27 Chicken Doner Platter £9.50 · 28 Mixed Doner Platter £10.50
 - **Shawarma**: 29 Lamb Shawarma £6.99 · 30 Chicken Shawarma £5.99 · 31 Mixed Shawarma £6.99
 - **Hot Dogs**: 32 Hot Dog £9.50 · 33 Zapata Hot Dog £11.50 · 34 Doner Hot Dog £14.50 · 35 Ajdar Hot Dog £15.50 · 36 Sosis Bandari £9.50
@@ -50,7 +52,6 @@
 ## Open (ask Ryan / Mama)
 - [ ] Mama to check Claude's Persian: سس باربیکیو (BBQ), فیله برگر مرغ زاپاتا (19).
 - [ ] Ryan: should Pickle Sauce also be in the sauce list? (His photo stopped at BBQ.)
-- [ ] Ryan: the offer for the bottom of the leaflet ("this offer stand": a photo or the words), then `OFFER` in `tools/leaflet.py`.
 
 ## A big menu update, step by step (Ryan, 26 Nov 2026: "I'm going to give you sheets and everything, and once we've confirmed it, update it with everything")
 1. **Read Ryan's sheets** (photos, Excel, Google Sheets, PDFs) and write every change into `tools/make-menu.py`: names, Persian, prices, ingredients (English and Persian), sauces, drinks, new or removed items and sections. Prices only from Ryan or Mama, never guessed.

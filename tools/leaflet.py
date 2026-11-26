@@ -17,7 +17,8 @@ secs = {t: (fa, items) for _, _, ss in PAGES for t, fa, items in ss if isinstanc
 W, H = 559, 794   # A5 at 96 px to the inch
 LOGO = '/_blob/cf0e3e5a629b743fcaa2dba8defe4817'   # the leaflet artifact's upload of menu/a4/logo.png
 PHONE = '020 8259 4026'
-OFFER = None   # [title, line, ...] from the offer stand; None = a box asking for it
+# the offer: the shop's loyalty card, word for word (Ryan's photo, 26 Nov 2026 16:05: "offer is here")
+OFFER = {'title': 'LOYALTY CARD · DAILY REWARDS', 'lines': ['£10 = 1 STAMP · £20+ = 2 STAMPS · ONE ORDER PER DAY'], 'big': '5 STAMPS · 1 FREE SHAWARMA'}
 
 CSS = """body{margin:0}
 .h{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid #F07C1A;padding-bottom:3px;margin:0 0 1px}
@@ -93,9 +94,10 @@ front = logo + ''.join(sec(t) for t in ['STARTERS & SIDES', 'SANDWICHES', 'BURGE
 sauces = ''.join(f'<div class="s"><span>{e(a)}</span><em>{e(b)}</em></div>' for a, b in SAUCES)
 drinks = ''.join(f'<div class="s"><span><b class="dn">{n}</b>{e(a)} <em>{e(b)}</em></span><strong>{p}</strong></div>' for n, a, b, p in DRINKS)
 if OFFER:
-    offer = (f'<div style="margin-top: 10px; background: #F07C1A; color: #121110; border-radius: 8px; padding: 9px 12px; text-align: center">'
-             f'<div style="font: 800 22px/1.05 \'Barlow Condensed\', sans-serif; letter-spacing: .5px">{e(OFFER[0])}</div>'
-             + ''.join(f'<div style="font: 700 15px/1.25 \'Barlow Condensed\', sans-serif; margin-top: 3px">{e(l)}</div>' for l in OFFER[1:]) + '</div>')
+    offer = ('<div style="margin-top: 10px; background: #F07C1A; color: #121110; border-radius: 8px; padding: 8px 12px 9px; text-align: center">'
+             f'<div style="font: 800 20px/1.1 \'Barlow Condensed\', sans-serif; letter-spacing: 1px">{e(OFFER["title"])}</div>'
+             + ''.join(f'<div style="font: 700 15px/1.25 \'Barlow Condensed\', sans-serif; margin-top: 3px">{e(l)}</div>' for l in OFFER['lines'])
+             + f'<div style="font: 800 22px/1.1 \'Barlow Condensed\', sans-serif; margin-top: 4px; color: #fff; background: #121110; border-radius: 6px; padding: 4px 8px; display: inline-block">{e(OFFER["big"])}</div></div>')
 else:
     offer = ('<div style="margin-top: 10px; border: 2px dashed #F07C1A; border-radius: 8px; padding: 12px; text-align: center; '
              'font: 700 15px/1.3 \'Barlow Condensed\', sans-serif; color: #F07C1A">OFFER GOES HERE: send Claude the offer stand</div>')
@@ -109,5 +111,5 @@ back = (''.join(sec(t) for t in ['DONER PLATTERS', 'SHAWARMA', 'HOT DOGS'])
 
 os.makedirs('menu/leaflet', exist_ok=True)
 open('menu/leaflet/Main.dc.html', 'w').write(page('Ajdar Zapata Leaflet – front', front, float(os.environ.get('K1', '0.9'))))
-open('menu/leaflet/Back.dc.html', 'w').write(page('Ajdar Zapata Leaflet – back', back, float(os.environ.get('K2', '1.0'))))
+open('menu/leaflet/Back.dc.html', 'w').write(page('Ajdar Zapata Leaflet – back', back, float(os.environ.get('K2', '0.92'))))
 print('wrote menu/leaflet/Main.dc.html, Back.dc.html')
