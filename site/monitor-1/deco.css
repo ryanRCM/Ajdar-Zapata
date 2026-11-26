@@ -13,7 +13,7 @@ html.half-1 .note, html.half-2 .note { position: absolute; z-index: 1; flex-dire
 .note p { position: relative; margin: .35vh 0 0; font: 600 2.05vh/1.25 "Barlow Semi Condensed", "Arial Narrow", sans-serif; color: #3c2414; }
 .note p[lang="fa"] { font: 600 1.95vh/1.45 Vazirmatn, Tahoma, sans-serif; text-align: right; }
 
-.deco { position: absolute; z-index: 2; pointer-events: none; }
+.deco { position: absolute; z-index: 4; pointer-events: none; }   /* above the snow on the panel tops and the lights (Ryan, 26 Nov 2026: "the white line isn't going through them") */
 .deco .pic { position: absolute; inset: 0; display: flex; align-items: flex-end; justify-content: center; opacity: 0; transform-origin: 50% 100%; }
 .deco .pic.only { opacity: 1; }
 .deco .bob { height: 100%; width: 100%; display: flex; align-items: flex-end; justify-content: center; animation: deco-bob 3s ease-in-out infinite; }
