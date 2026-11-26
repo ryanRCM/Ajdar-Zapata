@@ -13,6 +13,8 @@ import ast, html, os, re, runpy, subprocess, sys, tempfile
 U = html.unescape
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PHONE = '020 8259 4026'
+ALLERGY_EN = 'If you have a food allergy, intolerance, or coeliac disease – please speak to the staff about the ingredients in your food and drink before you order. Thank you.'
+ALLERGY_FA = 'اگر حساسیت یا عدم تحمل غذایی یا بیماری سلیاک دارید، لطفاً پیش از سفارش دربارهٔ مواد غذا و نوشیدنی با کارکنان ما صحبت کنید. سپاسگزاریم.'
 
 
 def load(source):
@@ -116,6 +118,10 @@ def check():
             nums = sorted(n for n, x in items.items() if norm(x['section']) == norm(label))
             if not nums: bad.append(f'{page}: label "{label}" matches no section in the list'); continue
             if (int(lo), int(hi)) != (nums[0], nums[-1]): bad.append(f'{page}: label "{label}, {lo} to {hi}" but the list has {nums[0]} to {nums[-1]}')
+    # 5. the food allergy notice: exactly the Food Standards Agency sign (Ryan, 26 Nov 2026), on the A4, the TVs and the phone menu
+    for f in ('menu/a4/Back.dc.html', 'site/monitor-1/index.html', 'menu/menu.html'):
+        t = U(rd(f))
+        if ALLERGY_EN not in t or ALLERGY_FA not in t: bad.append(f'{f}: the food allergy notice is not exactly the FSA sign')
     print(f'Checked {len(items)} items, {len(sauces)} sauces, {len(drinks)} drinks on the A4, both TVs and the phone menu:',
           'all match the list' if not bad else f'{len(bad)} problems')
     for b in bad: print('  ✗', b)

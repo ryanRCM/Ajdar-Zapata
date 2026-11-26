@@ -112,8 +112,8 @@ back = (f'<div style="display: flex; justify-content: center; margin-bottom: 8px
 </div>
 <div style="margin-top: 10px; border: 2px solid #F07C1A; border-radius: 8px; padding: 7px 12px; text-align: center; font: 800 19px/1.2 'Barlow Condensed', sans-serif; color: #F07C1A; letter-spacing: 0.5px">864 High Road, London N12 9RH · Tel 020 8259 4026 · ajdarzapata.co.uk</div>
 <div style="margin-top: 10px; border: 1.5px solid #5a524a; border-radius: 8px; padding: 9px 12px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 22px; color: #e4ddd3; font: 400 10.5px/1.4 Barlow, sans-serif">
-<p style="margin: 0"><b style="color: #F5A623; font-size: 12px">FOOD ALLERGIES &amp; INTOLERANCES</b><br>Before you order, please tell a member of our staff about any allergy or intolerance. Full information on the 14 major allergens is available on request. Our food is prepared in a kitchen where allergens are present, so we cannot guarantee that any dish is completely free from allergens.</p>
-<p style="margin: 0; font-family: Vazirmatn, sans-serif; direction: rtl; font-size: 10px; line-height: 1.6"><b style="color: #F5A623; font-size: 11.5px">حساسیت و عدم تحمل غذایی</b><br>لطفاً قبل از سفارش، اگر به غذایی حساسیت یا عدم تحمل دارید به همکاران ما اطلاع دهید. اطلاعات کامل ۱۴ آلرژن اصلی در صورت درخواست در اختیار شما قرار می‌گیرد. غذاهای ما در آشپزخانه‌ای آماده می‌شوند که در آن مواد آلرژی‌زا وجود دارد، بنابراین نمی‌توانیم تضمین کنیم که هیچ غذایی کاملاً بدون آلرژن باشد.</p>
+<p style="margin: 0; font-size: 12px; line-height: 1.45"><b style="color: #F5A623; font-size: 14px">FOOD ALLERGY OR INTOLERANCE?</b><br>If you have a food allergy, intolerance, or coeliac disease – please speak to the staff about the ingredients in your food and drink before you order. Thank you.</p>
+<p style="margin: 0; font-family: Vazirmatn, sans-serif; direction: rtl; font-size: 11.5px; line-height: 1.7"><b style="color: #F5A623; font-size: 13px">حساسیت یا عدم تحمل غذایی؟</b><br>اگر حساسیت یا عدم تحمل غذایی یا بیماری سلیاک دارید، لطفاً پیش از سفارش دربارهٔ مواد غذا و نوشیدنی با کارکنان ما صحبت کنید. سپاسگزاریم.</p>
 </div>''')
 
 P = 'menu/a4/'

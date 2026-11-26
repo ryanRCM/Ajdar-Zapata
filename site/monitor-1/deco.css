@@ -8,10 +8,10 @@ html.half-1 .note, html.half-2 .note { position: absolute; z-index: 1; flex-dire
   padding: .8vh 1.6vh; color: var(--ink); text-align: left; }
 .note .nt { display: flex; justify-content: flex-start; align-items: baseline; position: relative; }
 .note .nt.fa { justify-content: flex-end; margin-top: .5vh; }
-.note .nt b { font: 800 2.1vh/1.1 "Barlow Semi Condensed", "Arial Narrow", sans-serif; color: #8a0c00; letter-spacing: .02em; white-space: nowrap; }
-.note .nt b[lang="fa"] { font: 800 1.9vh/1.2 Vazirmatn, Tahoma, sans-serif; }
-.note p { position: relative; margin: .35vh 0 0; font: 600 1.55vh/1.25 "Barlow Semi Condensed", "Arial Narrow", sans-serif; color: #3c2414; }
-.note p[lang="fa"] { font: 600 1.5vh/1.45 Vazirmatn, Tahoma, sans-serif; text-align: right; }
+.note .nt b { font: 800 2.7vh/1.1 "Barlow Semi Condensed", "Arial Narrow", sans-serif; color: #8a0c00; letter-spacing: .02em; white-space: nowrap; }
+.note .nt b[lang="fa"] { font: 800 2.4vh/1.2 Vazirmatn, Tahoma, sans-serif; }
+.note p { position: relative; margin: .35vh 0 0; font: 600 2.05vh/1.25 "Barlow Semi Condensed", "Arial Narrow", sans-serif; color: #3c2414; }
+.note p[lang="fa"] { font: 600 1.95vh/1.45 Vazirmatn, Tahoma, sans-serif; text-align: right; }
 
 .deco { position: absolute; z-index: 2; pointer-events: none; }
 .deco .pic { position: absolute; inset: 0; display: flex; align-items: flex-end; justify-content: center; opacity: 0; transform-origin: 50% 100%; }

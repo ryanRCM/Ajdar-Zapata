@@ -81,10 +81,10 @@ PAGES = [
    ('DRINKS', 'نوشیدنی‌ها', 'DRINKS'),
  ]),
 ]
-SAUCES = [('Garlic', 'سس سیر'), ('Garlic & Dill', 'سس سیر و شوید'), ('Spicy Chilli', 'سس چیلی تند'), ('Ketchup', 'سس کچاپ'), ('Mayo', 'سس مایونز'), ('BBQ', 'سس باربیکیو')]   # Ryan, 26 Nov 2026 (photo): exactly these six; BBQ Persian is Claude's
+SAUCES = [('Zapata Special Sauce', 'سس مخصوص زاپاتا'), ('Garlic', 'سس سیر'), ('Garlic & Dill', 'سس سیر و شوید'), ('Spicy Chilli', 'سس چیلی تند'), ('Ketchup', 'سس کچاپ'), ('Mayo', 'سس مایونز'), ('BBQ', 'سس باربیکیو')]   # Ryan, 26 Nov 2026 (photo): these six; 15:38 "add Zapata Special Sauce" (first, the house sauce). BBQ Persian is Claude's
 DRINKS = [(37, 'Coca-Cola', 'کوکاکولا', '£1.50'), (38, 'Diet Coke', 'کوکا رژیمی', '£1.50'), (39, 'Fanta', 'فانتا', '£1.50'), (40, '7UP', 'سون‌آپ', '£1.50'),
-          (41, 'Ayran · Sparkling or still', 'دوغ', '£1.99'), (42, 'Still Water', 'آب معدنی', '£1.50'), (43, 'Sparkling Water', 'آب گازدار', '£2.00'),
-          (44, 'Istak', 'ایستک', '£1.50')]   # Mama, 24 Nov 2026: Ayran sparkling or still £1.99; Istak £1.50
+          (41, 'Ayran', 'دوغ', '£2.00'), (42, 'Still Water', 'آب معدنی', '£1.50'), (43, 'Sparkling Water', 'آب گازدار', '£2.00'),
+          (44, 'Istak', 'ایستک', '£1.50')]   # Mama, 24 Nov 2026: Istak £1.50. Ryan, 26 Nov 15:38: 41 just "Ayran" (دوغ), £2.00
 e = html.escape
 
 def item(x):
@@ -103,12 +103,10 @@ def section(s):
     h = f'<div class="sec"><div class="sh"><span>{e(title)}</span><span dir="rtl">{e(fa)}</span></div>'
     if items == 'SAUCES':
         h += ''.join(f'<div class="srow"><span class="en">{e(a)}</span><span class="fa" dir="rtl">{e(b)}</span></div>' for a, b in SAUCES)
-        h += ('<div class="allergy"><b>Food Allergies &amp; Intolerances</b><br>Before you order, please tell a member of our staff about any allergy or intolerance. '
-              'Full information on the 14 major allergens is available on request. '
-              'Our food is prepared in a kitchen where allergens are present, so we cannot guarantee that any dish is completely free from allergens.'
-              '<div dir="rtl" class="afa"><b>حساسیت و عدم تحمل غذایی</b><br>لطفاً قبل از سفارش، اگر به غذایی حساسیت یا عدم تحمل دارید به همکاران ما اطلاع دهید. '
-              'اطلاعات کامل ۱۴ آلرژن اصلی در صورت درخواست در اختیار شما قرار می‌گیرد. '
-              'غذاهای ما در آشپزخانه‌ای آماده می‌شوند که در آن مواد آلرژی‌زا وجود دارد، بنابراین نمی‌توانیم تضمین کنیم که هیچ غذایی کاملاً بدون آلرژن باشد.</div></div>')
+        # the food allergy notice: exactly the Food Standards Agency sign in the shop (Ryan, 26 Nov 2026 15:39: "exactly this"),
+        # English, then the Persian of the same words
+        h += ('<div class="allergy"><b>Food Allergy or Intolerance?</b><br>If you have a food allergy, intolerance, or coeliac disease – please speak to the staff about the ingredients in your food and drink before you order. Thank you.'
+              '<div dir="rtl" class="afa"><b>حساسیت یا عدم تحمل غذایی؟</b><br>اگر حساسیت یا عدم تحمل غذایی یا بیماری سلیاک دارید، لطفاً پیش از سفارش دربارهٔ مواد غذا و نوشیدنی با کارکنان ما صحبت کنید. سپاسگزاریم.</div></div>')
     elif items == 'DRINKS':
         h += ''.join(f'<div class="item small"><span class="num">{n}</span><div class="body"><div class="row"><span class="en">{e(a)}</span><span class="price">{p}</span></div><div class="fa" dir="rtl">{e(b)}</div></div></div>' for n, a, b, p in DRINKS)
         h += '<div class="hello"><b>COME SAY HELLO.</b><br>864 High Road, London N12 9RH<br>020 8259 4026<br>ajdarzapata.co.uk</div>'

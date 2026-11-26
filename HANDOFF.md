@@ -18,11 +18,12 @@
 - 6 Zapata Loaded Fries: chips, cheese, olives, **mushroom** & beef salami.
 - 19 is **Zapata Fillet Chicken Burger** (Persian فیله برگر مرغ زاپاتا, Claude's, for Mama to check).
 - **No NEW or HOUSE SIGNATURE tags** anywhere.
-- **Sauces, exactly** (Ryan's photo): Garlic, Garlic & Dill, Spicy Chilli, Ketchup, Mayo, BBQ. No Zapata Special Sauce or Mushroom sauce in the list. BBQ Persian سس باربیکیو is Claude's, for Mama to check.
+- **Sauces, exactly**: Zapata Special Sauce (added back 15:38, first), Garlic, Garlic & Dill, Spicy Chilli, Ketchup, Mayo, BBQ (Ryan's photo). No Mushroom sauce. BBQ Persian سس باربیکیو is Claude's, for Mama to check.
+- **41 is just Ayran (دوغ), £2.00** (15:38; was "Ayran · Sparkling or still" £1.99).
 - Pickle sauce stays where it was: 14, 15, 21, 33, 34, 35.
 - **TVs show English ingredients on every item that has them** (6, 8, 10, 11-36; not 1-5, 7 or drinks, which have none). Persian ingredients only on the A4 and phone menu: on the TVs they would halve the size of the whole board (text scale 0.50 instead of 0.71). To show them anyway: `DESC_FA = True` in `tools/make-sections.py`.
 - **Phone: 020 8259 4026 only** on printed menus (not 07773 001111). The TVs show no phone number.
-- **Allergy notice:** A4 and phone menu: the full one (tell staff before ordering; full information on the 14 major allergens on request; kitchen has allergens, no guarantee), English and Persian, last on the page. Its old line "every dish on this menu lists its main ingredients" was removed: not true (fries, wings, nuggets, drinks). TVs: the same full notice since 26 Nov (Ryan: "proper food allergy"; it was the Food Standards Agency sign's short words 24-26 Nov).
+- **Allergy notice: exactly the Food Standards Agency sign in the shop** (Ryan, 15:39, with a photo of it: "exactly this"): "Food Allergy or Intolerance? If you have a food allergy, intolerance, or coeliac disease – please speak to the staff about the ingredients in your food and drink before you order. Thank you." English, then the Persian of the same words, on the A4, the TVs and the phone menu (last on the page; on the TVs under Sauces). `menu-check.py` checks all three. (Earlier that day a longer 14-allergens text was used for a few hours; Ryan replaced it with the sign.)
 - A4 layout: front = Starters, Sandwiches, Burgers, Doner Baguettes; back = Platters, Shawarma, Hot Dogs, then Sauces and Drinks, then address and phone, then the allergy notice. Ingredients in English and Persian. Ryan rejected the TVs' yellow look for the A4.
 
 ## Mama's sheet, 26 Nov 2026 15:17 (two handwritten pages, read out by Ryan; live the same afternoon)
@@ -42,8 +43,8 @@
 - **Doner Platters**: 26 Lamb Doner Platter £10.50 · 27 Chicken Doner Platter £9.50 · 28 Mixed Doner Platter £10.50
 - **Shawarma**: 29 Lamb Shawarma £6.99 · 30 Chicken Shawarma £5.99 · 31 Mixed Shawarma £6.99
 - **Hot Dogs**: 32 Hot Dog £9.50 · 33 Zapata Hot Dog £11.50 · 34 Doner Hot Dog £14.50 · 35 Ajdar Hot Dog £15.50 · 36 Sosis Bandari £9.50
-- **Sauces**: Garlic, Garlic & Dill, Spicy Chilli, Ketchup, Mayo, BBQ
-- **Drinks**: 37 Coca-Cola £1.50 · 38 Diet Coke £1.50 · 39 Fanta £1.50 · 40 7UP £1.50 · 41 Ayran · Sparkling or still £1.99 · 42 Still Water £1.50 · 43 Sparkling Water £2.00 · 44 Istak £1.50
+- **Sauces**: Zapata Special Sauce, Garlic, Garlic & Dill, Spicy Chilli, Ketchup, Mayo, BBQ
+- **Drinks**: 37 Coca-Cola £1.50 · 38 Diet Coke £1.50 · 39 Fanta £1.50 · 40 7UP £1.50 · 41 Ayran £2.00 · 42 Still Water £1.50 · 43 Sparkling Water £2.00 · 44 Istak £1.50
 
 ## Open (ask Ryan / Mama)
 - [ ] Mama to check Claude's Persian: سس باربیکیو (BBQ), فیله برگر مرغ زاپاتا (19).
