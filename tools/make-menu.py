@@ -1,12 +1,12 @@
 """The printed A4 menu, built from the list below (Mama's corrections up to 18 Nov 2026), in the look of
 menu/Full_Menu_A4.pdf. Replaces tools/update-menu.py, which patched that PDF and can't renumber or add items.
-18 Nov (Mama): 14 and 15 new ingredients; burgers run to 21 (18 Chicken Fillet, 19 Zapata Chicken Burger NEW,
+18 Nov (Mama): 14 and 15 new ingredients; burgers run to 21 (18 Chicken Fillet, 19 Zapata Chicken Burger NEW (renamed Zapata Fillet Chicken Burger on 26 Nov),
 20 Royal, 21 Giant), so everything after moves up one. Prices from Mama's notebook (photos, 18 Nov; written with the old numbers, mapped here).
 Anything with pickle sauce has no Zapata special sauce (14, 15, 21, 33-35).
 Later on 18 Nov (Mama gave the old numbers; here +1): Giant Zapata Doner without cheese; platters just 'with salad',
 in medium and large (prices to come); shawarma with red cabbage, jalapeños and garlic or chilli sauce, no Zapata sauce. PLACEHOLDER prices chosen by Claude at Ryan's request (18 Nov, "u choose placeholder"), until Mama gives hers:
-19 Zapata Chicken Burger £11.50; platters M/L 26 £12.50/£15.50, 27 £11.50/£14.50, 28 £13.50/£16.50.
-26 Nov 2026 (Ryan): English "Meat" is Lamb (doner, platter, shawarma; Persian stays گوشت, which is right); 6 Zapata Loaded Fries gets mushroom; 32 Hot Dog £9.50 (was £8.50); no NEW / HOUSE SIGNATURE tags any more; phone 020 8259 4026 only (not 07773 001111); allergy notice no longer claims every dish lists its ingredients (fries, wings, nuggets, drinks don't).
+19 Zapata Fillet Chicken Burger £11.50; platters M/L 26 £12.50/£15.50, 27 £11.50/£14.50, 28 £13.50/£16.50.
+26 Nov 2026 (Ryan): English "Meat" is Lamb (doner, platter, shawarma; Persian stays گوشت, which is right); 6 Zapata Loaded Fries gets mushroom; 32 Hot Dog £9.50 (was £8.50); no NEW / HOUSE SIGNATURE tags any more; phone 020 8259 4026 only (not 07773 001111); allergy notice no longer claims every dish lists its ingredients (fries, wings, nuggets, drinks don't); 19 is now Zapata Fillet Chicken Burger (Persian فیله برگر مرغ زاپاتا is Claude's, for Mama to check).
     python3 tools/make-menu.py && node tools/menu-pdf.cjs   ->  menu/Ajdar_Zapata_Menu.pdf
 """
 import html, json, subprocess, pathlib
@@ -43,7 +43,7 @@ PAGES = [
      it(16, 'Classic Burger', 'برگر کلاسیک', '£9.50', den='Beef patty, pickles, tomato, lettuce & Zapata special sauce.', dfa='برگر گوشت، خیارشور، گوجه، کاهو و سس مخصوص زاپاتا.'),
      it(17, 'Double Cheeseburger', 'دبل چیزبرگر', '£11.50', den='Two beef patties, cheese, pickles, tomato, lettuce & Zapata special sauce.', dfa='دو برگر گوشت، پنیر، خیارشور، گوجه، کاهو و سس مخصوص زاپاتا.'),
      it(18, 'Chicken Fillet Burger', 'فیله برگر مرغ', '£9.50', den='1 chicken fillet, pickles, tomato, lettuce & Zapata special sauce.', dfa='۱ فیله مرغ، خیارشور، گوجه، کاهو و سس مخصوص زاپاتا.'),
-     it(19, 'Zapata Chicken Burger', 'برگر مرغ زاپاتا', '£11.50', den='Chicken fillet, cheese & mushroom, pickles, tomato, lettuce & Zapata special sauce.', dfa='فیله مرغ، پنیر و قارچ، خیارشور، گوجه، کاهو و سس مخصوص زاپاتا.'),
+     it(19, 'Zapata Fillet Chicken Burger', 'فیله برگر مرغ زاپاتا', '£11.50', den='Chicken fillet, cheese & mushroom, pickles, tomato, lettuce & Zapata special sauce.', dfa='فیله مرغ، پنیر و قارچ، خیارشور، گوجه، کاهو و سس مخصوص زاپاتا.'),
      it(20, 'Royal Zapata Burger', 'رویال برگر زاپاتا', '£13.50', den='Two beef patties, 2 slices salami, mushroom, cheese, pickles, tomato, lettuce & Zapata special sauce.', dfa='دو برگر گوشت، ۲ ورق کالباس، قارچ، پنیر، خیارشور، گوجه، کاهو و سس مخصوص زاپاتا.'),
      it(21, 'Giant Zapata Burger', 'غول برگر زاپاتا', '£18.50', den='1 beef patty, 2 slices salami, 1 chicken fillet steak, mushroom, cheese, pickles & tomato with pickle sauce.', dfa='۱ برگر گوشت، ۲ ورق کالباس، ۱ فیله استیک مرغ، قارچ، پنیر، خیارشور و گوجه با سس خیارشور.'),
    ]),

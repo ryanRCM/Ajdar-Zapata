@@ -14,14 +14,15 @@ PALETTE = {1: {'heading': (120, 10, 0), 'price': (222, 22, 10), 'persian': (168,
 KEY = {'STARTERS & SIDES': 'starters', 'SAUCE SELECTION': 'sauces', 'SANDWICHES': 'sandwiches', 'BURGERS': 'burgers', 'DONER BAGUETTES': 'doner',
        'DONER PLATTERS': 'platters', 'SHAWARMA': 'shawarma', 'HOT DOGS': 'hotdogs', 'DRINKS': 'drinks'}
 WIDTH = {'starters': 1094, 'sauces': 900, 'drinks': 1094, 'sandwiches': 1094, 'burgers': 1094, 'doner': 900, 'platters': 900, 'shawarma': 900, 'hotdogs': 900}
-DESC = {'sandwiches', 'burgers'}          # only these show ingredients on the TVs, as on the old boards
+DESC = {'starters', 'sandwiches', 'burgers', 'doner', 'platters', 'shawarma', 'hotdogs'}   # ingredients on every item that has them (Ryan, 26 Nov 2026: "everything ... ingredients")
+DESC_FA = False   # Persian ingredients too would halve the size of the whole board (26 Nov 2026: scale 0.50 vs 0.71); they are on the A4. True to show them
 STATIC = [['starters', 'sandwiches', 'burgers'], ['drinks', 'sauces'], ['doner', 'platters', 'shawarma', 'hotdogs']]
 # The halves (Mama and Ryan, 24 Nov 2026: "swap the sauce and drinks", "sandwiches on the second line after starters",
 # "sauces on the right above the food allergy", "drinks at the end"): columns, top to bottom.
 HALVES = {1: [['starters', 'sandwiches'], ['burgers', 'drinks']], 2: [['doner', 'platters', 'shawarma'], ['hotdogs', 'sauces']]}
-# The food allergy notice at the end of the menu: half 2, under its last column, at least NOTE_MIN px tall at 1080
+# The food allergy notice at the end of the menu (the full notice, same words as the A4, Ryan 26 Nov 2026): half 2, under its last column, at least NOTE_MIN px tall at 1080
 # (the menu is sized to leave that room; that column's panels don't stretch, the notice takes what is left).
-NOTE = {2: 1}; NOTE_MIN = 130.0
+NOTE = {2: 1}; NOTE_MIN = 185.0   # the full allergy notice since 26 Nov 2026 (was 130 for the short sign)
 SIZES = pathlib.Path('tools/.sections.json')
 
 def row(x, key):
@@ -29,6 +30,7 @@ def row(x, key):
     if ' · ' in name: name, t = name.split(' · '); tag = f'<span class="pill">{e(t)}</span>'
     if x['badge']: tag += f'<span class="pill">{e(x["badge"])}</span>'
     desc = f'<div class="d">{e(x["den"])}</div>' if key in DESC and x['den'] else ''
+    if desc and DESC_FA and x['dfa']: desc += f'<div class="dfa" dir="rtl">{e(x["dfa"])}</div>'
     pr = x['price']
     if pr.startswith('M '):
         m, l = [v.split(' ')[1] for v in pr.split(' · ')]
@@ -64,6 +66,7 @@ body{{font-family:'Barlow Semi Condensed',sans-serif;color:{c['name']};padding:4
 .t{{font:400 38px/1 'Bebas Neue',sans-serif;letter-spacing:.6px;-webkit-text-stroke:.7px {c['name']};white-space:nowrap}} .t.sm{{font-size:31px}}
 .pill{{display:inline-block;vertical-align:middle;margin:-6px 0 0 14px;border:2.5px solid {c['price']};color:{c['price']};border-radius:99px;font:700 16px/1 'Barlow Semi Condensed',sans-serif;letter-spacing:2px;padding:4px 12px 5px;-webkit-text-stroke:0}}
 .d{{font:500 20px/1.25 'Barlow Semi Condensed',sans-serif;color:{c['desc']};margin-top:5px;letter-spacing:.2px}}
+.dfa{{font:600 19px/1.5 'Vazirmatn',sans-serif;color:{c['desc']};margin-top:2px;text-align:right}}
 .f{{font:800 28px/1.3 'Vazirmatn',sans-serif;color:{c['persian']};white-space:nowrap}}
 .p,.ml{{font:400 48px/1 'Bebas Neue',sans-serif;color:{c['price']};letter-spacing:1px;-webkit-text-stroke:1px {c['price']};min-width:132px;text-align:right;white-space:nowrap}}
 .ml{{min-width:150px;font-size:44px}} .ml i{{font:800 19px/1 'Barlow Semi Condensed',sans-serif;font-style:normal;-webkit-text-stroke:0;background:{c['price']};color:#fff;border-radius:6px;padding:3px 7px 4px;margin-right:7px;vertical-align:9px;letter-spacing:0}}

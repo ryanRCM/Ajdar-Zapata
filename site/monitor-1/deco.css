@@ -10,8 +10,8 @@ html.half-1 .note, html.half-2 .note { position: absolute; z-index: 1; flex-dire
 .note .nt.fa { justify-content: flex-end; margin-top: .5vh; }
 .note .nt b { font: 800 2.1vh/1.1 "Barlow Semi Condensed", "Arial Narrow", sans-serif; color: #8a0c00; letter-spacing: .02em; white-space: nowrap; }
 .note .nt b[lang="fa"] { font: 800 1.9vh/1.2 Vazirmatn, Tahoma, sans-serif; }
-.note p { position: relative; margin: .35vh 0 0; font: 600 1.25vh/1.25 "Barlow Semi Condensed", "Arial Narrow", sans-serif; color: #3c2414; }
-.note p[lang="fa"] { font: 600 1.2vh/1.45 Vazirmatn, Tahoma, sans-serif; text-align: right; }
+.note p { position: relative; margin: .35vh 0 0; font: 600 1.55vh/1.25 "Barlow Semi Condensed", "Arial Narrow", sans-serif; color: #3c2414; }
+.note p[lang="fa"] { font: 600 1.5vh/1.45 Vazirmatn, Tahoma, sans-serif; text-align: right; }
 
 .deco { position: absolute; z-index: 2; pointer-events: none; }
 .deco .pic { position: absolute; inset: 0; display: flex; align-items: flex-end; justify-content: center; opacity: 0; transform-origin: 50% 100%; }

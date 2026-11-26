@@ -1,22 +1,22 @@
 /* Made by tools/make-sections.py: do not edit by hand. The two halves of the menu, one per shop TV, still. */
-/* half 1: text scale 0.768 */
+/* half 1: text scale 0.724 */
 html.half-1 .sec-sauces { display: none; }
 html.half-1 .sec-doner { display: none; }
 html.half-1 .sec-platters { display: none; }
 html.half-1 .sec-shawarma { display: none; }
 html.half-1 .sec-hotdogs { display: none; }
-html.half-1 .sec-starters { left: 0.729%; top: 1.111%; width: 48.958%; height: 48.867%; }
-html.half-1 .sec-sandwiches { left: 0.729%; top: 51.089%; width: 48.958%; height: 47.800%; }
-html.half-1 .sec-burgers { left: 50.313%; top: 1.111%; width: 48.958%; height: 48.902%; }
-html.half-1 .sec-drinks { left: 50.313%; top: 51.125%; width: 48.958%; height: 47.764%; }
-/* half 2: text scale 1.011 */
+html.half-1 .sec-starters { left: 0.729%; top: 1.111%; width: 48.958%; height: 51.486%; }
+html.half-1 .sec-sandwiches { left: 0.729%; top: 53.708%; width: 48.958%; height: 45.181%; }
+html.half-1 .sec-burgers { left: 50.313%; top: 1.111%; width: 48.958%; height: 49.708%; }
+html.half-1 .sec-drinks { left: 50.313%; top: 51.931%; width: 48.958%; height: 46.958%; }
+/* half 2: text scale 0.708 */
 html.half-2 .sec-starters { display: none; }
 html.half-2 .sec-drinks { display: none; }
 html.half-2 .sec-sandwiches { display: none; }
 html.half-2 .sec-burgers { display: none; }
-html.half-2 .sec-doner { left: 0.729%; top: 1.111%; width: 48.958%; height: 36.156%; }
-html.half-2 .sec-platters { left: 0.729%; top: 38.378%; width: 48.958%; height: 29.700%; }
-html.half-2 .sec-shawarma { left: 0.729%; top: 69.189%; width: 48.958%; height: 29.700%; }
-html.half-2 .sec-hotdogs { left: 50.313%; top: 1.111%; width: 48.958%; height: 41.245%; }
-html.half-2 .sec-sauces { left: 50.313%; top: 43.467%; width: 48.958%; height: 42.274%; }
-html.half-2 .note { display: flex; left: 50.313%; top: 86.852%; width: 48.958%; height: 12.037%; }
+html.half-2 .sec-doner { left: 0.729%; top: 1.111%; width: 48.958%; height: 36.200%; }
+html.half-2 .sec-platters { left: 0.729%; top: 38.422%; width: 48.958%; height: 28.858%; }
+html.half-2 .sec-shawarma { left: 0.729%; top: 68.392%; width: 48.958%; height: 30.497%; }
+html.half-2 .sec-hotdogs { left: 50.313%; top: 1.111%; width: 48.958%; height: 43.542%; }
+html.half-2 .sec-sauces { left: 50.313%; top: 45.764%; width: 48.958%; height: 30.169%; }
+html.half-2 .note { display: flex; left: 50.313%; top: 77.044%; width: 48.958%; height: 21.845%; }
