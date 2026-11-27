@@ -243,17 +243,32 @@ const server = http.createServer((req, res) => {
     }
     for (const c of [left, right, laptop, phone, shop]) await c.close();
   }
-  // The temporary bridge for the TVs still on the 16:16 page (netlify/edge-functions/tv-old.js): by when they ask,
-  // the first gets half 1, the second half 2; the current page (p=) and other times are left alone.
+  // The temporary bridge for the TVs still on the 16:16 page (netlify/edge-functions/tv-old.js): each TV told apart by
+  // when its request arrives (a drifting straight line) and its clock reading, checked on real requests from Netlify's
+  // log of 26-27 Nov; each gets its half and the az_tv cookie; the current page (p=) and other times are left alone.
   {
     const src = fs.readFileSync(path.join(__dirname, '..', 'netlify', 'edge-functions', 'tv-old.js'), 'utf8');
     const fn = (await import('data:text/javascript,' + encodeURIComponent(src))).default;
     const show = JSON.parse(fs.readFileSync(path.join(root, 'tv', 'show.json')));
-    const ask = async q => { const r = await fn(new Request('https://x/tv/show.json?' + q), { next: async () => new Response(JSON.stringify(show)) }); return r ? (await r.json()).all : 'untouched'; };
-    const a = await ask('t=1795538057731'), bb = await ask('t=1795538059239'), c = await ask('t=1795538059239&p=x'), d = await ask('t=1795538000000');
-    const dd = new Date(), mm = dd.getUTCMonth() + 1, xm = mm === 11 || mm === 12 || (mm === 1 && dd.getUTCDate() <= 6);
-    const pass = a === (xm ? show.tv2x : show.tv2) && bb === (xm ? show.tv1x : show.tv1) && c === 'untouched' && d === 'untouched'; ok = ok && pass;   // swapped 24 Nov: the 17.7 s TV is on the right
-    console.log(`${pass ? '✅' : '❌'} bridge for the 16:16 page: right TV (17.7 s) ${a}, left TV (19.2 s) ${bb}, current page ${c}, other times ${d}`);
+    const realNow = Date.now, realLog = console.log;
+    const ask = async (now, q) => { Date.now = () => now; console.log = () => {};
+      try {
+        const r = await fn(new Request('https://x/tv/show.json?' + q), { next: async () => new Response(JSON.stringify(show)) });
+        return r ? { all: (await r.json()).all, cookie: (r.headers.get('set-cookie') || '').split(';')[0] } : { all: 'untouched', cookie: '' };
+      } finally { Date.now = realNow; console.log = realLog; } };
+    const want = (now, half) => { const d = new Date(now), mo = d.getUTCMonth() + 1, x = mo === 11 || mo === 12 || (mo === 1 && d.getUTCDate() <= 6);
+      return { all: (x && show['tv' + half + 'x']) || show['tv' + half], cookie: 'az_tv=' + half }; };
+    const T0 = Date.UTC(2026, 10, 27, 13, 45), in2 = T0 + 2 * 86400000, at2 = in2 - (in2 % 120000) + 93592;   // left's line, 2 days on
+    const cases = [
+      ['left TV, 27 Nov 13:45', 1795787150009, 't=1795787154341', 1], ['right TV, 27 Nov 13:45', 1795787148915, 't=1795787155241', 2],
+      ['left TV, 26 Nov 15:05 (before its clock jumped)', 1795705557823, 't=1795705571111', 1], ['right TV, 26 Nov 15:05', 1795705556965, 't=1795705560719', 2],
+      ['left TV in 2 days, clock corrected', at2, 't=' + (at2 + 7777), 1], ['between the two', 1795787149462, 't=1795787150000', 0],
+      ['another time', 1795787100000, 't=1795787100000', 0], ['the current page', 1795787150009, 't=1795787154341&p=x', 0]];
+    for (const [name, now, q, half] of cases) {
+      const got = await ask(now, q), exp = half ? want(now, half) : { all: 'untouched', cookie: '' };
+      const pass = got.all === exp.all && got.cookie === exp.cookie; ok = ok && pass;
+      console.log(`${pass ? '✅' : '❌'} bridge for the 16:16 page, ${name}: ${got.all}${got.cookie ? ', ' + got.cookie : ''}`);
+    }
   }
   const m = await b.newPage({ viewport: { width: 390, height: 844 } }); const merrs = [];
   m.on('pageerror', e => merrs.push(e.message));
