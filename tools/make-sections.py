@@ -2,7 +2,8 @@
 menu (tools/make-menu.py), in the look of the old lifted boards but sharp at 2x. Replaces the lifting in
 tools/build-walls.py (the boards PDF can't be renumbered); the logo files it made are kept as they are.
     python3 tools/make-sections.py && node tools/sections.cjs && python3 tools/make-sections.py layout
-The two halves the shop TVs show, still (24 Nov 2026: "the menu in two parts, one on each monitor, always fixed"):
+The two halves the shop TVs show, still (24 Nov 2026: "the menu in two parts, one on each monitor, always fixed";
+27 Nov 2026: one menu across both, sauces and drinks small in a side column, see HALVES):
 site/monitor-1/halves.css, also written by `layout`, or on its own with: python3 tools/make-sections.py halves
 """
 import html, json, runpy, sys, pathlib
@@ -13,16 +14,19 @@ PALETTE = {1: {'heading': (120, 10, 0), 'price': (222, 22, 10), 'persian': (168,
            2: {'heading': (110, 6, 0), 'price': (206, 14, 30), 'persian': (150, 46, 0), 'name': (14, 10, 8), 'desc': (70, 46, 34)}}
 KEY = {'STARTERS & SIDES': 'starters', 'SAUCE SELECTION': 'sauces', 'SANDWICHES': 'sandwiches', 'BURGERS': 'burgers', 'DONER BAGUETTES': 'doner',
        'DONER PLATTERS': 'platters', 'SHAWARMA': 'shawarma', 'HOT DOGS': 'hotdogs', 'DRINKS': 'drinks'}
-WIDTH = {'starters': 1094, 'sauces': 900, 'drinks': 1094, 'sandwiches': 1094, 'burgers': 1094, 'doner': 900, 'platters': 900, 'shawarma': 900, 'hotdogs': 900}
+WIDTH = {'starters': 1200, 'sauces': 600, 'drinks': 600, 'sandwiches': 1200, 'burgers': 1200, 'doner': 1200, 'platters': 1800, 'shawarma': 1800, 'hotdogs': 1800}   # TV1 columns 1200, TV2's food column 1800 (fills it), the side column (sauces, drinks) 600 (Ryan, 27 Nov 2026)
 DESC = {'starters', 'sandwiches', 'burgers', 'doner', 'platters', 'shawarma', 'hotdogs'}   # ingredients on every item that has them (Ryan, 26 Nov 2026: "everything ... ingredients")
 DESC_FA = False   # Persian ingredients too would halve the size of the whole board (26 Nov 2026: scale 0.50 vs 0.71); they are on the A4. True to show them
 STATIC = [['starters', 'sandwiches', 'burgers'], ['drinks', 'sauces'], ['doner', 'platters', 'shawarma', 'hotdogs']]
-# The halves (Mama and Ryan, 24 Nov 2026: "swap the sauce and drinks", "sandwiches on the second line after starters",
-# "sauces on the right above the food allergy", "drinks at the end"): columns, top to bottom.
-HALVES = {1: [['starters', 'sandwiches'], ['burgers', 'drinks']], 2: [['doner', 'platters', 'shawarma'], ['hotdogs', 'sauces']]}
-# The food allergy notice at the end of the menu (the full notice, same words as the A4, Ryan 26 Nov 2026): half 2, under its last column, at least NOTE_MIN px tall at 1080
+# The halves: ONE menu split across the two TVs, read left to right (Ryan, 27 Nov 2026: "it's always going to be one
+# menu split across the two monitors"; "sauces and drinks smaller, to the side"): left TV Starters, Sandwiches |
+# Burgers, Doner; right TV Platters, Shawarma, Hot Dogs | a narrow side column of Sauces, Drinks and the allergy notice.
+# Both TVs use the same text size (the smaller of the two that fit), so the pair reads as one board.
+HALVES = {1: [['starters', 'sandwiches'], ['burgers', 'doner']], 2: [['platters', 'shawarma', 'hotdogs'], ['sauces', 'drinks']]}
+SIDE = {2: 1}   # the narrow side column: drawn small (600 wide, smaller type) and given no extra width
+# The food allergy notice at the end of the menu: half 2, under the side column, at least NOTE_MIN px tall at 1080
 # (the menu is sized to leave that room; that column's panels don't stretch, the notice takes what is left).
-NOTE = {2: 1}; NOTE_MIN = 185.0   # the full allergy notice since 26 Nov 2026 (was 130 for the short sign)
+NOTE = {2: 1}; NOTE_MIN = 300.0
 SIZES = pathlib.Path('tools/.sections.json')
 
 def row(x, key):
@@ -72,6 +76,9 @@ body{{font-family:'Barlow Semi Condensed',sans-serif;color:{c['name']};padding:4
 .ml{{min-width:150px;font-size:44px}} .ml i{{font:800 19px/1 'Barlow Semi Condensed',sans-serif;font-style:normal;-webkit-text-stroke:0;background:{c['price']};color:#fff;border-radius:6px;padding:3px 7px 4px;margin-right:7px;vertical-align:9px;letter-spacing:0}}
 .soft .b .f{{margin-top:6px;font-size:25px}} .soft{{padding-left:68px}}
 .s{{display:flex;align-items:center;gap:26px;padding:8px 0 9px;border-bottom:2px solid rgba(90,30,0,.14)}} .s .t{{flex:0 0 52%;text-align:right;font-size:40px}} .s .f{{font-size:31px}}
+#sauces .h,#drinks .h{{font-size:42px;padding-bottom:9px}} #sauces .hf,#drinks .hf{{font-size:30px}}
+#sauces .s{{gap:16px;padding:5px 0 6px}} #sauces .s .t{{font-size:30px;flex:0 0 50%}} #sauces .s .f{{font-size:24px}}
+#drinks .r{{gap:12px;padding:5px 0 6px}} #drinks .n{{flex:0 0 38px;height:38px;border-radius:9px;font-size:23px;line-height:38px}} #drinks .t{{font-size:29px}} #drinks .f{{font-size:21px}} #drinks .p{{font-size:36px;min-width:96px}}
 #starters .r{{padding:6px 0 7px}} #doner .r,#platters .r,#shawarma .r,#hotdogs .r{{padding:8px 0 9px}}
 '''
     secs = ''.join(sec(*s) for _, _, ss in PAGES for s in ss)
@@ -85,28 +92,34 @@ def sizes():
     return {k: tuple(round(v / 2) for v in Image.open(f'site/monitor-1/sec-{k}.png').size) for k in WIDTH}
 
 def halves():
-    """site/monitor-1/halves.css: /monitor-1/?half=1 and ?half=2, each half of the menu as big as fits on one TV.
-    Both halves in the same yellow, so the two TVs read as one board (Ryan, 24 Nov 2026: "one big one")."""
+    """site/monitor-1/halves.css: /monitor-1/?half=1 and ?half=2, the two halves of one menu, one per shop TV, both at the
+    same text scale. Both halves in the same yellow, so the two TVs read as one board (Ryan, 24 Nov 2026: "one big one")."""
     size = sizes()
     W, H, M, GAP, PAD, TOP = 1920.0, 1080.0, 14.0, 12.0, 10.0, 12.0
     BOT = H - 12.0
     pct = lambda v, ref: f'{v / ref * 100:.3f}%'
     css = ['/* Made by tools/make-sections.py: do not edit by hand. The two halves of the menu, one per shop TV, still. */',
 ]
-    out = []
+    fits = {}
     for half, cols in HALVES.items():
-        shown = [n for c in cols for n in c]
         fixed_w = 2 * M + GAP * (len(cols) - 1) + 2 * PAD * len(cols)
         s = (W - fixed_w) / sum(max(size[n][0] for n in c) for c in cols)
         for k, c in enumerate(cols):
             room = (NOTE_MIN + GAP) if NOTE.get(half) == k else 0
             s = min(s, (BOT - TOP - room - GAP * (len(c) - 1) - 2 * PAD * len(c)) / sum(size[n][1] for n in c))
-        extra_w = (W - fixed_w - s * sum(max(size[n][0] for n in c) for c in cols)) / len(cols)
-        css.append(f'/* half {half}: text scale {s:.3f} */')
-        css += [f'html.half-{half} .sec-{n} {{ display: none; }}' for n in WIDTH if n not in shown]
+        fits[half] = s
+    s = min(fits.values())   # one menu: the same text size on both TVs
+    out = []
+    for half, cols in HALVES.items():
+        fixed_w = 2 * M + GAP * (len(cols) - 1) + 2 * PAD * len(cols)
+        side = SIDE.get(half)
+        food = [k for k in range(len(cols)) if k != side]
+        extra = (W - fixed_w - s * sum(max(size[n][0] for n in c) for c in cols)) / len(food)
+        css.append(f'/* half {half}: text scale {s:.3f} (this half alone would fit {fits[half]:.3f}) */')
+        css += [f'html.half-{half} .sec-{n} {{ display: none; }}' for n in WIDTH if n not in [n for c in cols for n in c]]
         x = M
         for k, c in enumerate(cols):
-            cw = max(size[n][0] for n in c) * s + 2 * PAD + extra_w
+            cw = max(size[n][0] for n in c) * s + 2 * PAD + (0 if k == side else extra)
             used = sum(size[n][1] * s + 2 * PAD for n in c) + GAP * (len(c) - 1)
             note = NOTE.get(half) == k
             grow = 0 if note else (BOT - TOP - used) / len(c); y = TOP

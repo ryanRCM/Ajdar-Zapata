@@ -2,3 +2,4 @@ tools/shot-*.png
 node_modules/
 tools/.sections*
 tools/.a4-*
+tools/__pycache__/

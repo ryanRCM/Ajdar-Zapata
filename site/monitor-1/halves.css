@@ -1,22 +1,22 @@
 /* Made by tools/make-sections.py: do not edit by hand. The two halves of the menu, one per shop TV, still. */
-/* half 1: text scale 0.724 */
+/* half 1: text scale 0.766 (this half alone would fit 0.766) */
 html.half-1 .sec-sauces { display: none; }
-html.half-1 .sec-doner { display: none; }
+html.half-1 .sec-drinks { display: none; }
 html.half-1 .sec-platters { display: none; }
 html.half-1 .sec-shawarma { display: none; }
 html.half-1 .sec-hotdogs { display: none; }
-html.half-1 .sec-starters { left: 0.729%; top: 1.111%; width: 48.958%; height: 51.486%; }
-html.half-1 .sec-sandwiches { left: 0.729%; top: 53.708%; width: 48.958%; height: 45.181%; }
-html.half-1 .sec-burgers { left: 50.313%; top: 1.111%; width: 48.958%; height: 49.708%; }
-html.half-1 .sec-drinks { left: 50.313%; top: 51.931%; width: 48.958%; height: 46.958%; }
-/* half 2: text scale 0.716 */
+html.half-1 .sec-starters { left: 0.729%; top: 1.111%; width: 48.958%; height: 52.552%; }
+html.half-1 .sec-sandwiches { left: 0.729%; top: 54.775%; width: 48.958%; height: 44.114%; }
+html.half-1 .sec-burgers { left: 50.313%; top: 1.111%; width: 48.958%; height: 55.814%; }
+html.half-1 .sec-doner { left: 50.313%; top: 58.037%; width: 48.958%; height: 40.852%; }
+/* half 2: text scale 0.766 (this half alone would fit 0.767) */
 html.half-2 .sec-starters { display: none; }
-html.half-2 .sec-drinks { display: none; }
 html.half-2 .sec-sandwiches { display: none; }
 html.half-2 .sec-burgers { display: none; }
-html.half-2 .sec-doner { left: 0.729%; top: 1.111%; width: 48.958%; height: 39.012%; }
-html.half-2 .sec-platters { left: 0.729%; top: 41.235%; width: 48.958%; height: 24.956%; }
-html.half-2 .sec-shawarma { left: 0.729%; top: 67.302%; width: 48.958%; height: 31.587%; }
-html.half-2 .sec-hotdogs { left: 50.313%; top: 1.111%; width: 48.958%; height: 44.020%; }
-html.half-2 .sec-sauces { left: 50.313%; top: 46.242%; width: 48.958%; height: 34.406%; }
-html.half-2 .note { display: flex; left: 50.313%; top: 81.759%; width: 48.958%; height: 17.130%; }
+html.half-2 .sec-doner { display: none; }
+html.half-2 .sec-platters { left: 0.729%; top: 1.111%; width: 72.943%; height: 27.739%; }
+html.half-2 .sec-shawarma { left: 0.729%; top: 29.961%; width: 72.943%; height: 27.739%; }
+html.half-2 .sec-hotdogs { left: 0.729%; top: 58.811%; width: 72.943%; height: 40.077%; }
+html.half-2 .sec-sauces { left: 74.297%; top: 1.111%; width: 24.974%; height: 28.230%; }
+html.half-2 .sec-drinks { left: 74.297%; top: 30.453%; width: 24.974%; height: 35.250%; }
+html.half-2 .note { display: flex; left: 74.297%; top: 66.814%; width: 24.974%; height: 32.075%; }

@@ -1,4 +1,4 @@
-# Ajdar Zapata · handoff · 26 Nov 2026 (final, after Mama's sheet)
+# Ajdar Zapata · handoff · 27 Nov 2026 (TV layout, orange leaflet and A4)
 
 *Start with `CLAUDE.md`. Separate from LAIFE.* Ryan, 26 Nov 2026: "a finalized handoff so we don't lose this", "no more mix-ups".
 
@@ -8,9 +8,9 @@
 ## The outputs (all from the one list)
 | Output | What | How it's made |
 |---|---|---|
-| **TV board** (the shop's two TVs) | ajdarzapata.co.uk/tv1 (left: Starters, Sandwiches, Burgers, Drinks) and /tv2 (right: Doner, Platters, Shawarma, Hot Dogs, Sauces, allergy notice) | `python3 tools/make-sections.py && node tools/sections.cjs && python3 tools/make-sections.py layout`, then `node tools/tv-stills.cjs`, `node tools/check.cjs`, push to `main` |
-| **A4 to send out** (double-sided, black and orange) | `menu/Ajdar_Zapata_A4_Double_Sided.pdf` (final, 26 Nov) · artifact "Ajdar Zapata A4 Menu" https://claude.ai/artifact/Lip9yS3R3pBajm6cpGiJEK | `python3 tools/a4-menu.py` → `menu/a4/Main.dc.html` (front), `Back.dc.html` (back); `node tools/a4-pdf.cjs` → the PDF; publish both artboards to that artifact |
-| **Leaflet** (A5, double-sided, black and orange; Ryan 26 Nov: menu without ingredients, address and phone, no allergy notice, the offer at the bottom) | `menu/Ajdar_Zapata_Leaflet_A5.pdf` · artifact "Ajdar Zapata Leaflet" https://claude.ai/artifact/89Tw2CpFz5xUPwB4HESdyz | `python3 tools/leaflet.py` → `menu/leaflet/Main.dc.html` (front), `Back.dc.html` (back); `node tools/a4-pdf.cjs leaflet` → the PDF; publish both artboards to that artifact. The offer box: `OFFER` in `tools/leaflet.py` (Ryan's words from the shop's offer stand; empty = a box asking for it) |
+| **TV board** (the shop's two TVs) | One menu across both TVs: ajdarzapata.co.uk/tv1 (left: Starters over Sandwiches, Burgers over Doner) and /tv2 (right: Platters, Shawarma, Hot Dogs in a wide column; Sauces, Drinks and the allergy notice small in a side column). To check it as a PDF: `node tools/board-pdf.cjs` → `menu/Ajdar_Zapata_TV_Board.pdf` | `python3 tools/make-sections.py && node tools/sections.cjs && python3 tools/make-sections.py layout`, then `node tools/tv-stills.cjs`, `node tools/check.cjs`, push to `main` |
+| **A4 to send out** (double-sided, orange with black ink: the leaflet's palette, 27 Nov) | `menu/Ajdar_Zapata_A4_Double_Sided.pdf` (27 Nov) · artifact "Ajdar Zapata A4 Menu" https://claude.ai/artifact/Lip9yS3R3pBajm6cpGiJEK | `python3 tools/a4-menu.py` → `menu/a4/Main.dc.html` (front), `Back.dc.html` (back); `node tools/a4-pdf.cjs` → the PDF; publish both artboards to that artifact |
+| **Leaflet** (A5, double-sided, orange; Ryan 26 Nov: menu without ingredients, address and phone, no allergy notice, the offer at the bottom; 27 Nov: his own layout, orange) | `menu/Ajdar_Zapata_Leaflet_A5.pdf` · artifact "Ajdar Zapata Leaflet" https://claude.ai/artifact/89Tw2CpFz5xUPwB4HESdyz | `python3 tools/leaflet.py` → `menu/leaflet/Main.dc.html` (front), `Back.dc.html` (back); `node tools/a4-pdf.cjs leaflet` → the PDF; publish both artboards to that artifact. The offer box: `OFFER` in `tools/leaflet.py` (Ryan's words from the shop's offer stand; empty = a box asking for it) |
 | **Phone menu** (/menu/ for everyone else) | `menu/Ajdar_Zapata_Menu.pdf`, 4 orange pages | `python3 tools/make-menu.py && node tools/menu-pdf.cjs && pdftoppm -png -r 130 menu/Ajdar_Zapata_Menu.pdf site/menu/page` |
 
 ## Ryan's decisions, 26 Nov 2026 (all in the list, all three outputs)
@@ -25,7 +25,12 @@
 - **TVs show English ingredients on every item that has them** (6, 8, 10, 11-36; not 1-5, 7 or drinks, which have none). Persian ingredients only on the A4 and phone menu: on the TVs they would halve the size of the whole board (text scale 0.50 instead of 0.71). To show them anyway: `DESC_FA = True` in `tools/make-sections.py`.
 - **Phone: 020 8259 4026 only** on printed menus (not 07773 001111). The TVs show no phone number.
 - **Allergy notice: exactly the Food Standards Agency sign in the shop** (Ryan, 15:39, with a photo of it: "exactly this"): "Food Allergy or Intolerance? If you have a food allergy, intolerance, or coeliac disease – please speak to the staff about the ingredients in your food and drink before you order. Thank you." English, then the Persian of the same words, on the A4, the TVs and the phone menu (last on the page; on the TVs under Sauces). `menu-check.py` checks all three. (Earlier that day a longer 14-allergens text was used for a few hours; Ryan replaced it with the sign.)
-- A4 layout: front = Starters, Sandwiches, Burgers, Doner Baguettes; back = Platters, Shawarma, Hot Dogs, then Sauces and Drinks, then address and phone, then the allergy notice. Ingredients in English and Persian. Ryan rejected the TVs' yellow look for the A4.
+- A4 layout (orange with black ink since 27 Nov): front = Starters, Sandwiches, Burgers, Doner Baguettes; back = Platters, Shawarma, Hot Dogs, then Sauces and Drinks, then address and phone, then the allergy notice. Ingredients in English and Persian. Ryan rejected the TVs' yellow look for the A4.
+
+## Ryan's decisions, 27 Nov 2026
+- **TVs: always one menu split across the two monitors.** Left TV: Starters over Sandwiches | Burgers over Doner Baguettes. Right TV: Platters, Shawarma, Hot Dogs in one wide column | **Sauces and Drinks smaller, to the side** (a narrow column), the allergy notice under them. Both TVs at one text size (0.766; was 0.72), so they read as one board. `HALVES`, `SIDE`, `WIDTH` in `tools/make-sections.py`.
+- **Leaflet: Ryan's own version** (his PDF of 27 Nov: logo, GRAND OPENING, the food photo, "Food images are illustrative."; back: the wraps, CHICKEN SHAWARMA £5.99 from the list, "Visit Ajdar Zapata" bar) **with an orange background**. The photo is his (`menu/leaflet/photo.jpg`, the wraps cut from it `photo-wraps.jpg`). The loyalty card stays at the bottom of the back (his version didn't have it; he asked for it on 26 Nov).
+- **A4: the same palette** ("the actual menu give it same colour palette"): orange page, black ink, black heading bars and number tags. One palette file: `tools/print_palette.py`. Words unchanged.
 
 ## Mama's sheet, 26 Nov 2026 15:17 (two handwritten pages, read out by Ryan; live the same afternoon)
 - 3 Fries: **M £2.99 / L £4.99** (was one size £2.99).
@@ -50,6 +55,8 @@
 - **Drinks**: 37 Coca-Cola £1.50 · 38 Diet Coke £1.50 · 39 Fanta £1.50 · 40 7UP £1.50 · 41 Ayran £2.00 · 42 Still Water £1.50 · 43 Sparkling Water £2.00 · 44 Istak £1.50
 
 ## Open (ask Ryan / Mama)
+- [ ] Ryan: keep the loyalty card on the leaflet? (Not on his 27 Nov version; kept, as he asked on 26 Nov.)
+- [ ] Ryan: TVs stay yellow? (27 Nov "same colour palette" was read as the A4.)
 - [ ] Mama to check Claude's Persian: سس باربیکیو (BBQ), فیله برگر مرغ زاپاتا (19).
 - [ ] Ryan: should Pickle Sauce also be in the sauce list? (His photo stopped at BBQ.)
 
