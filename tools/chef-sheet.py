@@ -4,10 +4,10 @@ the numbers, the name, the ingredients ... black on white"; "make sure it is the
 up anything").
 Built from tools/make-menu.py, like everything else: the board's numbers, the Persian names and the Persian ingredients
 word for word, sizes where the list has them (Fries: M / L), the sauces and the drinks. No prices, no English, no
-pictures: a kitchen build sheet, black on white, to print and laminate.
+pictures: a kitchen build sheet on white, to print and laminate; three colours (below), heavy type.
 Writes menu/chef/Main.dc.html, the artboard of Ryan's Claude Design artifact "Ajdar Zapata Chef Sheet"
 (https://claude.ai/artifact/Q4nFQ1S6tyxzziRunRyB3a; its index is menu/chef/canvas.json); the PDF:
-node tools/a4-pdf.cjs chef -> menu/Ajdar_Zapata_Chef_Sheet_A3.pdf. A3 landscape, 4 columns right to left in number order; K scales the type so the sheet is full (0.97 on 27 Nov:
+node tools/a4-pdf.cjs chef -> menu/Ajdar_Zapata_Chef_Sheet_A3.pdf. A3 landscape, 4 columns right to left in number order; K scales the type so the sheet is full (0.98 on 27 Nov:
 ingredients 13 pt, names 17 pt, for reading at 1-2 m).
     python3 tools/chef-sheet.py
 """
@@ -24,20 +24,24 @@ MONTHS = ['ژانویه', 'فوریه', 'مارس', 'آوریل', 'مه', 'ژو�
 today = datetime.date.today()
 DATE = f'{today.day} {MONTHS[today.month - 1]} {today.year}'.translate(FA_DIGITS)
 
+# Three colours so the kitchen tells things apart at a glance (Ryan, 27 Nov 2026 17:00: "add colours ... around 3 colours
+# so they can differentiate things easier", "font make thick"): red = numbers and sections, black = the item's name,
+# blue = what goes in it. All on white, all heavy. Contrast on white: red 6.5:1, blue 8.7:1.
+RED, BLUE, INK = '#B91C1C', '#1E3A8A', '#000'
 CSS = """body{margin:0}
-.cols{column-count:%d;column-gap:28px;column-rule:1.5px solid #000;direction:rtl}
+.cols{column-count:%d;column-gap:28px;column-rule:2px solid #000;direction:rtl}
 .sec{}
-h2{margin:0 0 4px;padding:2px 0 5px;border-bottom:3.5px solid #000;font:800 27px/1.15 Vazirmatn;color:#000;break-after:avoid}
+h2{margin:0 0 4px;padding:3px 12px 4px;border-radius:6px;background:""" + RED + """;font:900 26px/1.2 Vazirmatn;color:#fff;break-after:avoid}
 .sec+.sec{margin-top:12px}
-.r{display:flex;gap:10px;align-items:flex-start;padding:5px 0 6px;border-bottom:1px solid #9a9a9a;break-inside:avoid}
-.n{flex:0 0 40px;height:36px;border-radius:5px;background:#000;color:#fff;font:800 25px/36px 'Barlow Condensed';text-align:center;direction:ltr}
+.r{display:flex;gap:10px;align-items:flex-start;padding:5px 0 6px;border-bottom:1.5px solid #8a8a8a;break-inside:avoid}
+.n{flex:0 0 40px;height:36px;border-radius:5px;background:""" + RED + """;color:#fff;font:900 25px/36px 'Barlow Condensed';text-align:center;direction:ltr}
 .b{flex:1;min-width:0}
 .l1{display:flex;align-items:baseline;gap:10px}
-.t{font:800 23px/1.25 Vazirmatn;color:#000}
-.sz{font:800 19px/1 'Barlow Condensed';color:#000;border:2px solid #000;border-radius:4px;padding:2px 7px 1px;direction:ltr;white-space:nowrap}
-.d{font:500 18px/1.45 Vazirmatn;color:#000;margin-top:1px}
+.t{font:900 23px/1.25 Vazirmatn;color:""" + INK + """}
+.sz{font:900 19px/1 'Barlow Condensed';color:""" + RED + """;border:2.5px solid """ + RED + """;border-radius:4px;padding:2px 7px 1px;direction:ltr;white-space:nowrap}
+.d{font:700 18px/1.45 Vazirmatn;color:""" + BLUE + """;margin-top:1px}
 .ss{display:grid;grid-template-columns:1fr 1fr;column-gap:16px}
-.s{font:700 19px/1.3 Vazirmatn;color:#000;padding:6px 0;border-bottom:1px solid #9a9a9a}
+.s{font:900 19px/1.3 Vazirmatn;color:""" + INK + """;padding:6px 0;border-bottom:1.5px solid #8a8a8a}
 .dk{display:grid;grid-template-columns:1fr 1fr;column-gap:16px}
 .dk .r{padding:5px 0 6px}
 .pg{}"""
@@ -76,15 +80,15 @@ def page(k):
 <body>
 <x-dc>
 <helmet>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&amp;family=Vazirmatn:wght@500;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@800;900&amp;family=Vazirmatn:wght@700;800;900&amp;display=swap" rel="stylesheet">
 <style>
 {scss(k)}
 </style>
 </helmet>
 <div style="width: {W}px; height: {H}px; box-sizing: border-box; background: #fff; position: relative; overflow: hidden; padding: 24px 32px 20px; display: flex; flex-direction: column; color: #000" class="pg">
-<div style="display: flex; justify-content: space-between; align-items: baseline; direction: rtl; border-bottom: 5px solid #000; padding-bottom: 6px; margin-bottom: 10px">
-<span style="font: 800 {34 * k:.1f}px/1.1 Vazirmatn, sans-serif">اژدر زاپاتا · منوی آشپزخانه</span>
-<span style="font: 700 {18 * k:.1f}px/1.1 Vazirmatn, sans-serif">به‌روز: {DATE}</span>
+<div style="display: flex; justify-content: space-between; align-items: baseline; direction: rtl; border-bottom: 5px solid {RED}; padding-bottom: 6px; margin-bottom: 10px">
+<span style="font: 900 {34 * k:.1f}px/1.1 Vazirmatn, sans-serif; color: #000">اژدر زاپاتا · منوی آشپزخانه</span>
+<span style="font: 800 {18 * k:.1f}px/1.1 Vazirmatn, sans-serif; color: #000">به‌روز: {DATE}</span>
 </div>
 <div class="cols">{body}</div>
 </div>
@@ -100,5 +104,5 @@ renderVals() {{ return {{}}; }}
 
 
 os.makedirs('menu/chef', exist_ok=True)
-open('menu/chef/Main.dc.html', 'w').write(page(float(os.environ.get("K", "0.97"))))
+open('menu/chef/Main.dc.html', 'w').write(page(float(os.environ.get("K", "0.98"))))
 print('wrote menu/chef/Main.dc.html')
