@@ -82,6 +82,25 @@ def check():
         if any(x['den'] and html.escape(x['den']) in lf for x in items.values()): bad.append('leaflet: has ingredients (it should not)')
         if ALLERGY_EN in U(lf): bad.append('leaflet: has the allergy notice (Ryan: not on the leaflet)')
     except FileNotFoundError as e: bad.append(f'leaflet not built: {e.filename}')
+    # 1c. the chef's sheet (A3, kitchen): the board's numbers, Persian names, sizes and Persian ingredients word for word,
+    #     the sauces and drinks in Persian; no prices, no English (Ryan, 27 Nov 2026: "the exact same ... not making up anything")
+    try:
+        cs = rd('menu/chef/Main.dc.html')
+        rows = re.findall(r'<div class="r"><span class="n">(\d+)</span><div class="b"><div class="l1"><span class="t">(.*?)</span>(?:<span class="sz">(.*?)</span>)?</div>(?:<div class="d">(.*?)</div>)?</div></div>', cs)
+        got = {int(n): (U(fa), U(sz), U(d)) for n, fa, sz, d in rows}
+        if len(rows) != len(got): bad.append('chef sheet: an item number is on it twice')
+        size = lambda p: ' / '.join(q.split()[0] for q in p.split(' · ')) if ' · ' in p else ''
+        for n, x in items.items():
+            want = (x['fa'], size(x['price']), x['dfa'])
+            if got.get(n) != want: bad.append(f'chef sheet: {n} {x["en"]} {"missing" if n not in got else "differs: " + str(got[n]) + " vs list " + str(want)}')
+        for n, a, b, p in drinks:
+            if got.get(n) != (b, '', ''): bad.append(f'chef sheet: drink {n} {a} {"missing" if n not in got else "differs"}')
+        for n in set(got) - set(items) - {d[0] for d in drinks}: bad.append(f'chef sheet: {n} is not in the list')
+        if [U(a) for a in re.findall(r'<div class="s">([^<]*)</div>', cs)] != [fa for _, fa in sauces]: bad.append('chef sheet: sauces differ from the list')
+        body = re.sub(r'<(style|script|helmet|title)[^>]*>.*?</\1>', '', cs, flags=re.S)
+        if '£' in body: bad.append('chef sheet: has prices (it should not)')
+        if any(x['en'] in U(body) for x in items.values()): bad.append('chef sheet: has English names (Persian only)')
+    except FileNotFoundError as e: bad.append(f'chef sheet not built: {e.filename}')
     # 2. the TV panels (what tools/sections.cjs photographs)
     src = rd('tools/make-sections.py'); tree = ast.parse(src)
     const = {t.id: ast.literal_eval(n.value) for n in tree.body if isinstance(n, ast.Assign) for t in n.targets
@@ -136,7 +155,7 @@ def check():
     for f in ('menu/a4/Back.dc.html', 'site/monitor-1/index.html', 'menu/menu.html'):
         t = U(rd(f))
         if ALLERGY_EN not in t or ALLERGY_FA not in t: bad.append(f'{f}: the food allergy notice is not exactly the FSA sign')
-    print(f'Checked {len(items)} items, {len(sauces)} sauces, {len(drinks)} drinks on the A4, the leaflet, both TVs and the phone menu:',
+    print(f'Checked {len(items)} items, {len(sauces)} sauces, {len(drinks)} drinks on the A4, the leaflet, the chef sheet, both TVs and the phone menu:',
           'all match the list' if not bad else f'{len(bad)} problems')
     for b in bad: print('  ✗', b)
     return not bad
