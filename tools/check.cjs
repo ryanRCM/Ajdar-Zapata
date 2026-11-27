@@ -251,9 +251,11 @@ const server = http.createServer((req, res) => {
     const fn = (await import('data:text/javascript,' + encodeURIComponent(src))).default;
     const show = JSON.parse(fs.readFileSync(path.join(root, 'tv', 'show.json')));
     const realNow = Date.now, realLog = console.log;
-    const ask = async (now, q) => { Date.now = () => now; console.log = () => {};
+    const B32 = '0123456789ABCDEFGHJKMNPQRSTVWXYZ', ulid = ms => { let s = ''; for (let i = 0; i < 10; i++) { s = B32[ms % 32] + s; ms = Math.floor(ms / 32); } return s + 'CDCQJSQX27WA8M4B'; };
+    // the function runs `late` ms after the request arrived (a cold start); the arrival time is in the request ID
+    const ask = async (now, q, late = 0, id = true) => { Date.now = () => now + late; console.log = () => {};
       try {
-        const r = await fn(new Request('https://x/tv/show.json?' + q), { next: async () => new Response(JSON.stringify(show)) });
+        const r = await fn(new Request('https://x/tv/show.json?' + q), { requestId: id ? ulid(now) : undefined, next: async () => new Response(JSON.stringify(show)) });
         return r ? { all: (await r.json()).all, cookie: (r.headers.get('set-cookie') || '').split(';')[0] } : { all: 'untouched', cookie: '' };
       } finally { Date.now = realNow; console.log = realLog; } };
     const want = (now, half) => { const d = new Date(now), mo = d.getUTCMonth() + 1, x = mo === 11 || mo === 12 || (mo === 1 && d.getUTCDate() <= 6);
@@ -263,9 +265,11 @@ const server = http.createServer((req, res) => {
       ['left TV, 27 Nov 13:45', 1795787150009, 't=1795787154341', 1], ['right TV, 27 Nov 13:45', 1795787148915, 't=1795787155241', 2],
       ['left TV, 26 Nov 15:05 (before its clock jumped)', 1795705557823, 't=1795705571111', 1], ['right TV, 26 Nov 15:05', 1795705556965, 't=1795705560719', 2],
       ['left TV in 2 days, clock corrected', at2, 't=' + (at2 + 7777), 1], ['between the two', 1795787149462, 't=1795787150000', 0],
-      ['another time', 1795787100000, 't=1795787100000', 0], ['the current page', 1795787150009, 't=1795787154341&p=x', 0]];
-    for (const [name, now, q, half] of cases) {
-      const got = await ask(now, q), exp = half ? want(now, half) : { all: 'untouched', cookie: '' };
+      ['another time', 1795787100000, 't=1795787100000', 0], ['the current page', 1795787150009, 't=1795787154341&p=x', 0],
+      ['right TV, clock corrected, function 0.9 s late (cold start)', 1795787148915, 't=1795787150000', 2, 900],
+      ['right TV, clock corrected, late, no request ID', 1795787148915, 't=1795787150000', 0, 900, false]];
+    for (const [name, now, q, half, late, id] of cases) {
+      const got = await ask(now, q, late, id), exp = half ? want(now, half) : { all: 'untouched', cookie: '' };
       const pass = got.all === exp.all && got.cookie === exp.cookie; ok = ok && pass;
       console.log(`${pass ? '✅' : '❌'} bridge for the 16:16 page, ${name}: ${got.all}${got.cookie ? ', ' + got.cookie : ''}`);
     }

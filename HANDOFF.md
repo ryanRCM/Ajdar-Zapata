@@ -1,4 +1,4 @@
-# Ajdar Zapata · handoff · 27 Nov 2026 (TV layout, orange leaflet and A4)
+# Ajdar Zapata · handoff · 27 Nov 2026 (TV layout, orange leaflet and A4, TVs locked to their halves)
 
 *Start with `CLAUDE.md`. Separate from LAIFE.* Ryan, 26 Nov 2026: "a finalized handoff so we don't lose this", "no more mix-ups".
 
@@ -72,8 +72,14 @@
 ## Building in a Claude sandbox (26 Nov 2026)
 Google Fonts is blocked there, so the panels fall back to local fonts. Install them first or the Persian comes out thin: `npm i @fontsource/bebas-neue @fontsource/barlow-semi-condensed @fontsource/vazirmatn @fontsource/barlow-condensed @fontsource/barlow` (the last two for the A4 PDF), convert the woff2 files to ttf into `~/.fonts` with fontTools (Vazirmatn: the **arabic** subset only, no latin files, or Chrome picks the wrong weight), `fc-cache -f`. Checked 26 Nov: the panels then match the 24 Nov ones.
 
-## Telling each TV which it is (24 Nov 2026)
-The two TVs are identical to the site, so each is told once. Either press **1** on the left TV's remote and **2** on the right TV's remote while the menu is showing, or set the start pages to `ajdarzapata.co.uk/tv1` (left) and `/tv2` (right). Until told, a TV shows the whole menu. If a TV shows the whole menu again after being switched off and on, it forgets (its browser keeps no memory): then set the start pages, which never need memory.
+## Which TV shows which half: how it stays locked in (27 Nov 2026)
+Ryan, 27 Nov 13:43, with a photo of both TVs showing the whole menu: "fix these monitors ASAP, see which ones they are, make sure they're always going to be constantly updated to the newest version ... develop a system to make sure it's locked in." Opening: 29 Nov.
+- **Now:** both TVs still run the TV page they opened on 24 Nov 16:16 (`e28571b`: no ID, can't be reloaded from here, shows show.json's "all"). `netlify/edge-functions/tv-old.js` tells them apart by **when each request arrives** (to the ms, from Netlify's request ID): each TV's timer runs ~95 ppm fast, so its arrival time slips back ~8.2 s (left) / 8.6 s (right) a day in a straight line, fitted on 23 hours of the log (within 0.16 s), and, while it holds, by **its clock reading** (exact until the TV corrects its clock). It hands each its half from the live show.json, so the newest pictures reach them within 2 minutes, and logs every answer. **Left TV = opened 16:16:19 (`o=1795536979`), right TV = 16:16:18 (`o=1795536978`)**, from Ryan's 24 Nov "right becomes left". Both on their halves since 27 Nov 13:59. (The 24 Nov version used fixed windows of the clock reading; the TVs' clock corrections moved them out, so both fell back to the whole menu.)
+- **If the bridge's log says "whole menu" for a TV** (its line drifted off): refit `TV` in tv-old.js from the log: per TV, the arrival ms mod 120000 over a day of `/tv/show.json` requests without `p=`; the `/tv/ping.txt` request with the same timestamp gives its `o`. `tools/check.cjs` checks the bridge on real logged requests.
+- **After any restart:** the bridge also puts each TV's side in the `az_tv` cookie (5 years). The current TV page reads it, so it comes back on its own half, pins `/tv1` or `/tv2`, keeps it in its memory too, and from then on updates itself: new pictures within 30 s, the page itself when it changes.
+- **If a TV ever shows the whole menu after a restart** (its browser kept no cookie): it shows a small code at the bottom, "TV ABCD" (the start of its ID). A photo is enough: put its ID (from its `/tv/ping.txt?id=` reports) in `site/tv/show.json` `"screens": {"<id>": 1 or 2}` and push; it takes its half within 30 s and remembers. Or press **1** / **2** on that TV's remote. Or set its start page to `/tv1` / `/tv2`, which needs no memory at all (the strongest lock).
+- **How they are, any time:** Netlify's request log (kept 24 h): `/tv/show.json` without `p=` → the bridge's "-> left / right" lines; `/tv/ping.txt` → each TV's `m` (its side), `o` (when it opened) and, on the current page, `pic` (the picture on the screen).
+- Remove tv-old.js once no TV asks for show.json without `p=` (both on the current page).
 
 ## Keep the TVs on (Ryan, once per TV, in the TV's own settings)
 - [ ] Start page of the TV's browser: **ajdarzapata.co.uk/tv1** on the left TV, **ajdarzapata.co.uk/tv2** on the right TV.

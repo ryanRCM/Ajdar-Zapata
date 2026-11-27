@@ -145,16 +145,25 @@ def layout():
     for names in STATIC:
         s1 = min(s1, (BOT - TOP - GAP * (len(names) - 1) - 2 * PAD * len(names)) / sum(size[n][1] for n in names))
     css = [f'/* Made by tools/make-sections.py: do not edit by hand. Full-menu TV, everything at once, text scale {s1:.3f}. */']
-    extra_w = (W - fixed_w - s1 * sum(cw_b(c) for c in STATIC)) / len(STATIC)
+    # the side column (sauces, drinks: drawn small since 27 Nov) keeps its own size, no extra width, and the allergy
+    # notice goes in what is left under it (27 Nov 2026: stretched, its panels were mostly empty glass)
+    side = [k for k, c in enumerate(STATIC) if set(c) <= {'sauces', 'drinks'}]
+    extra_w = (W - fixed_w - s1 * sum(cw_b(c) for c in STATIC)) / (len(STATIC) - len(side))
     x = M
-    for names in STATIC:
-        cw = cw_b(names) * s1 + 2 * PAD + extra_w
+    for k, names in enumerate(STATIC):
+        cw = cw_b(names) * s1 + 2 * PAD + (0 if k in side else extra_w)
         used = sum(size[n][1] * s1 + 2 * PAD for n in names) + GAP * (len(names) - 1)
-        grow = (BOT - TOP - used) / len(names); y = TOP
+        grow = 0 if k in side else (BOT - TOP - used) / len(names); y = TOP
         for n in names:
             h = size[n][1] * s1 + 2 * PAD + grow
             css.append(f'.sec-{n} {{ left: {pct(x, W)}; top: {pct(y, H)}; width: {pct(cw, W)}; height: {pct(h, H)}; }}')
             y += h + GAP
+        if k in side:
+            css.append(f'html:not(.half-1):not(.half-2) .note {{ display: flex; position: absolute; z-index: 1; flex-direction: column; justify-content: center; '
+                       f'padding: .8vh 1.2vh; color: var(--ink); text-align: left; left: {pct(x, W)}; top: {pct(y, H)}; width: {pct(cw, W)}; height: {pct(BOT - y, H)}; }}')
+            css.append('html:not(.half-1):not(.half-2) .note .nt b { font-size: 2.15vh; white-space: normal; } '
+                       'html:not(.half-1):not(.half-2) .note .nt b[lang="fa"] { font-size: 2vh; } '
+                       'html:not(.half-1):not(.half-2) .note p { font-size: 1.8vh; } html:not(.half-1):not(.half-2) .note p[lang="fa"] { font-size: 1.75vh; }')
         x += cw + GAP
     open('site/monitor-1/layout.css', 'w').write('\n'.join(css) + '\n')
     SIDE_W = 520.0; area_w = W - 2 * M - SIDE_W - GAP

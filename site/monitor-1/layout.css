@@ -1,10 +1,12 @@
 /* Made by tools/make-sections.py: do not edit by hand. Full-menu TV, everything at once, text scale 0.493. */
-.sec-starters { left: 0.729%; top: 1.111%; width: 32.431%; height: 34.500%; }
-.sec-sandwiches { left: 0.729%; top: 36.722%; width: 32.431%; height: 29.066%; }
-.sec-burgers { left: 0.729%; top: 66.900%; width: 32.431%; height: 31.989%; }
-.sec-drinks { left: 33.785%; top: 1.111%; width: 17.020%; height: 50.594%; }
-.sec-sauces { left: 33.785%; top: 52.816%; width: 17.020%; height: 46.073%; }
-.sec-doner { left: 51.429%; top: 1.111%; width: 47.842%; height: 25.460%; }
-.sec-platters { left: 51.429%; top: 27.683%; width: 47.842%; height: 20.346%; }
-.sec-shawarma { left: 51.429%; top: 49.140%; width: 47.842%; height: 20.346%; }
-.sec-hotdogs { left: 51.429%; top: 70.597%; width: 47.842%; height: 28.291%; }
+.sec-starters { left: 0.729%; top: 1.111%; width: 32.714%; height: 34.500%; }
+.sec-sandwiches { left: 0.729%; top: 36.722%; width: 32.714%; height: 29.066%; }
+.sec-burgers { left: 0.729%; top: 66.900%; width: 32.714%; height: 31.989%; }
+.sec-drinks { left: 34.068%; top: 1.111%; width: 16.453%; height: 23.359%; }
+.sec-sauces { left: 34.068%; top: 25.581%; width: 16.453%; height: 18.838%; }
+html:not(.half-1):not(.half-2) .note { display: flex; position: absolute; z-index: 1; flex-direction: column; justify-content: center; padding: .8vh 1.2vh; color: var(--ink); text-align: left; left: 34.068%; top: 45.530%; width: 16.453%; height: 53.359%; }
+html:not(.half-1):not(.half-2) .note .nt b { font-size: 2.15vh; white-space: normal; } html:not(.half-1):not(.half-2) .note .nt b[lang="fa"] { font-size: 2vh; } html:not(.half-1):not(.half-2) .note p { font-size: 1.8vh; } html:not(.half-1):not(.half-2) .note p[lang="fa"] { font-size: 1.75vh; }
+.sec-doner { left: 51.146%; top: 1.111%; width: 48.125%; height: 25.460%; }
+.sec-platters { left: 51.146%; top: 27.683%; width: 48.125%; height: 20.346%; }
+.sec-shawarma { left: 51.146%; top: 49.140%; width: 48.125%; height: 20.346%; }
+.sec-hotdogs { left: 51.146%; top: 70.597%; width: 48.125%; height: 28.291%; }

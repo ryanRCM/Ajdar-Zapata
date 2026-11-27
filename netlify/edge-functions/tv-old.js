@@ -19,19 +19,25 @@ const TV = [
   { half: 2, side: 'right', at: 108940, perDay: -8558, t: 115241 },
 ];
 const apart = (a, b) => { const d = (((a - b) % CYCLE) + CYCLE) % CYCLE; return Math.min(d, CYCLE - d); };
+// When the request arrived, to the millisecond: Netlify's request ID is a ULID, which begins with it. (Date.now() here
+// can be up to a second late when the function starts cold: 27 Nov 13:59, 0.7 s.)
+const B32 = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
+const ulidMs = id => { if (!/^[0-7][0-9A-HJKMNP-TV-Z]{25}$/i.test(id || '')) return 0; let v = 0; for (const c of id.slice(0, 10).toUpperCase()) v = v * 32 + B32.indexOf(c); return v; };
 
 export default async (request, context) => {
   const url = new URL(request.url);
   if (url.searchParams.has('p')) return;
   const t = Number(url.searchParams.get('t'));
   if (!t) return;
-  const now = Date.now(), days = (now - T0) / 86400000;
+  const clock = Date.now(), byId = ulidMs(context.requestId) || ulidMs(request.headers.get('x-nf-request-id'));
+  const now = byId && byId <= clock + 1000 && byId > clock - 10000 ? byId : clock, days = (now - T0) / 86400000;
   const near = TV.map(tv => ({ tv, d: apart(now, tv.at + tv.perDay * days), dt: apart(t, tv.t) })).sort((a, b) => a.d - b.d);
   // 1. its clock reading exactly as that TV's (until it corrects its clock), arriving about when that TV does
   let pick = near.find(n => n.dt <= 50 && n.d <= 700);
-  // 2. else by when it arrives: clearly the nearer of the two lines
-  if (!pick && near[0].d <= 600 && near[1].d - near[0].d >= 300) pick = near[0];
-  console.log(`tv-old t ${t % CYCLE} arrived ${now % CYCLE}: ${near.map(n => `${n.tv.side} ${Math.round(n.d)}ms`).join(', ')} -> ${pick ? pick.tv.side : 'whole menu'}`);
+  // 2. else by when it arrives: clearly the nearer of the two lines (only with the exact arrival time: a late clock
+  //    would make the right TV look like the left one)
+  if (!pick && now === byId && near[0].d <= 600 && near[1].d - near[0].d >= 300) pick = near[0];
+  console.log(`tv-old t ${t % CYCLE} arrived ${now % CYCLE} (${now === byId ? 'request id' : 'clock'}): ${near.map(n => `${n.tv.side} ${Math.round(n.d)}ms`).join(', ')} -> ${pick ? pick.tv.side : 'whole menu'}`);
   if (!pick) return;
   const half = pick.tv.half;
   const res = await context.next();
